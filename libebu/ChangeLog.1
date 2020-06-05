@@ -1,0 +1,2222 @@
+2001-06-03  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 3.0.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Set version to 3.0.
+
+	* eb/error.h (EB_ERR_FAIL_OPEN_LANG, EB_ERR_FAIL_READ_LANG,
+	EB_ERR_FAIL_SEEK_LANG, EB_ERR_UNEXP_LANG, EB_ERR_NO_LANG,
+	EB_ERR_NO_MSG, EB_ERR_NO_CUR_LANG, EB_ERR_NO_SUCH_LANG,
+	EB_ERR_NO_SUCH_MSG): Removed.
+	* eb/error.c (error_messages): Ditto.
+
+	* eb/book.c (eb_initialize_language): Not to return a value.
+
+2001-05-19  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/book.c: Function declaration of eb_initialize_catalog() is
+	duplicated.  Fixed.
+	* eb/book.c: 
+	* eb/language.c, eb/message.c: Removed.
+	All functions in the files except for eb_initialize_languages()
+	are removed.
+	eb_initialize_languages() is renamed to eb_initialize_languages()
+	and it is now placed in eb/book.c.
+	* eb/defs.h (EB_MAX_LANGUAGE_NAME_LENGTH, EB_MAX_MESSAGE_LENGTH,
+	EB_MAX_LANGUAGES, EB_MAX_MESSAGES): Deleted.
+	* eb/defs.h (EB_Language_Code, EB_Message_Code, EB_Language_Struct):
+	Removed.
+	* eb/defs.h (EB_Book_Struct): Delete `language_file_name', 
+	`language_zio', `language_count', `languages', `language_current',
+	and `messages' from the structure.
+	* eb/zipbook.c (eb_zip_book_eb): Find LANGUAGE file by itself.
+	* eb/unzipbook.c (eb_unzip_book_eb): Ditto.
+	* eb/zipinfobook.c (eb_zipinfo_book_eb): Ditto.
+
+2001-05-11  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 3.0beta1.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Set version to 3.0beta1.
+
+	* eb/Makefile, libebutils/Makefile, ebfont/Makefile, ebinfo/Makefile,
+	ebrefile/Makefile, ebzip/Makefile: Delete dependencies between *.c
+	and *.o.
+
+2001-05-09  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* m4/eb3.m4 (eb_LIB_EB3): Avoid other AC_TRY_LINK and CK_TRY_RUN
+	checks linking libeb.* to test program.
+
+2001-05-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): Set the variable to `-I m4', not
+	`-I $(srcdir)/m4'.
+
+2001-05-02  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/zipbook.c (ebzip_zip_book_epwing): Fix a bug that ebzip
+	doesn't compress gaiji files.
+
+	* eb/narwfont.c (eb_initialize_narrow_font): Canonicalize font file
+	name before fix.
+	* eb/filename.c (eb_canonicalize_font_file_name): New function.
+
+	* po-ebutils/Makefile.in (POTFILES): Updated.
+	Delete ebzip/filename.c and add ebrefile/ebrefile.c.
+
+	* ebrefile/Makefile.am: Revised.  Now ebrefile is written in C.
+	* ebrefile/ebrefile.c: New file.
+	* ebrefile/ebrefile.in: Deleted.
+
+2001-04-28  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/filename.c, eb/filename.c: fix_path_name_suffix() is
+	renamed to eb_fix_path_name_suffix() and its definition is moved
+	from ebzip/filename.c to eb/filename.c.
+	* ebzip/filename.c: Removed.
+	* ebzip/Makefile.am (ebzip_SOURCES): Delete `filename.c'.
+
+	* ebfont/Makefile.am (ebfont_LDADD): Fix the order of library to
+	be linked.
+	* ebinfo/Makefile.am (ebinfo_LDADD): Ditto.
+	* ebzip/Makefile.am (ebzip_LDADD): Ditto.
+
+2001-04-24  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/setword.c (eb_fix_word): Fix word if the given word is for
+	keyword search or multi-search without candidates.  Reported by
+	Kenichi Suto.
+
+2001-04-23  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.in: Renamed to `configure.ac'.
+
+2001-04-13  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/narwfont.c (eb_initialize_narrow_font): Fix a bug in reopen
+	a font file, reported by HASEGAWA Masafumi.
+
+2001-04-12  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/subbook.c (eb_initialize_indexes): Fix calcuration of end
+	page number of an index.
+
+	* m4/gettext.m4 (eb_GNU_GETTEXT): Ignore arguments.
+	* configure.in (eb_GNU_GETTEXT): Don't pass arguments to the macro.
+
+	* eb/po: Move the directory to po-eb.
+	* po-eb/Makefile.in (top_builddir, subdir): Updated.
+	* po: Move the directory to po-ebutils.
+	* po-ebutils/Makefile.in (subdir): Updated.
+
+	* configure.in (AC_OUTPUT): Delete `po/Makefile' and `eb/po/Makefile',
+	and add `po-eb/Makefile' and `po-ebutils/Makefile' instead.
+	* Makefile.am (SUBDIRS): Delete `po' and add `po-eb' and `po-ebutils'
+	instead.
+	* eb/Makefile.am (SUBDIRS): Deleted.
+
+2001-04-10  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 3.0beta0.
+
+	* ebzip/Makefile.am (noinst_HEADERS): Add `ebzip.h'.
+
+	* gttest.po: Add header.
+
+2001-04-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Search_Struct): Add `index_id'.
+	* eb/subbook.c (eb_initialize_indexies): Also set index ID.
+	* eb/multi.c (eb_initialize_multi_search): Likewise.
+	* eb/setword.c (eb_fix_word): Copy `canonicalized_word' to `word'
+	if as-is or alphabet search.  Don't modify `word' otherwise.
+	Don't modify `word' nor `canonicalized_word' if keyword or
+	candidate search.
+	* eb/setword.c (eb_set_multiword): Pass entry's search information
+	to `eb_fix_word', not to pass method's search information.
+
+	* configure.in (AC_ARG_ENABLE): Use `[[' and `]]' in a help string.
+
+	* Makefile.am (SUBDIRS): Delete `intl'.
+	* configure.in (AC_OUTPUT): Delete `intl/Makefile'.
+	* m4/gettext.m4 (AM_GNU_GETTEXT_HACKED): Renamed to `eb_GNU_GETTEXT',
+	and revised to support GNU gettext 0.10.36.  Now, we inspect not only
+	libintl but also libiconv.  Instead, we never use included libintl
+	sources.
+
+	* configure.in (AM_INIT_AUTOMAKE): Set version to `3.0beta0'.
+
+2001-04-07  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/zipbook.c (zip_book.c): Change type of the argument
+	`subbook_name_list'.
+	* ebzip/unzipbook.c (unzip_book.c): Ditto.
+	* ebzip/zipinfobook.c (zipinfo_book.c): Ditto.
+
+2001-04-06  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/internal.h.in (EB_TEXT_OPTINAL_TEXT): Defined.
+	* eb/defs.h.in (EB_Search_Struct): add `end_page'.  Rename
+	`index_page' to `start_page'.
+	* eb/subbook.c (eb_initialize_indexes): Also initialize and set
+	end pages of search methods.
+	* eb/text.c (eb_read_text): Set text mode to EB_TEXT_OPTINAL_TEXT
+	if the current position points to menu or copyright text.
+
+2001-04-05  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* po/Makefile.in (POTFILES): Add `ebzip/copyfile.c',
+	`ebzip/filename.c', `ebzip/unzipbook.c', `ebzip/unzipfile.c',
+	`ebzip/zipbook.c', `ebzip/zipfile.c', `ebzip/zipinfobook.c',
+	`ebzip/zipinfofile.c'.  Delete `ebzip/ebzip1.c'.
+
+	* eb/text.h (EB_HOOK_BEGIN_BITMAP, EB_HOOK_END_BITMAP): Renamed to
+	EB_HOOK_BEGIN_MONO_GRAPHIC and EB_HOOK_END_MONO_GRAPHIC.
+	* eb/text.h (EB_HOOK_BEGIN_BMP, EB_HOOK_END_BMP): Renamed to 
+	EB_HOOK_BEGIN_COLOR_BMP and EB_HOOK_END_COLOR_BMP.
+	* eb/text.h (EB_HOOK_BEGIN_JPEG, EB_HOOK_END_JPEG): 
+	EB_HOOK_BEGIN_COLOR_JPEG and EB_HOOK_END_COLOR_JPEG.
+	* eb/text.h (EB_HOOK_BEGIN_IN_JPEG, EB_HOOK_END_IN_JPEG): 
+	EB_HOOK_BEGIN_IN_COLOR_JPEG and EB_HOOK_END_IN_COLOR_JPEG.
+	* eb/text.h (EB_HOOK_BEGIN_GRAY_GRAPHIC, EB_HOOK_END_GRAY_GRAPHIC): 
+	Defined.
+
+	* eb/internal.h.in (EB_BINARY_MONO_GRAPHIC, EB_BINARY_COLOR_GRAPHIC,
+	EB_BINARY_WAVE, EB_BINARY_MPEG, EB_BINARY_GRAY_GRAPHIC, 
+	EB_BINARY_INVALID): Defined.
+	* eb/ebconfig.h (EB_Binary_Code): Defined.
+	* eb/defs.h (EB_SIZE_BINARY_CACHE_BUFFER): Change the value to 128.
+	* eb/defs.h (EB_Binary_Context_Struct): Add `code' and `width'.
+	* eb/binary.c (eb_set_binary_mono_graphic, eb_set_binary_gray_graphic,
+	eb_read_binary_mono_graphic): New functions.
+
+2001-03-25  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/libintl_r.c, eb/libintl_r.h: Removed.
+	* eb/Makefile.am (libeb_la_SOURCES): Remove `libintl_r.c'.
+	* eb/Makefile.am (pkginclude_HEADERS): Remove `libintl_r.h'.
+
+	* eb/error.h (EB_MAX_ERROR_MESSAGE_LENGTH): Deleted.
+	* eb/error.c (eb_error_message_r): Deleted.
+
+2001-03-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* m4/gettext.m4 (AM_GNU_GETTEXT_HACKED): Quote $INCLUDED_GETTEXT
+	and $ENABLE_NLS.
+
+2001-03-18  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/zio.c (zio_reopen): Return -1 if `zio' context cannot be
+	re-used.
+
+	* eb/book.c (eb_initialize_book): `book->language_zio' was not
+	initialized.  Fixed.
+
+	* eb/defs.h (EB_Font_Struct): Fix the length of the array `file_name'.
+
+	* eb/narwfont.c (eb_initialize_narrow_font): Fix a bug that it cannot
+	open a font file correctly.
+
+	* eb/zio.c (eb_reopen): Check strictly whehter the zio context is
+	ready to reopen.
+
+	* eb/zio.h (ZIO_REOPEN, ZIO_EBZIP1, ZIO_EPWING, ZIO_EPWING6,
+	ZIO_SEBXA): Renumbered.
+
+	* ebfont/ebfont.c: Don't include <fakelog.h>.
+	* ebinfo/ebinfo.c: Ditto.
+	* ebfont/ebfont.c (main): Don't call set_fakelog_name(), 
+	set_fakelog_mode() nor set_fakelog_level().
+	* ebinfo/ebinfo.c (main): Ditto.
+
+	* libebutils/ebutils.c (output_try_help): Add the argument
+	`invoked_name'.
+	* libebutils/ebutils.c (output_version): Add the arguments
+	`program_name' and `program_version'. 
+	* libebutils/ebutils.c (parse_subbook_name_argument): Add the
+	argument `invoked_name'.
+	* libebutils/ebutils.c: Delete definition of `program_name',
+	`program_version' and `invoked_name'.
+	* ebfont/ebfont.c: Define `program_name', `program_version' and
+	`invoked_name'.
+	* ebinfo/ebinfo.c: Ditto.
+	* ebfont/ebfont. (main): Don't initialize `program_name'.
+	* ebinfo/ebinfo.c (main): Ditto.
+
+	* ebfont/ebfont.c (subbook_list, subbook_count):
+	Changed to `static' variables.
+	* ebfont/ebfont.c (font_list, fount_count): Ditto.
+	* ebfont/ebfont.c (image_list, image_count): Ditto.
+
+	* ebfont/ebfont.c (parse_image_argument): The order of arguments
+	is changed.
+	* ebfont/ebfont.c (parse_font_argument): Ditto.
+
+	* libebtuils/ebutils.c (find_subbook): Fix a bug.  The function
+	returns invalid error code if an error has occured.
+
+	* ebzip/copyfile.c: Include "eb.h", "error.h" and "internal.h".
+
+	* ebzip/copyfile.c (copy_file): Don't `stat' the input file.
+
+	* ebzip/copyfile.c (copy_files_in_directory): Don't output an error
+	message if input directory doesn't exists.
+	* ebzip/copyfile.c (copy_files_in_directory): Output an error message
+	if failed to open the input directory.
+	* ebzip/copyfile.c (copy_files_in_directory): Skip a file entry
+	if it is not regular file.
+
+	* ebzip/ebzip.c: Add `-s' and `--skip-content' options.
+	* ebzip/ebzip.c (ebzip_skip_flag_font, ebzip_skip_flag_graphic,
+	ebzip_skip_flag_movie, ebzip_skip_flag_sound): New variables.
+	* ebzip/ebzip.h (EBZIP_DEFAULT_SKIP_FONT, EBZIP_DEFAULT_SKIP_GRAPHIC,
+	EBZIP_DEFAULT_SKIP_MOVIE, EBZIP_DEFAULT_SKIP_SOUND): New cpp macros.
+	* ebzip/ebzip.c (parse_skip_content_argument): New function.
+
+	* ebzip/ebzip.h (EBZIP_SUFFIX_NONE, EBZIP_SUFFIX_EBZ,
+	EBZIP_SUFFIX_ORG): New cpp macros.
+
+	* ebzip/filename.c (compose_unfixed_path_name): Renamed to 
+	fix_path_name_suffix() and revised.
+	* ebzip/filename.c (compose_unfixed_path_name2,
+	compose_unfixed_path_name3, compose_fixed_path_name,
+	compose_fixed_path_name2, compose_fixed_path_name3): Deleted.
+
+	* ebzip/zipbook.c (ebzip_zipbook): In order to compose a file name,
+	use eb_find_file_name(), eb_compose_file_name(),
+	eb_compose_file_name2(), eb_compose_file_name3() and
+	fix_path_name_suffix().
+	* ebzip/unzipbook.c (ebzip_unzip_book): Ditto.
+	* ebzip/zipinfobook.c (ebzip_zipinfo_book): Ditto.
+
+	* ebzip/zipbook.c (ebzip_zip_book): Support movie files.
+	* ebzip/unzipbook.c (ebzip_unzip_book): Ditto.
+
+2001-03-12  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.in (AC_PROG_CC, AC_AIX, AC_MINIX, AC_PROG_LIBTOOL):
+	Check AC_PROG_CC, (AC_AIX + AC_MINIX) and AC_PROG_LIBTOOL in that
+	order.
+
+	* eb/filename.c (eb_fix_file_name, eb_fix_file_name2,
+	eb_fix_file_name3): Removed.
+	* eb/filename.c (eb_find_file_name, eb_find_file_name2,
+	eb_find_file_name3): Added.
+	* eb/filename.c (eb_compose_path_name, eb_compose_path_name2,
+	eb_compose_path_name3): Revised.
+	* eb/internal.h.in (EB_FILE_NAME_START, EB_FILE_NAME_SOUND,
+	EB_FILE_NAME_CATALOG, EB_FILE_NAME_LANGUAGE, EB_FILE_NAME_VTOC,
+	EB_FILE_NAME_WELCOME, EB_FILE_NAME_CATALOGS, EB_FILE_NAME_HONMON,
+	EB_FILE_NAME_HONMON2, EB_FILE_NAME_HONMONG, EB_FILE_NAME_HONMONS,
+	EB_FILE_NAME_APPENDIX, EB_FILE_NAME_FUROKU): Deleted.
+	* eb/internal.h.in (EB_SUFFIX_NONE, EB_SUFFIX_EBZ, EB_SUFFIX_ORG):
+	Deleted.
+
+	* eb/appendix.c (eb_initialize_appendix_catalog):
+	Use eb_find_file_name() to find a file to open.
+	* eb/appsub.c (eb_set_appendix_subbook_eb): Ditto.
+	* eb/appsub.c (eb_set_appendix_subbook_epwing): Ditto.
+	* eb/binary.c (eb_set_binary_mpeg): Ditto.
+	* eb/book.c (eb_initialize_catalog): Ditto.
+	* eb/language.c (eb_initialize_languages, eb_set_language): Ditto.
+	* eb/message.c (eb_initialize_messages): Ditto.
+	* eb/narwfont.c (eb_initialize_narrow_font): Ditto.
+	* eb/subbook.c (eb_set_subbook_eb, eb_set_subbook_epwing): Ditto.
+
+	* eb/defs.h (EB_Font_Struct): Delete unused member `available'.
+	* eb/defs.h (EB_Book_Struct): Add the member `language_file_name'.
+	* eb/defs.h (EB_Book_Struct): Add `language_file_name' and
+	`language_zio'.
+
+2001-02-26  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/appsub.c (eb_initialize_appendix_subbook,
+	eb_set_appendix_subbook): fix `data' sub-dirtory name in 
+	eb_set_appendix_subbook(), reported by HASEGAWA Masafumi.
+
+2001-02-25  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* m4/eb3.m4 (AC_ARG_WITH): Fix typo.
+
+	* m4/utimbuf.m4: Rename variable prefix from `ax_cv' to `ac_cv'.
+
+2001-02-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* check gettext() in libintl , and then in libc.
+
+2001-02-19  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/filename.c (compose_unfixed_path_name2): Enclose "%s/%s"
+	with F_().
+
+2001-02-18  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/filename.c (compose_out_path_name, compose_out_path_name2,
+	compose_out_path_name3): Rename prefix from `compose_out_' to 
+	`compose_unfixed_'.
+
+	* ebzip/filename.c (compose_existent_path_name,
+	compose_existent_path_name2, compose_existent_path_name3): Rename
+	prefix from `compose_exisntent_' to  `compose_fixed_'.
+
+	* lib/text.c (eb_read_text_internal): Fix ISO 8859-1 code point range,
+	reported by HASEGAWA Masafumi.
+
+2001-02-12  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/ebzip.c: Split the file into 9 files; eb/copyfile.c,
+	eb/ebzip.c, eb/ebzip.h, eb/unzipbook.c, eb/unzipfile.c, eb/zipbook.c,
+	eb/zipfile.c, eb/zipinfobook.c and eb/zipinfofile.c.
+
+	* ebzip/zipbook.c (zip_book, zip_book_eb, zip_book_epwing):
+	Add the prefix `ebzip_', and revised.
+	* ebzip/zipfile.c (zip_file): Ditto.
+	* ebzip/unzipbook.c (unzip_book, unzip_book_eb, unzip_book_epwing):
+	Ditto.
+	* ebzip/unzipfile.c (unzip_file): Ditto.
+	* ebzip/zipinfobook.c (zipinfo_book, unzip_book_eb,
+	unzip_book_epwing): Ditto.
+	* ebzip/zipinfofile.c (zipinfo_file): Ditto.
+
+	* ebzip/ebzip.h (zip_level, keep_flag, quiet_flag, test_flag, 
+	overwirte_mode): Add the prefx `ebzip_'.
+
+	* libebutils/Makefile.am (INCLUDES): Remove `-DUSE_FAKELOG'.
+	* libebutils/Makefile.am (noinst_HEADERS): Remove `fakelog.h'.
+	* libebutils/Makefile.am (libebutils_a_SOURCES): Remove `fakelog.c'.
+	* libebutils/fakelog.c, libebutils/fakelog.h: Removed.
+	* libebutils/makedir.c: Don't use fakelog.
+
+	* libebutils/makedir.c (make_missing_directory_chaing): Removed.
+
+2001-02-11  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* m4/gettext.m4 (AM_GNU_GETTEXT_HACKED): Find gettext() in libc.
+
+	* eb/search.c (eb_hit_list_keyword, eb_hit_list_multi): Comparison
+	Group entry with `context->word', not `context->canonicalized_word'.
+	Pill Book 2001 needs this fix.
+
+	* eb/configure.in (AM_INIT_AUTOMAKE): Set version to `3.0alpha5'.
+
+2001-02-09  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/filename.c (eb_canonicalize_path_name): Fix typo, reported
+	by Satomi Igi.
+
+	* eb/internal.h.in (EB_SUFFIX_ORG): Defined.
+	* eb/subbook.c (eb_set_subbook_epwing): Try to open `HONMON2.ORG'.
+	* eb/subbook.c (eb_set_subbook_epwing): Assume HONMON(.EBZ) file
+	has graphic and sound data regardless of EPWING version.
+	* ebzip/ebzip.c (zip_book, unzip_book, zipinfo_book): Support
+	`HONMONS', `HONMONG' and `HONMON2.ORG' files.
+	* ebzip/ebzip.c (zip_book): When compress HONMON2, output the result
+	to HONMON2.EBZ, not `HONMON.EBZ'.
+	* ebzip/ebzip.c (unzip_book): When uncompress HONMON2.EBZ, output the
+	result to `HONMON2.ORG', not `HONMON2' or `HONMON'.
+
+2001-02-06  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* zlib/Makefile.am (AC_CHECK_FUNCS): Fix typo (vnsprintf -> vsnprintf). 
+	Reported by Takashi NEMOTO.
+	* m4/gettext.m4: When tests, use the locale name `en_US' instead of
+	`en'.  Reported by Takashi NEMOTO.
+	* libebutils/Makefile.am (INCLUDES): Use @INTLINCS@, not `-I../intl'
+	Reported by Takashi NEMOTO.
+	* intl/libgettext.h: Added again.  Since `intl/bindtextdomain.c'
+	includes the file.  Reported by Takashi NEMOTO.
+
+2001-02-03  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 3.0alpha4.
+
+	* po/Makefile.in, eb/po/Makefile (DISTFILES): Distribute
+	`Makefile.in', not `Makefile.in.in'.  Add `$(CATALOGS)'.
+	* po/Makefile.in, eb/po/Makefile (distclean): Don't delete `Makefil.in'
+	itself.
+	* eb/text.c (eb_read_text_internal): Dispatch the BEGIN_WAVE hook.
+
+2001-01-31  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Appendix_Subbook_Struct): Rename `appendix_zio' to
+	`zio'.
+	* eb/defs.h (EB_Font_Struct): Rename `font_zio' to `zio'.
+
+	* eb/graphic.c: Removed.
+	* eb/Makefile.am (libeb_la_SOURCES): Remove `eb/graphic.c'.
+	* eb/defs.h (EB_Subbook_Struct): The member `graphic' is removed.
+	* eb/ebinfo.c (output_information): Delete `graphic search'
+	information.
+
+	* eb/defs.h (EB_Subbook_Struct): The member `sound' is added.
+	* eb/subbook.c (eb_initialize_indexes): Recognize 0xd8 as sound data.
+
+	* eb/defs.h (EB_Binary_Context_Struct): Add the members;
+	`cache_buffer', `cache_length' and `cache_offset'.
+	* eb/binary.c (eb_set_binary_wave): Add the argument `type'.
+	* eb/binary.c (eb_est_binary_wave, eb_set_binary_color_graphic,
+	eb_set_binary_mpeg, eb_read_binary, eb_unset_binary): Update cache
+	data.
+
+	* eb/Makefile.am (pkginclude_HEADERS): Add `zio.h'.
+
+2001-01-28  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebfont/ebfont.c (make_subbook_size_image_fonts): Fix typo.
+
+	* eb/uint.c: Renamed to `eb/bcd.c'.
+	* eb/uint.c: Delete definition of eb_uint1(), eb_uint2(), eb_uint4()
+	and eb_uint4_le().
+
+	* eb/zio.h: New file.
+	* eb/defs.h (EB_Zip_Code ,EB_Huffman_Node): Move declaration of 
+	these types to `eb/zio.h'.
+	* eb/defs.h (EB_SIZE_EBZIP_HEADER, EB_SIZE_EBZIP_MARGIN, 
+	EB_MAX_EBZIP_LEVEL, EB_HUFFMAN_NODE_INTERMEDIATE,
+	EB_HUFFMAN_NODE_EOF, EB_HUFFMAN_NODE_LEAF8, EB_HUFFMAN_NODE_LEAF16,
+	EB_HUFFMAN_NODE_LEAF32, EB_ZIO_NONE, EB_ZIO_EBZIP1, EB_ZIO_EPWING,
+	EB_ZIO_EPWING6, EB_ZIO_SEBXA, EB_ZIO_INVALID): Move definition of
+	these cpp macros to `eb/zio.h'.
+	* eb/zio.c: Include `eb/zio.h'.
+	* eb/defs.h: Include `eb/zio.h'.
+	
+	* eb/zio.h (EB_Zip): Renamed to `Zio'.
+	* eb/zio.h (EB_Zip_Code): Renamed to `Zio_Code'.
+	* eb/defs.h (EB_SIZE_EBZIP_HEADER): Renamed to `ZIO_SIZE_EBZIP_HEADER'.
+	* eb/defs.h (EB_SIZE_EBZIP_MARGIN): Renamed to `ZIO_SIZE_EBZIP_MARGIN'.
+	* eb/defs.h (EB_MAX_EBZIP_LEVEL): Renamed to `ZIO_MAX_EBZIP_LEVEL'.
+	* eb/defs.h (EB_HUFFMAN_NODE_INTERMEDIATE): Renamed to
+	`ZIO_HUFFMAN_NODE_INTERMEDIATE'.
+	* eb/defs.h (EB_HUFFMAN_NODE_EOF): Renamed to `ZIO_HUFFMAN_NODE_EOF'.
+	* eb/defs.h (EB_HUFFMAN_NODE_LEAF8): Renamed to
+	`ZIO_HUFFMAN_NODE_LEAF8'.
+	* eb/defs.h (EB_HUFFMAN_NODE_LEAF16): Renamed to
+	`ZIO_HUFFMAN_NODE_LEAF16'.
+	* eb/defs.h (EB_HUFFMAN_NODE_LEAF32): Renamed to
+	`ZIO_HUFFMAN_NODE_LEAF32'.
+	* eb/defs.h (EB_ZIO_NONE): Renamed to `ZIO_NONE'.
+	* eb/defs.h (EB_ZIO_EBZIP1): Renamed to `ZIO_EBZIP1'.
+	* eb/defs.h (EB_ZIO_EPWING): Renamed to `ZIO_EPWING'.
+	* eb/defs.h (EB_ZIO_EPWING6): Renamed to `ZIO_EPWING6'.
+	* eb/defs.h (EB_ZIO_SEBXA): Renamed to `ZIO_SEBXA'.
+	* eb/defs.h (EB_ZIO_INVALID): Renamed to `ZIO_INVALID'.
+
+	* eb/unebzip.c, eb/unzepwng.c, eb/unzsebxa.c: Removed.
+	The contents of those files are moved to `eb/zio.c'.
+
+	* eb/defs.h (EB_Appendix_Subbook_Struct): Rename `appendix_zip' to
+	`appendix_zio'.
+	* eb/defs.h (EB_Appendix_Subbook_Struct): Remove `appendix_file'.
+	* eb/defs.h (EB_Font_Struct): Rename `font_zip' to `font_zio'.
+	* eb/defs.h (EB_Font_Struct): Delete `font_file'.
+	* eb/defs.h (EB_Subbook_Struct): Rename `text_zip' to `text_zio'.
+	* eb/defs.h (EB_Subbook_Struct): Delete `text_file'.
+	* eb/defs.h (EB_Subbook_Struct): Rename `graphic_zip' to `graphic_zio'.
+	* eb/defs.h (EB_Subbook_Struct): Delete `graphic_file'.
+	* eb/defs.h (EB_Subbook_Struct): Rename `sound_zip' to `sound_zio'.
+	* eb/defs.h (EB_Subbook_Struct): Delete `sound_file'.
+	* eb/defs.h (EB_Subbook_Struct): Add `movie_zip'.
+	* eb/defs.h (EB_Binary_Context_Struct): Delete `file'.
+	* eb/defs.h (EB_Binary_Context_Struct): Rename `zip' to `zio'.
+
+	* eb/zio.c: Don't include `ebconfig.h', `errorh.h' nor `internal.h'.
+	* eb/zio.c (eb_zinitialize): Renamed to `zio_initialize_library'.
+	* eb/zio.c (eb_zfinalize): Renamed to `zio_finalize_library'.
+	* eb/zio.c (eb_zopen): Renamed to `zio_open'.
+	* eb/zio.c (eb_zopen_none): Renamed to `zio_open_none'.
+	* eb/zio.c (eb_zopen_ebzip): Renamed to `zio_open_ebzip'.
+	* eb/zio.c (eb_zopen_epwing): Renamed to `zio_open_epwing'.
+	* eb/zio.c (eb_zopen_epwing6): Renamed to `zio_open_epwing6'.
+	* eb/zio.c (eb_zopen_sebxa): Renamed to `zio_open_sebxa'.
+	* eb/zio.c (eb_zclose): Renamed to `zio_close'.
+	* eb/zio.c (eb_zlseek): Renamed to `zio_lseek'.
+	* eb/zio.c (eb_zread): Renamed to `zio_read'.
+	* eb/zio.c (eb_zread_ebzip): Renamed to `zio_read_ebzip'.
+	* eb/zio.c (eb_zread_epwing): Renamed to `zio_epwing'.
+	* eb/zio.c (eb_make_epwing_huffman_tree): Renamed to
+	`zio_make_epwing_huffman_tree'.
+	* eb/zio.c (eb_unzip_slice_ebzip1): Renamed to
+	`zio_unzip_slice_ebzip1'.
+	* eb/zio.c (eb_unzip_slice_epwing): Renamed to
+	`zio_unzip_slice_epwing'.
+	* eb/zio.c (eb_unzip_slice_epwing6): Renamed to
+	`zio_unzip_slice_epwing6'.
+	* eb/zio.c (eb_initialize, eb_finalize, eb_reopen, eb_file):
+	New functions.
+	* eb/zio.c (eb_read_all): Renamed to `zio_read_raw'.
+
+	* eb/zio.c (Zio): Add the member `file'.
+
+	* eb/zio.c (zio_close, zio_lseek, zio_read, zio_read_ebzip,
+	eb_zread_epwing, eb_zread_sebxa): Delete 2nd argument `file'.
+
+	* eb/zio.c (zio_uint1, zio_uint2, zio_uint4): Defined.
+	Don't use eb_uint1, eb_uint2 or zio_uint4.
+
+	* eb/appendix.c (eb_finalize_appendix): Finalize `appendix_zio'
+	in all subbooks.
+	* eb/book.c (eb_finalize_book): Ditto.
+
+	* eb/appendix.c (eb_initialize_appendix_catalog): Use zio to
+	open a catalog file.
+	* eb/book.c (eb_initialize_catalog): Ditto.
+
+	* eb/book.c (eb_fix_misleaded_book): New function.
+	* eb/book.c (eb_initialize_catalog): Fix chachacter-code information
+	by calling eb_fix_misleaded_book().
+
+	* eb/appendix.c (eb_initialize_catalog): Initialize `appendix_zio' in
+	an EB_Appendix_Subbook Object.
+	* eb/book.c (eb_initialize_catalog): Initialize `text_zio', 
+	`graphic_zio', `sound_zio and movie_zio' in an EB_Book_Subbook object.
+
+2001-01-27  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/error.h: Rivse error codes.
+	* eb/error.c (error_messages): Revised.
+	* eb/binary.c (eb_set_binary_mpeg): Fix a bug in initialization of
+	binary context.
+	* eb/filename.c (eb_decompose_movie_file_name): New function.
+	* eb/filename.c (eb_compose_movie_file_name): Don't believe file name
+	consists of 8 characters.
+	
+	* eb/text.c (SIZE_FEW_REST): Change the value from 40 to 48.
+	* eb/text.c (eb_read_text_internal): BEGIN_MPEG hook was not called
+	correctly. Fixed.
+
+	* eb/subbook.c (eb_set_subbook_epwing): Don't suppose graphic or
+	sound data are in HONMON file if EPWING version is 5 or later.
+
+2001-01-23  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/error.h (EB_ERR_BAD_FILE_NAME, EB_ERR_BAD_DIR_NAME): Add these
+	error codes.
+
+	* eb/filename.c (eb_fix_directory_name, eb_fix_directory_name2,
+	eb_fix_file_name, eb_fix_file_name2, eb_fix_file_name3, 
+	eb_compose_path_name, eb_compose_path_name2, eb_compose_path_name3): 
+	eb_compose_movie_file_name): Return EB_Error_Code, not {0 or -1}.
+	
+2001-01-21  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/error.h, eb/error.c (EB_ERR_FAIL_OPEN_BIANRY,
+	EB_ERR_FAIL_READ_BINARY, EB_ERR_FAIL_SEEK_BINARY, EB_ERR_UNEXP_BINARY,
+	EB_ERR_NO_CUR_BINARY, EB_ERR_NO_SUCH_BINARY): Add these error codes.
+
+	* eb/binary.h: New file.
+	* eb/Makefile.am (pkginclude_HEADERS): Add binary.h.
+
+	* eb/text.h, eb/internal.h.in: Move function declaration of
+	eb_uint1(), eb_uint2(), eb_uint4(), eb_bcd2(), eb_bcd4() and eb_bcd6()
+	from eb/text.h to eb/internal.h.in.
+
+2001-01-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.in, m4/gettext.m4 (AM_GNU_GETTEXT): renamed to
+	AM_GNU_GETTEXT_HACKED.
+	* m4/gettext.m4: Use the language `en' instead of `fr' in the test
+	program.
+
+	* eb/defs.h (EB_Subbook_Struct): Fix array length of `text_file_name',
+	`graphic_file_name' and `sound_file_name'.
+
+	* eb/internal.h.in: Declare eb_intialize_binary().
+	* eb/binary.c: Added.
+	* eb/subbook.c: Call eb_initialize_binary() to initialize a binary
+	context.
+
+	* eb/Makefile.am (libeb_la_SOURCES): Add `binary.c'.
+
+2001-01-17  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.c (EB_MAX_ARGV): Change the value from 4 to 6.
+
+	* eb/filename.c (eb_compose_movie_file_name): Defined.
+
+	* ebzip/ebzip.c (zip_eb_book): Renamed to zip_book_eb().
+	* ebzip/ebzip.c (zip_epwing_book): Renamed to zip_book_epwing().
+	* ebzip/ebzip.c (unzip_eb_book): Renamed to unzip_book_eb().
+	* ebzip/ebzip.c (unzip_epwing_book): Renamed to unzip_book_epwing().
+	* ebzip/ebzip.c (zipinfo_eb_book): Renamed to zipinfo_book_eb().
+	* ebzip/ebzip.c (zipinfo_epwing_book): Renamed to
+	zipinfo_book_epwing().
+
+	* eb/defs.h (EB_Subbook_Struct): Add the following members;
+	`graphic_file', `graphic_zip', `sound_file' and `sound_zip'.
+	* eb/internal.h.in (EB_FILE_NAME_HONMONG, EB_FILE_NAME_HONMONS):
+	Defined.
+	* eb/subbook.c (eb_set_subbook): Split this function into
+	eb_set_subbook(), eb_set_subbook_eb() and eb_set_subbook_epwing().
+	* eb/subook.c (eb_set_subbook_epwing): Try opening graphic and sound
+	files.
+
+	* eb/uint.c, eb/internal.h.in (eb_uint4_le): Defined.
+
+	* eb/defs.h (EB_Binary_Context_Struct, EB_Binary_Context): Defined.
+	* eb/defs.h (EB_Book_Struct): Add the member `binary_context'.
+
+	* eb/text.h: (EB_HOOK_BEGIN_BITMAP, EB_HOOK_END_BITMAP,
+	EB_HOOK_BEGIN_BMP, EB_HOOK_BEGIN_JPEG, EB_HOOK_END_COLOR_GRAPHIC,
+	EB_HOOK_BEGIN_IN_BMP, EB_HOOK_BEGIN_IN_JPEG,
+	EB_HOOK_END_IN_COLOR_GRAPHIC, EB_HOOK_BEGIN_WAVE, EB_HOOK_END_WAVE,
+	EB_HOOK_BEGIN_MPEG, EB_HOOK_END_MPEG): Defined.
+	* eb/defs.h (EB_NUMBER_OF_HOOKS): Updated.
+
+	* eb/zio.c (zio_reopen): become `static' function.
+	* eb/zio.h (ZIO_REOPEN): Added.
+	* eb/zio.c (zio_open): Recognize the compression mode `ZIO_REOPEN'.
+	* eb/zio.c (zio_mode): New function.
+
+	* eb/book.c (eb_filenalize_book): Don't call zio_finalize() for
+	`movie_zio'.  Call zio_finalize() for `language_zio'.
+
+2001-01-16  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/internal.h (EB_Subbook_Struct): Remove the member
+	`stream_directory_name'.
+	* eb/subbook.c (eb_set_subbook): Don't initialize
+	`subbook->stream_directory_name'.
+
+	* eb/text.h (EB_HOOK_STOP_CODE, EB_HOOK_BEGIN_BITMAP,
+	EB_HOOK_END_BITMAP, EB_HOOK_BEGIN_BMP, EB_HOOK_BEGIN_JPEG,
+	EB_HOOK_END_IMAGE, EB_HOOK_BEGIN_IN_BMP, EB_HOOK_BEGIN_IN_JPEG,
+	EB_HOOK_END_IN_IMAGE, EB_HOOK_BEGIN_WAVE, EB_HOOK_END_WAVE,
+	EB_HOOK_BEGIN_MPEG, EB_HOOK_END_MPEG): Define new text hooks.
+
+	* eb/text.c (SIZE_FEW_REST): Change the value from 16 to 40.
+
+2001-01-14  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Binary_Context_Struct, EB_Binary_Context,
+	EB_Binary_Code): Defined.
+
+2001-01-11  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* m4/gettext.m4 (AM_GNU_GETTEXT): Set LC_ALL to `fr', and set LANGUAGE
+	to empty string.
+
+	* ebzip/ebzip.c (zip_epwing_book, unzip_epwing_book,
+	zipinfo_epwing_book): Fix filenames in error messages.
+
+2001-01-03  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* lib/strcasecmp.c (strncasecmp): Fix a bug that the function returns
+	wrong result when comparison length is 0.
+	* libebutils/strcasecmp.c (strncasecmp): Ditto.
+
+	* eb/Makefile.am (SUBDIRS): Don't use @POSUB@.
+
+2001-01-02  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.in (AC_ARG_WITH): Fix a bug that configure cannot
+	recognize --with-included-zlib option.  Reported by Kazuhiko.
+
+2001-01-01  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* po/Makefile.in.in, eb/po/Makefile.in.in: Use `ENABLE_NLS', not
+	`USE_NLS'.
+
+	* eb/Makefile.am (SUBDIRS): Set to `po', not `@POSUB@'.
+
+2000-12-31  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* intl/Makefile.am (noinst_HEADERS): Remove `libgettext.h'.  Add 
+	`libintl.h' instead.
+	* intl/Makefile.am (BUILT_SOURCES): Remove libintl.h.
+	* intl/Makefile.am (DISTCLEANFILES): Remove libintl.h.
+
+	* po/Makefile.in.in, eb/po/Makefile.in.in (ja_JP.SJIS): Remove the
+	target.
+
+	* gttest.po, gttest.mo: New files.
+	* Makefile.am (EXTRA_DIST): Add `gttest.mo' and `gttest.po'.
+	* Makefile.am (gttest.mo): New target.
+	* m4/gettext.m4: Fully revised.
+	* configure.in (AC_OUTPUT): Fix an output file name.
+
+2000-12-30  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* libebutils/Makefile.am (EXTRA_DIST): Delete `memset.c', `strerror.c'
+	and `strcasecmp.c'.  Automake recognizes them as distirbution files.
+
+2000-12-29  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): Defined.
+
+	* m4/ssizet.m4 (AX_TYPE_SSIZE_T): Renamed to `AC_TYPE_SSIZE_T'.
+	* m4/utimbuf.m4 (AX_HAVE_STRUCT_UTIMBUF): Renamed to
+	`AC_STRUCT_UTIMBUF'.
+	* configure.in: Use new macro names described above.
+
+	* m4/libtool.m4: New file.
+	(This file will be removed when a bug in libtool.m4 distributed
+	with Libtool is fixed.)
+	* m4/Makefile.am (EXTRA_DIST): Add `libtool.m4'.
+
+2000-12-23  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Use autoconf 2.49b, automake 1.4b, and libtool 1.3c (checkout
+	2000-12-18).
+	* depcomp: New file.
+
+	* configure.in: Call `AX_TYPE_SSIZE_T' instead of
+	`AC_CHECK_TYPE(ssize_t, int)'.
+
+	* lib/fakelog.c (fakelog): Use memcpy() instead of strcpy() to
+	expand `%m'.
+
+	* m4/Makefile.am, m4/eb3.m4, m4/gettext.m4, m4/lcmessage.m4,
+	m4/ssize_t.m4, m4/utimbuf.m4: New files.
+	* configure.in (AC_OUTPUT): Add `m4/Makefile.in'.
+	* Makefile.am (SUBDIRS): Add `m4'.
+
+	* acconfig.h, acinclude.m4: Removed.
+
+	* intl/Makefile.am, eb/Makefile.am, libebutils/Makefile.am,
+	ebfont/Makefile.am, ebinfo/Makefile.am, ebzip/Makefile.am,
+	doc/Makefile.am, doc-ja/Makefile.am:
+	Remove @MAKE_SET@.
+	
+2000-12-06  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 3.0alpha3.
+
+	* ebzip/Makefile.am (INCLUDES): Delete `-I$(top_srcdir)'.
+	* ebzip/Makefile.am (INCLUDES): Add `-I../eb' and `-I$(top_srcdir)/eb'.
+	* ebzip/ebzip.c: Include `*.h' in the `../eb' directory, not `eb/*.h'. 
+
+2000-11-28  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/subbook.c (eb_subbook_directory, eb_subbook_directory2):
+	All letters in a directory name are converted to lower letters
+	that were converted to upper letters.
+	* libebutils/ebutils.c (parse_subbook_name_argument): Ditto.
+
+2000-11-23  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* intl/Makefile.am: Don't make a symbolc link `libintl.h'.
+
+	* eb/font.c (eb_set_font): Set font files to -1.
+	* eb/font.c (eb_unset_font): Check file descriptor before close
+	the file.
+
+2000-11-18  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.in (AC_OUTPUT_COMMANDS): Copy `intl/libgettext.h' to
+	`intl/libintl.h'.
+
+	* eb/filename.c, ebzip/filename.c, ebfont/ebfont.c: Define the macro
+	`F_' to resolve path notation problem between UNIX and DOS.
+
+	* ebconfig.h: New file.
+	* appendix.c, appsub.c, bitmap.c, book.c, copyright.c, eb.c, 
+	endword.c, error.c, exactword.c, filename.c, font.c, graphic.c, 
+	hook.c, jacode.c, keyword.c, language.c, lock.c, match.c, menu.c, 
+	message.c, multi.c, narwalt.c, narwfont.c, search.c, setword.c, 
+	stopcode.c, subbook.c, text.c, uint.c, unzebzip.c, unzepwing.c, 
+	unzsebxa.c, widefont.c, word.c, zio.c:
+	Include `ebconfig.h'.
+	Dont' include public headers nor define public macros.
+	* Makefile.am (noinst_HEADERS): Add `ebconfig.h'.
+
+	* eb/search.c (eb_and_hit_lists): In its prototype declaration,
+	type of the 4th argument is changed from (EB_Hit [N1][]) to
+	(EB_Hit [][N2]).
+
+2000-11-14  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Makefile.am (CLEANFILES): Add stamp-widealt-h, stamp-widefont-h,
+	widealt.c and widefont.c.
+	* Makefile.am (BUILT_SOURCES): Add widealt.c and widefont.c.
+	* Makefile.am (widealt.c, stamp-widealt-h): Add the targets.
+	* Makefile.am (widefont.c, stamp-widefont-h): Add the targets.
+	* widealt.c, widefont.c: Generated from narwalt.c and narwfont.c.
+
+2000-11-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.c (eb_read_text_internal): 
+	* eb/text.h (EB_HOOK_END_CANDIDATE): Split this hook into
+	EB_HOOK_END_CANDIDATE_GROUP and EB_HOOK_END_CANDIDATE_LEAF.
+	* eb/text.h (EB_HOOK_BEGIN_SOUND, EB_HOOK_END_SOUND,
+	EB_HOOK_BEGIN_PICTURE, EB_HOOK_END_PICTURE): Removed temporary.
+	* eb/defs.h (EB_NUMBER_OF_HOOKS): Updated.
+
+	* eb/defs.h (EB_Text_Context): Add the members `candidate' and
+	`is_candidate'.
+	* eb/text.c (eb_current_candidate): New function.
+
+	* eb/text.c (eb_read_internal): Manage the current candidate.
+	* eb/text.c (eb_seek_text, eb_read_text, eb_read_heading):
+	Clear the current candidate.
+	
+	* eb/text.c (eb_seek_text): Complain if the given position is not
+	valid.
+
+2000-11-07  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/hook.c (euc_a1_to_ascii_table, euc_a1_to_ascii_table):
+	The tables start with the character 0xa0 and end with 0xff.
+	* eb/hook.c (EUC_TO_ASCII_TABLE_START, EUC_TO_ASCII_TABLE_END):
+	Defined
+	* eb/hook.c (eb_hook_euc_to_ascii): Use new convertion tables.
+
+	* eb/multi.c (eb_multi_entry_candidates): Return EB_ERR_NO_CANDIDATES
+	not EB_ERR_NO_SUCH_SEARCH if the multi entry doesn't have candidates.
+
+	* eb/error.c (EB_ERR_STOP_CODE): Defined.
+	* eb/error.c (EB_ERR_HOOK_WORKSPACE): Removed.
+	* eb/hook.c (eb_hook_stop_code): Return EB_ERR_STOP_CODE when the
+	stop code is found.
+	* eb/text.c (eb_read_text_internal): Return only when STOP_CODE hook
+	function returns EB_ERR_STOP_CODE.
+
+2000-11-06  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.c (eb_read_text_internal): `argv' must be `unsigned int []'.
+	* eb/text.c (eb_read_text_internal): Set MSB of argv[0] passed to
+	NARROW_JISX0208, WIDE_JISX0208, GB2312 hooks.
+
+2000-11-04  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.c: Include <stdlib.h>.
+
+2000-11-03  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Text_Context_Strcut): 
+	The member `work_buffer', `work_length' and `work_step' are removed.
+	The member `out', `out_rest_length', `unprocessed', `in_step',
+	`out_step' and `unprocessed_size' are added.
+	* eb/text.c (eb_read_text_internal): `text_p' and `text_rest_length'
+	are now recorded in `book->text_context.out' and
+	`book->text_context.out_rest_length'.
+	* eb/defs.h (EB_MAX_WORK_LENGTH): Removed.
+
+	* eb/text.c (eb_read_text_internal): Don't write `\0' on the tail
+	of text buffer.
+
+	* eb/text.c (eb_write_text_byte1, eb_write_text_byte2,
+	eb_write_text_string, eb_write_text): New functions.
+	* eb/text.c (eb_read_text_internal): Use eb_write_text*() functions
+	to write characters to a text buffer.  Don't write directly.
+
+	* eb/defs.h (EB_Hook_Struct): The type of `argv' is changed from
+	`const int *' to `const unsigned int *'.
+
+	* eb/defs.h (EB_Hook_Struct): Add the new argument `container'
+	and remove `workbuf'.
+	* eb/hook.c (eb_hook_euc_to_ascii, eb_hook_stop_code, 
+	eb_hook_narrow_character_text, eb_hook_wide_character_text,
+	eb_hook_empty): Ditto.
+	* eb/text.c (eb_read_text, eb_read_heading): Add the new argument
+	`container'.
+
+	* eb/hook.c (eb_hook_newline): New function.
+	* eb/hook.c (eb_initialize_hookset): Set EB_HOOK_NEWLINE of the
+	default hookset.
+
+2000-10-31  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebinfo/ebinfo.c (output_information): In the font-size and 
+	font-range paramter lines, output a newline character even
+	when an error occurs.
+
+2000-10-30  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/hook.c (eb_hook_stop_code): Return EB_ERR_HOOK_WORKSPACE
+	not -1 when a stop code is found.
+
+	* eb/text.c (eb_read_text, eb_read_heading, eb_read_text_internal):
+	give up formatting text when a hook function returns any other value
+	than EB_SUCCESS.
+
+2000-10-27  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/filename.c (compose_exisitent_path_name,
+	compose_exisitent_path_name2, compose_exisitent_path_name3):
+	New functions.
+	* ebzip/ebzip.c (zip_eb_book, zip_epwing_book, unzip_eb_book,
+	unzip_epwing_book, zipinfo_eb_book, zipinfo_epwing_book): Use
+	compose_exisitent_path_name*() functions instead of sprintf().
+
+	* eb/filename.c (eb_canonicalize_path_name): Don't expand `/./'
+	and `/../' in the given path name.
+
+2000-10-26  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/subbook.c (eb_set_subbook): Set `book->subbook_current->text_file'
+	to 1 when no text file exists.
+
+2000-10-21  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.c (eb_read_text_internal): Cache controll bug was still
+	remained.  Fix the bug.
+
+	* doc-ja/ebinfo-ja.texi: Include `ebinfo-ver.texi', not `version.texi'.
+
+2000-10-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 3.0alpha2.
+
+	* doc-ja/Makefile.am (EXTRA_DIST): Remove `stamp-eb'.
+	* doc-ja/Makefile.am (stamp-eb): Remove the target.
+
+	* eb/text.c (eb_read_text_internal): Fix a cache controll bug.
+	Reported by Rei.
+
+2000-10-17  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/ebzip.c (zip_epwing_book): Fix a bug that it tries to compress
+	non-existant font files.
+	* eb/text.c (eb_read_text_internal): Check text-end-flag,
+	cache buffer, and unprocessed data in the text context, in
+	this order.
+
+2000-09-30  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/zio.c (eb_zopen_epwing): Add missing initialization code for
+	the variable `read_length'.
+
+2000-09-24  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Language_Struct): the member `offset' is renamed to
+	`location'.
+	* eb/defs.h (EB_Zip_Struct): likewise.
+
+	* eb/appsub.c (eb_initialize_appendix_subbook): value passed to
+	eb_zlseek() must be off_t.
+	* eb/font.c (eb_initialize_font): Likewise.
+	* eb/language.c (eb_set_language): Likewise.
+	* eb/multi.c (eb_initialize_multi_search): Likewise.
+	* eb/narwalt.c (eb_narrow_character_text_jis): Likewise.
+	* eb/narwalt.c (eb_narrow_character_text_latin): Likewise.
+	* eb/narwfont.c (eb_initialize_narrow_font): Likewise.
+	* eb/narwfont.c (eb_narrow_character_bitmap_jis): Likewise.
+	* eb/narwfont.c (eb_narrow_character_bitmap_latin): Likewise.
+	* eb/search.c (eb_presearch_word): Likewise.
+	* eb/search.c (eb_hit_list_word): Likewise.
+	* eb/search.c (eb_hit_list_keyword): Likewise.
+	* eb/search.c (eb_hit_list_multi): Likewise.
+	* eb/subbook.c (eb_initialize_subbook): Likewise.
+	* eb/widealt.c (eb_wide_character_text_jis): Likewise.
+	* eb/widealt.c (eb_wide_character_text_latin): Likewise.
+	* eb/widefont.c (eb_initialize_wide_font): Likewise.
+	* eb/widefont.c (eb_wide_character_bitmap_jis): Likewise.
+	* eb/widefont.c (eb_wide_character_bitmap_latin): Likewise.
+	* eb/text.c (eb_initialize_text): `book->text_context.location'
+	must be calculated with `off_t' values.
+
+	* po/POTFILES.in: Add `libebutils/getopt.c'.
+
+	* eb/zio.c (eb_zopen_none): Get file size, reported by Takashi NEMOTO.
+	
+2000-09-09  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Subbook_Struct): Add the member `cross'.
+	* eb/subbook.c (eb_initialize_subbook): Also initialize the member
+	`cross'.
+	* eb/subbook.c (eb_initialize_indexes): Recognize index code
+	0x81 as Cross-Index.
+
+2000-09-07  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/setword.c (eb_fix_word_latin): Renamed to `eb_convert_latin'.
+	* eb/setword.c (eb_fix_word_jis): Renamed to `eb_convert_euc_jp'.
+
+	* eb/setword.c (eb_fix_word): New static function.
+	* eb/setword.c (eb_set_word, eb_set_endword, eb_set_keyword): 
+	Call `eb_fix_word' to fix `word' and `canonicalized_word' according
+	with index page style.
+	* eb/setword.c (eb_set_endword): Get index page style from endword
+	search indexes, not from word search.
+	* eb/setword.c (eb_set_keyword): Get index page style from keyword
+	search indexes, not from word search.
+
+	* eb/libintl_r.c: New file.
+	* eb/error.c (gettext_mutex): Moved to `libintl_r.c'.
+	* eb/error.c (eb_error_message): Do not lock.
+	* eb/error.c (eb_error_message_r): New function.
+
+	* eb/lock.c (eb_pthread_enabled): New function.
+	* eb/eb.c (eb_nls_enabled): New function.
+
+	* eb/Makefile.am (pkginclude_HEADERS): Add `libintl_r.h'.
+	* eb/Makefile.am (libintl_la_SOURCES): Add `libintl_r.c'.
+
+	* eb/subbook.c (eb_set_subbook): Don't return an error code when
+	no text file exists.
+
+	* eb/setword.c (eb_convert_euc_jp): Accept local character
+	0xa121 ... 0xfe7e.
+
+	* eb/subbook.c (eb_initialize_subbook): Becomes static function.
+	* eb/appsub.c (eb_initialize_appendix_subbook): Likewise.
+
+	* eb/text.c (eb_read_text, eb_read_heading, eb_forward_text,
+	eb_read_text_internal): Discard `const' of the argument `hookset'.
+
+	* eb/subbook.c (eb_set_subbook): Add missing call of eb_unlock().
+
+	* eb/text.c (eb_fowrard_text): Don't unlock `cache_mutex'.
+	* eb/text.c (eb_fowrard_heading): Likewise.
+
+	* eb/zio.c (eb_zread_ebzip, eb_zread_epwing, eb_zread_sebxa): Don't
+	lock or unkock `cache_mutex'.
+	* eb/zio.c (eb_zread): Lock and unkock `cache_mutex'.
+
+	* eb/internal.h.in (EB_ZIP_INVALID): Defined.
+	* eb/zip.c (eb_zopen_none, eb_zopen_ebzip, eb_zopen_epwing, 
+	eb_zopen_epwing6): Now they are static functions.
+	* eb/zip.c (eb_zopen): New function.
+
+	* eb/appsub.c (eb_set_subbook): Call eb_zopen(), instead of 
+	eb_zopen_ZIPTYPE() functions.
+	* eb/font.c (eb_set_font): Likewise.
+	* eb/language.c (eb_initialize_language): Likewise.
+	* eb/language.c (eb_set_language): Likewise.
+	* eb/subbook.c (eb_set_subbook): Likewise.
+	* ebzip/ebzip.c (zip_eb_book, zip_epwing_book, unzip_eb_book,
+	unzip_epwing_book, zipinfo_eb_book, zipinfo_epwing_book): Likewise.
+	* ebzip/ebzip.c (zip_file, unzip_file, zipinfo_file): The argument
+	`in_open_function' is replaced to `in_zip_code'.
+
+	* ebzip/ebzip.c (zipinfo_file): Call `stat' before open a file.
+
+	* ebzip/ebzip.c (zipinfo_epwing_book): Skip font entires whose
+	code is EB_FONT_INVALID.
+
+2000-09-05  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/internal.h.in, libebutils/ebutils.c, ebfont/ebfont.c,
+	ebinfo/ebinfo.c, ebzip/ebzip.c: Define `_' and `N_' macros even
+	when ENABLE_NLS is not defined.
+
+2000-08-11  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebfont/ebfont.c (make_subbook_size_image_fonts): Fixed bugs
+	that use old API.  Reported by Takashi NEMOTO.
+	* eb/book.c (eb_initialize_catalog): Fix a bug that wrong font code
+	is set to EB_Font struct.  Reported by Takashi NEMOTO.
+
+	* eb/internal.h.in (EB_INDEX_STYLE_REVERSED_CONVERT): Defined.
+	Super Tougou Jisho 2000 sets 2 to the katakana index style parameter.
+	* eb/setword.c (eb_convert_hiragana_jis): New function.
+	Convert all hiragana characters in a string to katakana.
+	* eb/setword.c (eb_set_word): If the katakana index style parameter
+	is EB_INDEX_STYLE_REVERSED_CONVERT, call eb_convert_hiragana_jis().
+
+2000-08-04  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/internal.h.in (eb_initialize_lock, eb_finalize_lock, eb_lock,
+	eb_unlock): Add function declarations.
+	* eb/font.c (eb_set_font): Set the variable `subbook' after
+	lock the book.
+	* eb/font.c (eb_set_font, eb_font_list, eb_have_font): Set the
+	variable `subbook' after lock the book.
+
+	* eb/Makefile.am (libeb_la_SOURCES): Add lock.c.
+
+2000-07-21  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 3.0alpha1.
+
+	* eb/defs.h (EB_Huffman_Node_Struct): The type of the member `value'
+	is changed to `unsigned int'.
+
+	* eb/epwunzip.c (eb_unzip_slice_epwing6): New function.
+
+	* libebutils/ebutils.c (fix_file_name, parse_case_argument,
+	parse_suffix_argument): Removed.
+
+	* eb/internal.h.in: Include `config.h'.
+	* eb/internal.h.in: Always includes `defs.h'.
+	* eb/internal.h: Delete extern declaration of `eb_option'.
+
+	* eb/font.c, eb/message.c, eb/search.c, eb/text.c: Remove cpp macro
+	definition of `memmove'.
+	* eb/internal.h.in: Add cpp macro definition of `memmove'.
+	* eb/filename.c: Remove cpp macro definition of `strcasecmp' and
+	`strncasecmp'.
+	* eb/internal.h.in: Add cpp macro definition of `strcasecmp' and
+	`strncasecmp'.
+
+	* ebzip/ebzip.c (short_options, long_options): Delete `--suffix'
+	and `--case' options.
+
+2000-07-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/filename.c (eb_fix_file_name2, eb_fix_file_name3): New functions.
+	* ebzip/filename.c (compose_out_file_name, compose_out_file_name2, 
+	compose_out_file_name3): New functions, New file.
+	* eb/Makefile.am (ebzip_SOURCES): Add `filename.c'.
+	* ebzip/ebzip.c (zip_book, unzip_book, zipinfo_book): Rewritten.
+	* ebzip/ebzip.c: Delete `--case' and `--suffix' options.
+
+	* eb/defs.h (EB_ZIP_EPWING): Assign the value `100'.
+	* eb/defs.h (EB_ZIP_EPWING6, EB_ZIP_SEBXA): New macros.
+
+	* eb/internal.h.in (EB_HUFFMAN_NODE_EOF, EB_HUFFMAN_NODE_LEAF8,
+	EB_HUFFMAN_NODE_LEAF16): Assign new values.
+	* eb/internal.h.in (EB_HUFFMAN_NODE_LEAF32): Defined.
+
+	* eb/zio.c (eb_zread_ebzipped): Renamed to eb_zread_ebzip().
+	* eb/zio.c (eb_zread_epwzipped): Renamed to eb_zread_epwing().
+	* eb/ebunzip1.c (eb_ebunzip1_slice): Renamed to
+	eb_unzip_slice_ebzip1()..
+	* eb/epwunzip.c (eb_epwunzip_slice): Renamed to
+	eb_unzip_slice_epwing().
+
+	* eb/ebunzip1.c: Renamed to eb/unzebzip.c.
+	* eb/epwunzip.c: Renamed to eb/unzepwing.c.
+	* eb/unzsebxa.c: New file.
+
+2000-07-16  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/subbook.c (eb_initialize_all_subbooks): Also set each font.
+	* eb/subbook.c (eb_initialize_all_subbooks): Call eb_unset_subbook()
+	if an error occurs.
+
+	* ebzip/Makefile.am (ebzip_SOURCES): Remove `filelist.c'.
+	* ebzip/ebzip.c: Remove function declarations of
+	initialize_file_name_list(), finalize_file_name_list() and
+	add_file_name_list().
+
+2000-07-09  Motoyuki Kasahara  <m-kasahr@sra.eco.jp>
+
+	* eb/narwfont.c (eb_narrow_font_file_name, eb_narrow_font_file_name2):
+	Removed.
+	* eb/widefont.c (eb_wide_font_file_name, eb_wide_font_file_name2):
+	Removed.
+
+	* eb/font.c (eb_initialize_fonts, eb_initialize_eb_fonts,
+	eb_initialize_epwing_fonts): Removed.
+	* eb/font.c (eb_initialize_font): New function.
+	* eb/narwfont.c (eb_initialize_narrow_font): New function.
+	* eb/widefont.c (eb_initialize_wide_font): New function.
+	* eb/appendix.c (eb_initialize_appendix_catalog): Adapt to new
+	file name composition rule.
+	* eb/appsub.c (eb_set_subbook): Likewise.
+	* eb/book.c (eb_initialize_catalog): Likewise.
+	* eb/font.c (eb_set_font): Likewise.
+	* eb/language.c (eb_initialize_language): Likewise.
+	* eb/language.c (eb_set_language): Likewise.
+	* eb/subbook.c (eb_set_subbook): Likewise.
+
+	* eb/zio.c (eb_zopen, eb_zopen2): Removed.
+	* eb/zio.c (eb_zopen_none): New function.
+	* eb/zio.c (eb_zopen_ebzipped): Renamed to `eb_zopen_ebzip' and
+	changed to non-static.
+	* eb/zio.c (eb_zopen_epwing): Renamed to `eb_zopen_epwing' and
+	changed to non-static.
+
+	* eb/appendix.c (eb_initialize_appendix_catalog): Adjuts subbook
+	directory names.
+	* eb/book.c (eb_initialize_catalog): Likewise.
+	* eb/appsub.c (eb_initialize_appendix_subbook): Adjust data directory
+	name.
+	* eb/subbook.c (eb_initialize_subbook): Adjust date, gaiji, stream
+	and movie directory names.
+
+	* configure.in (AC_HEADER_DIRENT): Added.
+
+	* eb/subbook.c (eb_initialize_subbook): Don't call
+	eb_initialize_fonts().
+
+	* eb/defs.h (EB_CASE_UNCHANGE, EB_CASE_UPPER, EB_CASE_LOWER): Deleted.
+	* eb/defs.h (EB_SUFFIX_UNCHANGE, EB_SUFFIX_NONE, EB_SUFFIX_DOT,
+	EB_SUFFIX_PERIOD, EB_SUFFIX_VERSION, EB_SUFFIX_BOTH): Deleted.
+	* eb/ebzip.c (CASE_UNCHANGE, CASE_UPPER, CASE_LOWER): Defined.
+	* eb/ebzip.c (SUFFIX_UNCHANGE, SUFFIX_NONE, SUFFIX_DOT, 
+	SUFFIX_VERSION, SUFFIX_BOTH): Defined.
+
+	* eb/defs.h (EB_FILE_NAME_START, EB_FILE_NAME_SOUND,
+	EB_FILE_NAME_CATALOG, EB_FILE_NAME_LANGUAGE, EB_FILE_NAME_WELCOME,
+	EB_FILE_NAME_CATALOGS, EB_FILE_NAME_HONMON, EB_FILE_NAME_HONMON2,
+	EB_FILE_NAME_APPENDIX, EB_FILE_NAME_FUROKU, EB_DIRECTORY_NAME_DATA,
+	EB_DIRECTORY_NAME_GAIJI, EB_DIRECTORY_NAME_STREAM,
+	EB_DIRECTORY_NAME_MOVIE): Move these definitions to `eb/internal.h.in'
+	and convert their values to lower cases.
+	* eb/internal.h.in (EB_SUFFIX_EBZ): Defined.
+	* eb/internal.h.in (EB_SUFFIX_NONE): Defined.
+	* eb/internal.h.in (EB_FILE_NAME_HONMONS): Defined.
+	* eb/internal.h.in (EB_FILE_NAME_HONMONG): Defined.
+	* eb/internal.h.in (EB_FILE_NAME_VTOC): Removed.
+
+	* eb/ebinfo.c (output_information): Adapt to new EB_FONT_* macro
+	values.  They were 16, 24, 30, 48, but now they are 0, 1, 2, 3.
+	
+2000-07-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_MAX_BASE_NAME_LENGTH): Renamed to
+	EB_MAX_DIRECTORY_NAME_LENGTH.
+	* eb/defs.h (EB_MAX_FILE_NAME_LENGTH): Defined.
+
+	* eb/defs.h (EB_Subbook_Struct): Add the member `version'.
+	* eb/book.c (eb_initialize_catalog): Set format version.
+
+        * eb/zio.c (eb_zopen_epwzipped): Check if least frequent node
+        is found or not after scanning a node list.
+
+	* eb/strcasecmp.c: New file.
+	* eb/Makefile.am (libeb_la_SOURCES): Add `strcasecmp.c'.
+
+	* libebutil/strcasecmp.c: Include `sys/type.h'.
+
+	* eb/defs.h (EB_Subbook_Struct): Rename the member `directory' to
+	`directory_name',
+	* eb/defs.h (EB_Subbook_Struct): Add the member `data_directory_name',
+	`gaiji_directory_name', `movie_directory_name',
+	`stream_directory_name', `text_file_name', `graphic_file_name',
+	and `sound_file_name'.
+	* eb/defs.h (EB_Book_Struct): Remove the member `case_code' and
+	`suffix_code'.
+	* eb/defs.h (EB_Appendix_Struct): Add the member `data_directory_name',
+	and `appendix_file_name'.
+	* eb/defs.h (EB_Appendix_Subbook_Struct): Rename the member
+	`directory' to `directory_name',
+	* eb/defs.h (EB_APpendix_Subbook_Struct): Remove the member
+	`case_code' and `suffix_code'.
+
+	* eb/filename.c (eb_catalog_file_name): Removed.
+	* eb/filename.c (eb_appendix_catalog_file_name): Removed.
+	* eb/filename.c (eb_canonicalize_appendix_file_name): Removed.
+	* eb/filename.c (eb_canonicalize_file_name_internal): Renamed to 
+	`eb_canonicalize_file_name'.  The original `eb_canonicalize_file_name'
+	is overwritten.
+	* eb/filename.c (eb_fix_file_name): Removed.
+	* eb/filename.c (eb_fix_appendix_file_name): Removed.
+	* eb/filename.c (eb_fix_file_name_internal): Removed.
+	* eb/filename.c (eb_fix_directory_name, eb_fix_sub_directory_name):
+	New functions.
+	* eb/filename.c (eb_fix_file_name, eb_compose_file_name,
+	eb_compose_file_name2, eb_compose_file_name3): New functions.
+
+	* eb/defs.h (EB_DIRECTORY_NAME_DATA, EB_DIRECTORY_NAME_GAIJI,
+	EB_DIRECTORY_NAME_STREAM): Moved to eb/internal.h.in.
+	* eb/internal.h.in (EB_DIRECTORY_NAME_STREAM, 
+	EB_DIRECTORY_NAME_MOVIE): Defined.
+
+	* eb/font.h (EB_FONT_16, EB_FONT_24, EB_FONT_30, EB_FONT_48):
+	Change their integer values.
+
+	* eb/defs.h (EB_Font_Struct): Remove the memeber `width' and `height'.
+	* eb/defs.h (EB_Font_Struct): Add the memeber `available' and
+	`font_code'.
+	* eb/defs.h (EB_Subbook_Struct): Remove the memeber `font_count'.
+	* eb/defs.h (EB_Subbook_Struct): Split the memeber `fonts' into
+	`narrow_fonts' and `wide_fonts'.
+	* eb/book.c (eb_initialize_catalog): Assume that the order of font
+	names is always wide-16, -24, -30, -48, narrow-16, -24, -30, -48.
+
+	* eb/font.c (eb_initialize_eb_fonts, eb_initialize_epwing_fonts,
+	eb_font, eb_set_font, eb_unset_font, eb_font_list, eb_have_font):
+	Catch up with new EB_Font_Struct.
+	* eb/narwfont.c (eb_have_narrow_font, eb_narrow_font_width,
+	eb_narrow_font_width2, eb_narrow_font_size, eb_narrow_font_size2,
+	eb_narrow_font_file_name, eb_narrow_font_file_name2,
+	eb_narrow_font_start, eb_narrow_font_end,
+	eb_narrow_character_bitmap_jis, eb_narrow_character_bitmap_latin):
+	Likewise.
+	* eb/widefont.c (eb_have_wide_font, eb_wide_font_width,
+	eb_wide_font_width2, eb_wide_font_size, eb_wide_font_size2,
+	eb_wide_font_file_name, eb_wide_font_file_name2,
+	eb_wide_font_start, eb_wide_font_end,
+	eb_wide_character_bitmap_jis, eb_wide_character_bitmap_latin):
+	Likewise.
+	* eb/subbook.c (eb_initialize_indexes): Likewise.
+
+	* eb/font.c (eb_font_height, eb_font_height2): New functions.
+	* eb/font.h (EB_HEIGHT_FONT_16, EB_HEIGHT_FONT_24, EB_HEIGHT_FONT_30,
+	EB_HEIGHT_FONT_48): Defined.
+	
+	* eb/defs.h (EB_Subbook_Struct): Rename the member `zip' to
+	`text_zip'.
+	* eb/defs.h (EB_Appendix_Subbook_Struct): Rename the member `zip' to
+	`appendix_zip'.
+
+2000-06-24  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/subbook.c (eb_initialize_subbook): Fix bugs that EB 2.x API
+	are remained.
+
+	* eb/setword.c (eb_fix_word_jis): Initialize `c1' and `c2' to
+	avoid GCC warning `might be used uninitialized...'.
+
+	* eb/search.c (eb_presearch_word): Return EB_ERR_FAIL_SEEK_TEXT
+	when eb_zlseek() failed, and EB_ERR_FAIL_READ_TEXT when eb_zread().
+
+	* eb/exactword.c (eb_search_exactword): Return EB_ERR_NO_SUCH_FONT
+	when invalid font height is given.
+
+	* eb/bitmap.c (eb_narrow_font_xbm_size): Return EB_ERR_NO_SUCH_FONT
+	when invalid font height is given.
+	* eb/bitmap.c (eb_narrow_font_xpm_size): Likewise.
+	* eb/bitmap.c (eb_narrow_font_gif_size): Likewise.
+	* eb/bitmap.c (eb_wide_font_xbm_size): Likewise.
+	* eb/bitmap.c (eb_wide_font_xpm_size): Likewise.
+	* eb/bitmap.c (eb_wide_font_gif_size): Likewise.
+
+	* eb/appendix.c (eb_initialize_appendix_catalog): Return
+	EB_ERR_FAIL_OPEN_CATAPP when failed to open the catalog file.
+	* eb/book.c (eb_initialize_catalog): Return EB_ERR_FAIL_OPEN_CAT when
+	failed to open the catalog file.
+
+	* eb/hook.c: Include appendix.h.
+
+	* configure.in (AC_OUTPUT_COMMANDS): Remove `libintl.h', linked
+	from `libgettext.h' by gettext.m4.
+	* intl/Makefile.am: Make a symlink from `libgettext.h' to `libintl.h'.
+
+	* eb/zio.c (eb_zopen, eb_zopen2): Support DOS style path, reported
+	by Kazuhiro Ito.
+
+	* Makefile.am (SUBDIRS): Don't use ${INTL_SUBDIR} for `intl'
+	because automake complains.
+	* intl/Makefile.am (INCLUDED_LIBINTL): Use this conditional
+	to determine whether we build `libintl.la' or not.
+	* Makefile.am (intl/lib_LTLIBRARIES): Set to $(INTL_LTLIB).
+
+2000-06-17  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebrefile/ebrefile.in: Fix a bug that ebrefile fills the reserved-1
+	with 0x00, reported by Takashi NEMOTO.
+
+2000-06-13  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/keyword.c (eb_search_keyword): Type of 2nd argument is changed
+	from `const *[]' to `const * const []'.
+	* eb/multi.c (eb_search_multi): Likewise.
+
+	* configure.in (ZLIBLIBS): Fixed a bug that this variable was not
+	set when zlib was built from included sources,reported by Kazuhiro
+	Ito.
+	* eb/filename.c (eb_canonicalize_file_name_internal for DOS):
+	EB Library 2.x API code was remained, reported by Kazuhiro Ito.
+	Fixed.
+
+2000-06-11  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/ebzip.c (zip_file): Type of 2nd argument is changed from
+	`const char **' to `const char * const *'.
+	* ebzip/ebzip.c (unzip_file): Likewise
+	* ebzip/ebzip.c (zip_finfo): Likewise.
+
+	* libebutils/ebutils.c (parse_case_argument): Control reached end of
+	non-void function.  Fixed.
+	* libebutils/ebzip.c (parse_suffix_argument): Likewise.
+	* libebutils/getumask.c: Include `sys/stat.h'.
+
+	* eb/book.c (misleaded_book_table): Type is changed from
+	`const char *[]' to `const char * const[]'.
+	* eb/error.c (error_messages): Likewise.
+
+2000-05-27  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 3.0alpha0.
+
+	* configure.in: Add `--enable-pthread', `--with-pthread-cppflags',
+	`--with-pthread-cflags' and ``--with-pthread-ldflags'.
+	* configure.in (AC_TRY_LINK): Add a test program that checks Pthread.
+
+	* configure.in (WITH_ZLIB): Renamed to `INCLUDED_ZLIB'.
+
+	* configure.in: Add `--with-gettext-includes' and
+	`--with-gettext-libraries' options.
+
+	* configure.in (EBCONF_ZLIBINCS, EBCONF_ZLIBLIBS, PTHREAD_CPPFLAGS,
+	PTHREAD_CFLAGS, PTHREAD_LDFLAGS, EBCONF_INTLINCS, EBCONF_INTLLIBS,
+	EBCONF_EBINCS, EBCONF_EBLIBS): Substitute these variables, for
+	generating eb.conf.
+	* Makefile.am (sysconf_DATA): Add `eb.conf'.
+	* Makefile.am (CLEANFILES): Add `eb.conf'.
+	* Makefile.am (EXTRA_DIST): Add `eb.conf.in'.
+	* Makefile.am (eb.conf): New target.
+
+2000-05-22  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.in: Remove the `--enable-ja-doc' option.
+	* Makefile.am (ENABLE_JA_DOC): Remvoe the condition.
+	* Makefile.am (SUBDIRS): Remove $(JA_DOC_SUBDIR).
+
+	* configure.in (AC_OUTPUT): Add `eb_r/Makefile'.
+	* Makefile.am (ENABLE_PTHREAD): Add the condition.
+	* Makefile.am (SUBDIRS): Add $(EB_R_SUBDIR).
+	* eb_r/Makefile.am: New file.
+
+	* eb/defs.h (EB_Text_Context_Struct): Add `auto_stop_code'.
+	* eb/text.c (eb_seek_text): Initialize `auto_stop_code' of the
+	text context in `book'.
+	* eb/text.c (eb_read_text_internal): Update `auto_stop_code'
+	when the control sequence 0x41 is seen.
+	* eb/hook.c (eb_hook_stop_code): Don't assume the control sequence
+	0x09 as the stop code.
+
+	* eb/text.h (EB_HOOK_STOPCODE): Renamed to EB_HOOK_STOP_CODE.
+
+2000-05-21  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/Makefile.am (install-data-hook): Removed.
+
+2000-05-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* libebtuils/Makefile.am (libebutils_a_SOURCES): Add `ebtuils.c'.
+	* libebtuils/Makefile.am (INCLUDES): Add `-I$(top_srcdir)/intl'.
+	* libebtuils/ebtuils.c: New file.
+	* libebtuils/ebtuils.c (output_try_help, output_version,
+	parse_case_argument, parse_suffix_argument, 
+	parse_subbook_name_argument, find_subbook, fix_file_name,
+	canonicalize_path): Define these functions.
+	* libebtuils/ebtuils.c (program_name, program_version, invoked_name):
+	Define these global variables.
+	* ebfont/ebfont.c (program_name, program_version, invoked_name):
+	these global variables are removed.
+	* ebinfo/ebinfo.c (program_name, program_version, invoked_name):
+	Likewise.
+	* ebzip/ebzip.c (program_name, program_version, invoked_name):
+	Likewise.
+	* ebfont/ebfont.c (parse_subbook_name_argument, find_subbook,
+	output_version, output_try_help, canonicalize_path):
+	these global functions are removed.
+	* ebinfo/ebinfo.c (output_version, output_try_help):
+	Likewise.
+	* ebzip/ebzip.c (output_version, output_try_help,
+	parse_subbook_name_argument, find_subbook, fix_file_name,
+	canonicalize_path):
+	Likewise.
+
+2000-05-18  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/Makefile.am (EXTRA_DIST): Add `internal.h.in'.
+	* eb/Makefile.am (CLEANFILES): Defined and add
+	`stamp-defs-h` and `internal.h' to this macro.
+	* eb/Makefile.am (BUILT_SOURCES): Defined as `internal.h'.
+	* eb/Makefile.am (noinst_HEADERS): Add `internal.h'.
+	* eb/Makefile.am (internal.h, stamp-internal-h): New targets.
+
+2000-05-14  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* move-if-change: New script.
+	* Makfile.am (EXTRA_DIST): Add `move-if-change'.
+	* libebutils/Makefile.am (EXTRA_DIST): Add `ebutils.h.in'.
+	* libebutils/Makefile.am (CLEANFILES): Defined and add
+	`stamp-defs-h` and `ebutils.h' to this macro.
+	* libebutils/Makefile.am (BUILT_SOURCES): Defined as `ebutils.h'.
+	* libebutils/Makefile.am (noinst_HEADERS): Add `ebutils.h'.
+	* libebutils/Makefile.am (ebutils.h, stamp-ebutils-h): New targets.
+
+	* eb/error.c, ebfont/ebfont.c, ebinfo/ebinfo.c, ebzip/ebzip.c,
+	ebzip/filelist.c: Support gettext.
+	* ebfont/ebfont.c, ebinfo/ebinfo.c, ebzip/ebzip.c: Include 
+	locale.h, libintil.h and ebutils.h.
+	* ebfont/ebfont.c, ebinfo/ebinfo.c, ebzip/ebzip.c (main): Call
+	setlocale(), bindtextdomain() and textdomain() when NLS is enabled.
+
+	* ebfont/Makefile.am, ebinfo/Makefile.am, ebzip/Makefile.am
+	(INCLUDES): Add `-I$(srcdir)/../intl'.
+	* ebfont/Makefile.am (ebfont_LDADD): Add @INTLLIBS@.
+	* ebinfo/Makefile.am (ebinfo_LDADD): Likewise.
+	* ebzip/Makefile.am (ebzip_LDADD): Likewise.
+	* ebfont/Makefile.am (ebfont_DEPENDENCIES): Add @INTLDEPS@.
+	* ebinfo/Makefile.am (ebinfo_DEPENDENCIES): Likewise.
+	* ebzip/Makefile.am (ebzip_DEPENDENCIES): Likewise.
+
+	* po/Makefile.in.in, eb/po/Makefile.in.in: Support DESTDIR.
+	* po/Makefile.in.in, eb/po/Makefile.in.in (TEXTDOMAIN, top_builddir,
+	subdir): Defined.
+	* po/Makefile.in.in, eb/po/Makefile.in.in: Don't use $PACKAGE for
+	text domain name.  Use $TEXTDOMAIN, instead.
+	* po/Makefile.in.in, eb/po/Makefile.in.in: Don't use `basename'.
+	* po/Makefile.in.in, eb/po/Makefile.in.in: Use `$(top_builddir)' not
+	'..'.  Use `$(top_srcdir) not `$(srcdir)/.'
+	* po/Makefile.in.in, eb/po/Makefile.in.in: Use `$(top_builddir)/intl'
+	not `../intl'.  Use `$(top_srcdir)/../intl' not `$(srcdir)/../intl'.
+	* po/Makefile.in.in, eb/po/Makefile.in.in: Set @localedir@ to
+	$localedir.
+	* po/Makefile.in.in, eb/po/Makefile.in.in: Use `$(subdir)' not `po'.
+
+2000-05-13  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/po: New directory.
+	* eb/Makefile.am (SUBDIRS): Add `po'.
+	* configure.in (AC_OUTPUT): Add `eb/po/Makefile.in'.
+	* configure.in (AC_OUTPUT_COMMANDS): Generate `Makefile' from
+	`Makefile.in'.
+	* configuer.in: Subst `localedir'.
+	* acconfig.h (ENABLE_NLS, HAVE_CATGETS, HAVE_GETTEXT, HAVE_LC_MESSAGES,
+	HAVE_STPCPY): Defined.
+	
+	* configure.in (DEPENDENCIES_FOR_LIBZ): Renamed to `ZLIBDEPS'.
+	* configure.in (LDADD_FOR_LIBZ): Renamed to `ZLIBLIBS'.
+	* configure.in (INCLUDES_FOR_LIBZ): Renamed to `ZLIBINCS'.
+
+2000-05-11  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.in (--with-zlib): Renamed to `--with-included-zlib'.
+	* Invoke gettexize.
+	* configure.in (ALL_LINGUAS, AM_GNU_GETTEXT): Added.
+	* Makefile.am (SUBDIRS): Add `intl' and `po'.
+	* configure.in (AC_OUTPUT): Add `intl/Makefile' and `po/Makefile'.
+
+2000-05-05  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* acconfig.h (USE_FAKELOG, EB_BUILD_LIBRARY): Remove the definitions.
+	* eb/Makefile.am (INCLUDES): Add `-DEB_BUILD_LIBRARY'.
+	* libebutils/Makefile.am (INCLUDES): Defined as `-DUSE_FAKELOG'.
+
+2000-05-03  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/error.h (EB_ERR_NO_CANDIDATES): Added.
+
+	* eb/language.h (EB_LANG_ENGLISH, EB_LANG_FRENCH, EB_LANG_GERMAN,
+	EB_LANG_ITALIAN, EB_LANG_SPANISH, EB_LANG_JAPANESE, EB_LANG_DANISH,
+	EB_LANG_FINNISH, EB_LANG_SWEDISH, EB_LANG_NORWEGIAN, EB_LANG_DUTCH,
+	EB_LANG_POLISH): Rename _LANG_ to _LANGUAGE_.
+	* eb/language.h (EB_MSG_WORD_SEARCH, EB_MSG_END_SEARCH, 
+	EB_MSG_KEY_SEARCH, EB_MSG_MENU_SEARCH, EB_MSG_MULTI_SEARCH,
+	EB_MSG_GRAPHIC_SEARCH, EB_MSG_BOOK_CONTAIN, EB_MSG_ENTER_WORD,
+	EB_MSG_ENTER_WORDS, EB_MSG_SUCCESSFUL, EB_MSG_ENTRY, EB_MSG_ENTRIES,
+	EB_MSG_SEARCH_FAIL, EB_MSG_PUSH_NO, EB_MSG_INSERT_DISC,
+	EB_MSG_CANT_READ, EB_MSG_REINSERT_DISC, EB_MSG_CLEAN_DISC,
+	EB_MSG_NOT_EB_DISC, EB_MSG_SEARCHING, EB_MSG_CHANGING_BATT,
+	EB_MSG_DRY_BATT, EB_MSG_CHARGE_END, EB_MSG_BATT_EMPTY,
+	EB_MSG_BATT_CHANGE, EB_MSG_CANT_CHANGE_BATT, EB_MSG_SELECT_LANGUAGE,
+	EB_MSG_MENU): Rename _MSG_ to _MESSAGE_.
+
+	* eb/language.h (EB_MESSAGE_INVALID): Defined.
+	* eb/language.h (EB_LANG_ERROR): Renamed to EB_LANGUAGE_INVALID.
+	* eb/defs.h (EB_MULTI_INVALID, EB_MULTI_ENTRY_INVALID): Defined.
+
+	* eb/defs.h (EB_CHARCODE_ERROR): Renamed to EB_CHARCODE_INVALID.
+	* eb/defs.h (EB_WORD_ERROR): Renamed to EB_WORD_INVALID.
+	* eb/defs.h (EB_TEXT_ERROR): Renamed to EB_TEXT_INVALID.
+	* eb/defs.h (EB_DISC_ERROR): Renamed to EB_DISC_INVALID.
+	* eb/defs.h (EB_SUBBOOK_ERROR): Renamed to EB_SUBBOOK_INVALID.
+	* eb/defs.h (EB_MULTI_ERROR): Renamed to EB_MULTI_INVALID.
+	* eb/defs.h (EB_MULTI_ENTRY_ERROR): Renamed to
+	EB_MULTI_ENTRY_INVALID.
+	* eb/font.h (EB_FONT_ERROR): Renamed to EB_FONT_INVALID.
+
+2000-03-29  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebinfo/ebinfo.c (output_multi_information): Fix the length of
+	an entry label buffer.
+
+	* eb/stopcode.c (eb_have_stopcode): Renamed to eb_have_stop_code().
+	* eb/stopcode.c (eb_stopcode): Renamed to eb_stop_code().
+	* eb/hook.c (eb_hook_stopcode): Renamed to eb_hook_stop_code().
+
+	* eb/defs.h (EB_Appendix_Subbook_Struct): the members `narw_start'
+	`narw_end' and `narw_page' are renamed to `narrow_start', `narrow_end'
+	and `narrow_page'.
+	* eb/def.sh (EB_Appendix_Struct): the member `narw_cache' is renamed
+	to `narrow_cache'.
+	* eb/defs.h (EB_Subbook_Struct): the member `narw_current' is
+	renamed to `narrow_current'.
+	* eb/defs.h (EB_Text_Context_Struct): the member `narw_flag' is
+	renamed to `narrow_flag'.
+
+	* eb/defs.h (EB_Alternation_Cache_Struct): the memeber `char_no' is
+	renamed to `character_number'.
+	* eb/defs.h (EB_Appendix_Subbook_Struct): the memeber `char_code' is
+	renamed to `character_code'.
+	* eb/defs.h (EB_Subbook_Struct): Likewise.
+
+	* eb/error.h (EB_NUM_ERRORS): Renamed to EB_NUMBER_OF_ERRORS.
+	* eb/def.s (EB_NUM_HOOKS): Renamed to EB_NUMBER_OF_HOOKS.
+	* eb/def.s (EB_NUM_SEARCH_CONTEXTS): Renamed to
+	EB_NUMBER_OF_SEARCH_CONTEXTS.
+
+2000-03-27  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/ebzip.c: Don't include `ctype.h'.  Define compatible
+	character test and letter conversion macros.
+	* ebinfo/ebinfo.c: Likewise.
+
+	* eb/defs.h (EB_EB_MAXLEN_WORD): Renamed to EB_MAX_WORD_LENGTH.
+	* eb/defs.h (EB_MAXLEN_EB_TITLE): Renamed to EB_MAX_EB_TITLE_LENGTH.
+	* eb/defs.h (EB_MAXLEN_EPWING_TITLE): Renamed to
+	EB_MAX_EPWING_TITLE_LENGTH.
+	* eb/defs.h (EB_MAXLEN_TITLE): Renamed to EB_MAX_TITLE_LENGTH.
+	* eb/defs.h (EB_MAXLEN_BASENAME): Renamed to EB_MAX_BASE_NAME_LENGTH.
+	* eb/defs.h (EB_MAXLEN_LANGNAME): Renamed to
+	EB_MAX_LANGUAGE_NAME_LENGTH.
+	* eb/defs.h (EB_MAXLEN_MESSAGE): Renamed to EB_MAX_MESSAGE_LENGTH.
+	* eb/defs.h (EB_MAXLEN_MULTI_LABEL): Renamed to
+	EB_MAX_MULTI_LABEL_LENGTH.
+	* eb/defs.h (EB_MAXLEN_ALTERNATION_TEXT): Renamed to
+	EB_MAX_ALTERNATION_TEXT_LENGTH.
+	* eb/error.h (EB_MAXLEN_ERROR_MESSAGE): Renamed to 
+	EB_MAX_ERROR_MESSAGE_LENGTH.
+
+	* eb/defs.h (EB_FILENAME_START): Renamed to EB_FILE_NAME_START.
+	* eb/defs.h (EB_FILENAME_SOUND): Renamed to EB_FILE_NAME_SOUND.
+	* eb/defs.h (EB_FILENAME_CATALOG): Renamed to EB_FILE_NAME_CATALOG.
+	* eb/defs.h (EB_FILENAME_LANGUAGE): Renamed to EB_FILE_NAME_LANGUAGE.
+	* eb/defs.h (EB_FILENAME_VTOC): Renamed to EB_FILE_NAME_VTOC.
+	* eb/defs.h (EB_FILENAME_WELCOME): Renamed to EB_FILE_NAME_WELCOME.
+	* eb/defs.h (EB_FILENAME_CATALOGS): Renamed to EB_FILE_NAME_CATALOGS.
+	* eb/defs.h (EB_FILENAME_HONMON): Renamed to EB_FILE_NAME_HONMON.
+	* eb/defs.h (EB_FILENAME_HONMON2): Renamed to EB_FILE_NAME_HONMON2.
+	* eb/defs.h (EB_FILENAME_APPENDIX): Renamed to EB_FILE_NAME_APPENDIX.
+	* eb/defs.h (EB_FILENAME_FUROKU): Renamed to EB_FILE_NAME_FUROKU.
+
+	* eb/defs.h (EB_DIRNAME_DATA): Renamed to EB_DIRECTORY_NAME_DATA.
+	* eb/defs.h (EB_DIRNAME_GAIJI): Renamed to EB_DIRECTORY_NAME_GAIJI.
+
+	* eb/defs.h (EB_Font_Struct): Rename the member `filename' to
+	`file_name'.
+
+	* eb/font.h (EB_ERR_EMPTY_FILENAME): Renamed to EB_ERR_EMPTY_FILE_NAME.
+	* eb/font.h (EB_ERR_TOO_LONG_FILENAME): Renamed to 
+	EB_ERR_TOO_LONG_FILENAME.
+
+	* eb/error.h (EB_ERR_EMPTY_FILENAME): EB_ERR_EMPTY_FILE_NAME.
+	* eb/error.h (EB_ERR_TOO_LONG_FILENAME): EB_ERR_TOO_LONG_FILE_NAME.
+
+2000-02-27  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Search_Context): Add the member `keyword_heading'
+	for keyword search.
+	
+	* eb/text.c, eb/text.h (eb_seek, eb_tell): Renamed to eb_seek_text()
+	and eb_tell_text().
+
+2000-02-10  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/zio.c (eb_zopen_epwzipped): Fix offset passed to lseek().
+	Reported by Takashi NEMOTO.
+
+2000-01-23  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.in (--with-zlib): zlib is detected automatically.
+
+	* acconfig.h (MAILING_ADDRESS, PACKAGE, VERSION, RETSIGTYPE_VOID,
+	HAVE_STRUCT_UTIMBUF, WITH_SYMBOL_UNDERSCORE, DOS_FILE_PATH,
+	EXEEXT_EXE): Removed.
+	* acinclude.m4 (HAVE_STRUCT_UTIMBUF): Specify the third argument
+	of AC_DEFINE.
+	* cofigure.in (RETSIGTYPE_VOID): Likewise.
+	* cofigure.in (EXEEXT_EXE): Likewise.
+
+	* configure.in: Delete the `--enable-samples' option.
+	* Makefile.am (ENABLE_SAMPLES): Remove the condition variable.
+
+	* doc/Makfile.am (info_TEXINFOS): Remove eb.texi.
+	* doc/Makfile.am (eb_TEXINFOS): Removed.
+	* doc/Makfile.am (EXTRA_DIST): Remove `stamp-eb'.
+	* doc/Makfile.am (eb-ver.texi, stamp-eb): Delete the targets.
+
+	* eb/filename.c: Don't use ctype.h.
+
+	* eb/text.c, eb/text.h (eb_forward_text): New function.
+	* eb/text.c, eb/eb.h (eb_forward_heading): New function.
+	* eb/search.c (eb_hit_list_keyword): Use eb_forward_heading()
+	to get heading position.
+
+2000-01-22  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebfont/ebfont.c (canonicalize_path): New function, copied
+	from eb/ebzip.c.
+	* ebzip/ebzip.c (main): Don't call eb_canoncalize_filename() to
+	canonicalize `out_path'.  Use canonicalize_path() instead.
+	* ebfont/ebfont.c (make_book_fonts): Check whether `book_path'
+	is "/".
+
+	* eb/setword.c (eb_convert_lower_latin): Also convert alphaet
+	with an accent mark to the corresponding upper letter.
+
+	* eb/font.c, eb/font.h (eb_font_count): Removed.
+	* eb/subbook.c, eb/eb.h (eb_subbook_count): Removed.
+	* eb/appsub.c, eb/eb.h (eb_appendix_subbook_count): Removed.
+	* eb/language.c, eb/language.h (eb_language_count): Removed.
+	* eb/message.c, eb/language.h (eb_message_count): Removed.
+	* eb/multi.c, eb/eb.h (eb_multi_search_count): Removed.
+	* eb/multi.c, eb/eb.h (eb_multi_entry_count): Removed.
+
+2000-01-18  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/hook.c (euc2ascii_table_a1, euc2ascii_table_a3): Renamed
+	to `euc_a1_to_ascii_table' and `euc_a3_to_ascii_table'.
+
+	* eb/defs.h (EB_TEXT_ERROR): Defined.
+	* eb/text.c (eb_read_text, eb_heading, eb_rawtext): If it returns
+	with an error, set context mode to `EB_TEXT_ERROR'.
+
+	* ebappendix/ebappendix.in ($copyright): Defined and use it
+	when `ebappendix --version'.
+	* ebrefile/ebrefile.in ($copyright): Likewise.
+	
+2000-01-16  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.c (eb_text, eb_heading, eb_rawtext): Renamed to
+	eb_read_text(), eb_read_heading(), eb_read_rawtext().
+
+	* eb/defs.h (EB_CASE_UNCHANGE, EB_SUFFIX_UNCHANGE): Define the cpp
+	macros.
+
+	* ebinfo/ebinfo.c (output_error_message): New static function.
+	* ebinfo/ebinfo.c: Use output_error_message() to output an error
+	messge.
+
+	* ebzip/ebzip.c (find_subbook): Oputput an error message when
+	an errorr occurs.
+	* ebzip/ebzip.c: Return EB_SUBBOOK_ERROR rather than -1 if
+	the target subbook is not found.
+
+2000-01-15  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/match.c (eb_match_exactword): Also ignores NULs in the
+	tail of a pattern.
+
+	* eb/search.c (eb_presearch_word, eb_hit_list_word,
+	eb_hit_list_keyword, eb_hit_list_multi): Support DUDEN, which
+	has leaf index pages of fixed length entires.  
+
+	* eb/defs.h (Text_Context_Struct): Remove the membsers
+	`modifier_hook' and `reference_hook'.
+	* eb/text.c (eb_read_internal): Delete operations to `modifier_hook'
+	and `reference_hook'.
+	* eb/text.h (EB_HOOK_NARROW, EB_HOOK_SUBSCRIPT, EB_HOOK_SUPERSCRIPT,
+	EB_HOOK_EMPHASIS, EB_HOOK_PICTURE, EB_HOOK_MENU, EB_HOOK_SOUND,
+	EB_HOOK_REFERENCE, EB_HOOK_KEYWORD): Remove these hook codes.
+	* eb/defs.h (EB_NUM_HOOKS): Updated.
+	
+2000-01-13  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Hook_Struct): The member `function' is pointer
+	to a function that returns `EB_Error_Code', not `int'.
+
+	* eb/error.h (EB_NO_ERR): Renamed to `EB_SUCCESS'.
+
+	* eb/search.c (EB_PAGE_ID_LEAF, EB_PAGE_ID_START, EB_PAGE_ID_END,
+	EB_PAGE_ID_HAVE_GROUP): Define these cpp macros.
+	* eb/search.c (eb_presearch_word, eb_hit_list_word,
+	eb_hit_list_keyword, eb_hit_list_multi): Use EB_PAGE_ID_* macros
+	to check page id.
+
+2000-01-10  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.c (eb_read_internal): Discard cache data when read error
+	occurs.
+	* eb/search.c (eb_hit_list_word, eb_hit_list_keyword,
+	eb_hit_list_multi): Likewise.
+
+	* eb/search.c (cache_rest_length): Declare as an auto variable
+	in eb_read_internal(), not static variable in this file.
+	* eb/search.c (cache_location, cache_length): New static variables.
+	* eb/text.c (eb_read_internal): Check cache status before processing
+	text.
+	
+	* eb/eb.c, eb/book.c: All the functions defined in eb/eb.c
+	are moved to `eb/book.c'.
+	* eb/eb.c, eb/eb.h (eb_initialize_library, eb_finalize_library):
+	New functions.
+	* eb/book.c (eb_initialize, eb_clear): Renamed to
+	`eb_initialize_book' and `eb_finalize_book'.
+	* eb/appendix.c (eb_clear_appendix): Renamed to `eb_finalize_appendix'.
+
+	* eb/book.c (eb_finalize_book): Don't call eb_initialize_book().
+	Reset variables by itself.
+	* eb/appendix.c (eb_finalize_appendix): Don't call
+	eb_finalize_appendix().  Reset variables by itself.
+
+	* ebzip/ebzip.c (canonicalize_path): New function.
+	* ebzip/ebzip.c (main): Don't call eb_canoncalize_filename() to
+	canonicalize `out_path'.  Use canonicalize_path() instead.
+	* ebzip/ebzip.c (main): Define `book_path' as an array of char,
+	rather than a pointer to char.  Copy a book's path to it, and
+	call canonicalize_path() to canonicalize it.
+	* ebzip/ebzip.c (zip_book, unzip_book, zipinfo_book): Also takes
+	`book_path' as an argument.  Refer it rather than `book->path'.
+	* ebzip/ebzip.c (zip_book, unzip_book, zipinfo_book): Check whether
+	`book_path' and/or `out_path' is "/".
+
+2000-01-09  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/zio.c (eb_zclaer): dispose `cache_buffer' only when it is not
+	NULL.
+	* eb/zio.c (eb_zclaer): Renamed to eb_zfinalize().
+	* eb/zio.c (eb_zinitialize): Add the new function.
+	* eb/zio.c (eb_zinitialize, eb_zread_ebzipped, eb_zread_epwzipped):
+	Allocate memory to `cache_buffer' in the new function eb_zinitialize()
+	rather than eb_zread_ebzipped() or eb_zread_epwzipped().
+	
+	* eb/text.c (eb_text, eb_heading): Don't initialize `default_hookset'.
+	* eb/text.c (default_hookset): Move to `hook.c' and renamed to
+	`eb_default_hookset'.
+	* eb/internal.h (eb_default_hookset): Declare as an external variable.
+	* eb/hook.c, eb/internal.h (eb_initialize_default_hookset):
+	Add the function.
+
+	* ebzip/ebzip.c (main): Go to `die' when eb_subbook_list() fails,
+	or when an unknown subbook is specified.
+	* eb/ebzip.c (main): Call eb_clear() at the end of the routine.
+
+	* eb/search.c (eb_hit_list): Fully re-written to support
+	keyword and multi search.
+
+	* eb/search.c (eb_initialize_search): Initialize also
+	`search_contexts[0].code' in a book.
+	* eb/search.c (eb_presearch_word, eb_hit_list_word,
+	eb_hit_list_keyword, eb_hit_list_multi): Take a search context
+	as a second argument to record search parameters.
+	* eb/search.c (eb_search_word_internal): Use search context 
+	in a target book.
+	* eb/search.c (eb_hit_list): Likewise.
+	* eb/search.c (eb_hit_list_internal): Likewise.
+	* eb/exactword.c (eb_search_exactword): Likewise.
+	* eb/word.c (eb_search_word): Likewise.
+	* eb/endword.c (eb_search_endword): Likewise.
+
+2000-01-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_BOOK_NONE): Define the cpp macro.
+	* eb/text.c (eb_initialize_text, eb_read_internal): Use EB_BOOK_NONE 
+	rather than -1, to represent no cache data is buffered.
+	* eb/search.c (eb_initialize_search, eb_presearch_word): Likewise.
+	
+	* eb/appsub.c (eb_initialize_appendix_subbook,
+	eb_set_appendix_subbook): Define the `succeeded' label, and
+	go to there when there is nothing to be done in the latter of the
+	function.
+	* eb/font.c (eb_set_font) Likewise.
+	* eb/language.c (eb_set_language): Likewise.
+	* eb/narwalt.c (eb_narrow_character_text_jis,
+	eb_narrow_character_text_latin): Likewise.
+	* eb/narwfont.c (eb_have_narrow_font): Likewise.
+	eb/search.c (eb_presearch_word, eb_hit_list_word, eb_hit_list_keyword,
+	eb_hit_list_multi): Likewise.
+	* eb/subbook.c (eb_initialize_subbook, eb_set_subbook): Likewise.
+	* eb/widealt.c (eb_wide_character_text_jis,
+	eb_wide_character_text_latin): Likewise.
+	* eb/widefont.c (eb_have_wide_font): Likewise.
+	
+	* eb/appendix.c, eb/appsub.c, eb/copyright.c, eb/eb.c, 
+	eb/exactword.c, eb/filename.c, eb/font.c, eb/graphic.c, eb/hook.c,
+	eb/keyword.c, eb/language.c, eb/menu.c, eb/message.c, eb/multi.c,
+	eb/narwalt.c, eb/narwfont.c, eb/search.c, eb/setword.c, eb/stopcode.c,
+	eb/subbook.c, eb/text.c, eb/widealt.c, eb/widefont.c, eb/word.c:
+	Define the `failed' label in most functions.  Go to there
+	if error.
+
+	* eb/defs.h (EB_SUBBOOK_ERROR): Define the cpp macro.
+	* eb/appsub.c (eb_appendix_subbook): Return EB_SUBBOOK_ERROR
+	rather than -1 if error.
+	* eb/subbook.c (eb_subbook): Likewise.
+
+	* eb/defs.h (EB_DISC_ERROR): Define the cpp macro.
+	* eb/eb.c (eb_disc_type): Return EB_DISC_ERROR rather than -1
+	if error.
+	* eb/defs.h (EB_CHARCODE_ERROR): Define the cpp macro.
+	* eb/eb.c (eb_character_code): Return EB_CHARCODE_ERROR rather than
+	-1 if error.
+
+	* eb/font.h (EB_FONT_ERROR): Define the cpp macro.
+	* eb/eb.c (eb_font): Return EB_FONT_ERROR rather than -1 if error.
+
+	* eb/language.h (EB_LANG_ERROR): Define the cpp macro.
+	* eb/setword.c (eb_language): Return EB_LANG_ERROR rather than
+	-1 if error.
+
+	* eb/setword.c (eb_reverse_word_latin): Don't check whether
+	`word_length' is 0.  This is not needed.
+	* eb/setword.c (eb_reverse_word_jis): Don't check whether
+	`word_length' is less than 2.  This is not needed.
+
+	* eb/messages.c (eb_initialize_messages): Return 0 or -1.
+
+	* eb/narwalt.c (eb_narrow_alt_start, eb_narrow_alt_end): 
+	Return -1 if an error occurs.
+	* eb/widealt.c (eb_wide_alt_start, eb_wide_alt_end): Likewise.
+	
+2000-01-07  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Appendix_Struct, EB_Book_Struct, EB_Hookset_Struct):
+	Add a member named `error'.
+	* eb/appendix.c (eb_initialize_appendix): Initialize `error' to 0.
+	* eb/eb.c (eb_initialize): Initialize `error' to 0.
+	* eb/hook.c (eb_initialize_hookset): Initialize `error' to 0.
+
+	* eb/setword.c (eb_fix_word_latin, eb_fix_word_jis): 
+	Takes the argument `book' as the first argument.
+
+	* eb/appendix.c, eb/appsub.c, eb/hook.c, eb/narwalt.c, eb/widealt.c:
+	Set `appendix->error' instead of `eb_error', if an error occurs.
+	* eb/copyright.c, eb/eb.c, eb/error.c, eb/font.c, eb/graphic.c,
+	eb/keyword.c, eb/language.c, eb/match.c, eb/menu.c, eb/message.c,
+	eb/multi.c, eb/narwfont.c, eb/search.c, eb/setword.c, eb/stopcode.c,
+	eb/subbook.c, eb/text.c, eb/uint.c, eb/widefont.c: Set `book->error'
+	instead of `eb_error', if an error occurs.
+	* eb/hookset.c: Set `hookset->error' instead of `eb_error',
+	if an error occurs.
+
+	* eb/filename.c (eb_canonicalize_filename,
+	eb_canonicalize_filename_internal, eb_canonicalize_appendix_filename):
+	Rename the original `eb_canonicalize_filename()' to `...internal()',
+	and add the argument `error'.
+	Add the new function `eb_canonicalize_filename()' and
+	`eb_canonicalize_appendix_filename()'.
+	* filename.c (eb_catalog_filename_internal, 
+	eb_fix_filename_internal): Call `eb_canonicalize_filename_internal()',
+	instead of `eb_canonicalize_filename'.
+	* eb/eb.c (eb_bind): Call `eb_canonicalize_appendix_filename()',
+	instead of `eb_canonicalize_filename'.
+
+	* eb/error.c, eb/error.h (eb_error): Removed.
+	* eb/error.c, eb/error.h (eb_error, eb_appendix_error,
+	eb_hookset_error): Add these functions.
+	* eb/error.c, eb/error.h (eb_error_message, eb_error_message2):
+	The original eb_error_message2() is renamed to eb_error_message().
+	The original eb_error_message() is overwritten.
+	
+	* eb/narwfont.c (eb_narrow_font_width2, eb_narrow_font_size2):
+	Don't set `eb_error'.
+	* eb/widefont.c (eb_wide_font_width2, eb_wide_font_size2):
+	Likewise.
+	* eb/bitmap.c (eb_narrow_font_xbm_size, eb_narrow_font_xpm_size,
+	eb_narrow_font_gif_size, eb_wide_font_xbm_size,
+	eb_wide_font_xpm_size, eb_wide_font_gif_size):
+	Likewise.
+	
+	* eb/text.c, eb/text.h (eb_initialize_hookset, eb_set_hook,
+	eb_set_hooks): Move to `eb/hook.c'.
+	* eb/hook.c, eb/text/h (eb_hook_stopcode_dummy,
+	eb_hook_stopcode_mixed): Removed.
+
+	* Makefile.am (EXTRA_DIST): Add `ChangeLog.0'.
+
+	* eb/font.c (eb_font_count): Return -1 if an error occurs.
+
+	* eb/appendix.c (eb_bind_appendix): Don't call 
+	eb_initialize_appendix(), but eb_clear_appendix().
+
+2000-01-06  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_Subbook): Rename the member `multi' to `multis'.
+
+	* eb/font.c (eb_initialize_eb_fonts, eb_initialize_epwing_fonts):
+	Use memmove(), not memcpy().
+	* eb/message.c (eb_initialize_messages): Likewise.
+	* eb/text.c (eb_read_internal): Likewise.
+	* eb/font.c, eb/message.c, eb/text.c: Check for HAVE_MEMMOVE.
+	* eb/memmove.c: New file.
+	* eb/internal.h: Declare eb_memmove().
+	* eb/Makefile.am (libeb_la_SOURCES): Add `memmove.c'.
+	* configure.in (AC_CHECK_FUNCS): Add `memmove'.
+	
+	* eb/search.c: Include string.h, and check HAVE_MEMCPY and
+	MEMMOVE.
+
+	* libebutils/memset.c (memset): Type of return value is `VOID *',
+	not `void *'.
+
+2000-01-05  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/defs.h (EB_SEARCH_EXACTWORD, EB_SEARCH_WORD, EB_SEARCH_ENDWORD,
+	EB_SEARCH_KEYWORD, EB_SEARCH_MULTI,EB_SEARCH_NONE): Defined.
+	* eb/defs.h (EB_Search_Code, EB_Text_Code): Defined.
+	* eb/defs.h (EB_Multi_Search_Struct, EB_Search): Defined.
+	* eb/defs.h (EB_Search_Context_Struct, EB_Search_Context): Defined.
+	* eb/defs.h (EB_Multi_Entry_Struct, EB_Multi_Entry): Merged to
+	`EB_Search_Struct' and `EB_Search'.
+	* eb/defs.h (EB_Search_Context_Struct): Add the member `label' and
+	`candidates_page', and rename `page' to `index_page'.
+	* eb/defs.h (EB_Multi_Search_Struct): Add the member `search', and
+	change the type of `entries' from `EB_Multi_Entry' to `EB_Search'.
+	* eb/defs.h (EB_Subbook_STruct): Change the type of `multi' from
+	`EB_Search[]' to `EB_Multi_Search[]'.
+
+	* eb/eb.h: Declaration of functions defined in eb/filename.c
+	are moved to `eb/internal.h'.
+
+	* eb/search.c: Move eb_have_word_search() and eb_search_word()
+	to the new file eb/word.c.
+	* eb/search.c: Move eb_have_endword_search() and eb_search_endword()
+	to eb/endword.c, new file.
+	* eb/search.c: Move eb_have_endword_search() and eb_search_endword()
+	to the new file eb/endword.c.
+	* eb/search.c: Move eb_have_exactword_search() and
+	eb_search_exactword() to the new file eb/exactword.c.
+
+	* eb/multi.c, eb/eb.h (eb_multi_entry_have_exactword_search,
+	eb_multi_entry_have_word_search, eb_multi_entry_have_endword_search,
+	eb_multi_entry_have_keyword_search): Removed.
+	* eb/multi.c, eb/eb.h (eb_multi_entry_have_candidates,
+	eb_multi_entry_candidates): Added these functions.
+	* eb/multi.c, eb/eb.h (eb_search_multi): Added these functions.
+
+	* eb/error.h (EB_ERR_DIFF_SUBBOOK, EB_ERR_DIFF_BOOK,
+	EB_ERR_NO_PREV_SEARCH, EB_ERR_NO_PREV_CONTENT,
+	EB_ERR_NO_SUCH_MULTI_ID, EB_ERR_NO_SUCH_ENTRY_ID): Removed.
+	* eb/error.h (EB_ERR_FAIL_OPEN_START, EB_ERR_FAIL_READ_START,
+	EB_ERR_FAIL_SEEK_START, EB_ERR_UNEXP_START, EB_ERR_NO_START):
+	Removed these obsolete error code names that are remained for
+	backword compatibility.
+
+	* eb/error.h (EB_ERR_TOO_MANY_WORDS, EB_ERR_NO_WORD): Add these
+	to the error code list.
+
+	* eb/hook.c (euc2ascii_table_a1, euc2ascii_table_a3) Declared
+	as `const'.
+
+	* eb/keyword.c: Define `eb_search_keyword()'.
+
+	* eb/setword.c, eb/internal.h (eb_set_keyword, eb_set_multiword):
+	Added these functions.
+
+	* eb/subbook.c (eb_initialize_indexes): Initialize `label' and
+	`candidates_page', the struct members in `EB_Search'.
+
+	* eb/search.c (comparison_result, word, canonicalized_word, page,
+	offset, page_id, entry_count, entry_index): These static variables
+	are moved to struct members of `EB_Search_Context'.
+	* eb/search.c (subbook_code): The static variable are removed.
+	* eb/search.c (book_code, page_buffer, bufp): These static variables
+	are renamed to `cache_book_code', `cache_buffer' and `cachep'.
+	* eb/search.c (cache_page): New static variable.
+
+	* eb/search.c (eb_search_word_internal): Renamed to
+	`eb_presearch_word'.
+	* eb/search.c (eb_hit_list_internal): Renamed to `eb_hit_list_word'.
+	* eb/search.c (eb_hit_list_word): Read a page at the beginning of
+	the loop, instead of the tail.
+	* eb/search.c (eb_hit_list_keyword, eb_hit_list_multi): New functions.
+	* eb/defs.h (EB_Book_Struct): Add the member `search_contexts'.
+	* eb/defs.h (EB_Search_Context_Struct): Defined.
+
+	* eb/ebinfo.c (output_multi_information): Output `with candidates'
+	instead of `search methods'.
+	
+2000-01-03  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/setword.c (jisx0208_table, jisx0201_table, long_vowel_table,
+	voiced_consonant_table): Declared as `const'.
+	* eb/hook.c (euc2ascii_table_a1, euc2ascii_table_a3): Likewise.
+
+	* eb/defs.h, eb/internal.h: All functions defined in `eb/filename.h'
+	are declared in `eb/internal.h', not `eb/defs.h'.
+
+	* eb/text.h: Use `EB_UINT_FUNCTION', not `EB_UINT_FUNC'.
+
+1999-12-28  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/bitmap.c (gif_preamble): Renamed to `gif_default_preamble'.
+	* eb/bitmap.c (eb_bitmap_to_gif): Don't modify `gif_default_preamble'.
+
+1999-12-26  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.c (eb_read_internal): Discard cache buffered in 
+	`cache_buffer' if different book's data are cached.
+	* eb/text.c (eb_read_internal): Update `book->text_context.location'
+	when the pointed character is prossessed.
+	
+	* eb/text.c (eb_initialize_text): Rewritten.
+
+	* eb/text.c (eb_text): Don't check for EB_ERR_NO_PREV_CONTENT,
+	EB_ERR_DIFF_BOOK or EB_ERR_DIFF_SUBBOOK error.
+	* eb/text.c (eb_heading): Likewise.
+
+	* eb/text.c, eb_text.h (eb_tell): Add this function.
+
+	* eb/text.c (eb_set_hook): Don't test whether `hook->code' is 
+	EB_HOOK_NULL.
+
+	* eb/text.c (bookcode, pagebuf, pagebufp, pagerest): Renamed to
+	`cache_book_code`, `cache_buffer`, `cachep` and `cache_rest_length'.
+	* eb/text.c (callcount, subcode, location, workbuf, worklen,
+	modhook, refhook, narwflag, charapp, bookeof, textend, skipcode):
+	Remove these static variables.
+	* eb/defs.h (EB_Book_Struct): Add the member `text_context'.
+	* eb/defs.h (EB_Text_Context_Struct): Defined.
+
+	* eb/bitmap.c, eb/copyright.c, eb/ebunzip1.c, eb/error.c, 
+	eb/filename.c, eb/graphic.c, eb/hook.c, eb/menu.c, eb/setword.c, 
+	eb/stopcode.c, eb/uint.c: Include `internal.h'.
+	* eb/uint.c: Undefine the cpp macros eb_uint1, eb_uint2, eb_uint3
+	and eb_uint4.
+
+	* eb/defs.h, eb/appendix.h, eb/eb.h, eb/error.h, eb/font.h,
+	eb/internal.h, eb/language.h, eb/text.h (EB_P): 
+	Defined in eb/defs.h only.
+
+	* eb/appsub.c, eb/appendix.h (eb_appendix_subbook2): Removed.
+
+	* eb/defs.h, eb/text.h (EB_Hook, EB_Hookset): Move definitions
+	from eb/text.h to eb/defs.h,
+	* eb/defs.h (EB_Book_Struct): Rename the member `sub_count' to
+	`subbook_count', `sub_current' to `subbook_current', `lang_count'
+	to `language_count' and `lang_current' to `language_current'.
+	* eb/defs.h (EB_Subbook_Struct): Rename the member `sub_file' to
+	`text_file', `word_alpha' to `word_alphabet' and `endword_alpha'
+	to `endword_alphabet'.
+	* eb/defs.h (EB_Language_Struct): Rename the member `msg_count' to
+	`message_count'.
+	* eb/defs.h (EB_Appendix_Struct): Rename the member `sub_count' to
+	`subbook_count', and `sub_current' to `subbook_current'.
+	* eb/defs.h (EB_Alternation_Cache_Struct): Rename the member
+	`charno' to `char_no'.
+	* eb/defs.h (EB_Huffman_Node_Struct): Change the type of the members
+	`left` and `right` to `EB_Huffman_Node'.
+	* eb/defs.h (EB_Huffman_Node, EB_Zip, EB_Alternation_Cache,
+	EB_Appendix_Subbook, EB_Appendix, EB_Font, EB_Language,
+	EB_Multi_Entry, EB_Search, EB_Subbook, EB_Text_Context, EB_Book,
+	EB_Position, EB_Hit, EB_Hook, EB_Hookset): Typedef'ed first,
+	and then define their conrete structs.
+	* eb/defs.h, eb/error.h (EB_Error_Code): 
+	Move definition from eb/error.h to eb/defs.h.
+	* eb/defs.h, eb/text.c (EB_MAXLEN_TEXT_WORK, EB_NUM_HOOKS):
+	Move definitions from eb/text.c to eb/defs.h.
+	* eb/defs.h, eb/text.c (CONTENT_TEXT, CONTENT_HEADING,
+	CONTENT_RAWTEXT): Move definitions from eb/text.c to eb/defs.h,
+	and renamed to EB_TEXT_TEXT, EB_TEXT_HEADING and EB_TEXT_RAWTEXT.
+	Add the new content type macro `EB_TEXT_NONE'.
+	* eb/defs.h (EB_WORD_ALPHA): Renamed to `EB_WORD_ALPHABET'.
+
+	* eb/error.c (messages): Add the `const' modifier.
+
+1999-12-13  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/error.h: Rename the error code
+	EB_ERR_FAIL_OPEN_START to EB_ERR_FAIL_OPEN_TEXT,
+	EB_ERR_FAIL_READ_START to EB_ERR_FAIL_READ_TEXT,
+	EB_ERR_FAIL_SEEK_START to EB_ERR_FAIL_SEEK_TEXT,
+	EB_ERR_UNEXP_START to EB_ERR_UNEXP_TEXT,
+	and EB_ERR_NO_START to EB_ERR_NO_TEXT.
+	The old error code names are obsoleted, but still available.
+
+	* eb/defs.h (EB_WORD_ALPHA): Renamed to `EB_WORD_ALPHABET'.
+	* eb/defs.h (EB_Alternation_Cache): Rename the structure member
+	`charno' to `char_no'.
+	* eb/defs.h (EB_Appendix): Rename the structure member
+	`sub_file' to `appendix_file',
+	`sub_count' to `subbook_count'
+	and `sub_current' to `subbook_current'.
+	* eb/defs.h (EB_Language): Rename the structure member
+	`msg_count' to `message_count'.
+	* eb/defs.h (EB_Book): Rename the structure member
+	`sub_file' to `text_file',
+	`word_alpha' to `word_alphabet',
+	`endword_alpha' to `endword_alphabet',
+	`sub_count' to `subbook_count',
+	`sub_current' to `subbook_current'.
+	`sub_count' to `subbook_count',
+	and `lang_current' to `language_current'.
+
+1999-12-12  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/error.c (messages): Modify the error message of the error
+	code 39 (EB_ERR_NO_START).
+
+	* eb/text.c, eb/internal.h (eb_initialize_text): Add an argument
+	`book'.  Initialize variables only when a code of `book' is
+	equal to `bookcode'.
+	* eb/seaarch.c, eb/internal.h (eb_initialize_search): Likewise.
+
+	* eb/text.c (eb_text, eb_heading, eb_rawtext): Check `bookcode'
+	for the EB_ERR_NO_PREV_CONTENT error when `callcount' is 0.
+
+	* eb/text.c (eb_tell): Add a new function.
+
+	* eb/text.c (eb_text_internal): Don't go to `at_end' when
+	no enough space is left on the text buffer.
+

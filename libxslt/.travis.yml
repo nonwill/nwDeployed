@@ -1,0 +1,38 @@
+language: c
+sudo: required
+matrix:
+  include:
+    # Try to emulate a C89 compiler on a POSIX system by disabling as many
+    # GNU extensions as possible.
+    # TODO: Build and test Python bindings.
+    - compiler: gcc
+      env: CONFIG="--without-python"
+           CFLAGS="-O2 -std=c89 -D_POSIX_C_SOURCE=200112L -Werror -Wno-error=array-bounds"
+    # clang with AddressSanitizer and UndefinedBehaviorSanitizer.
+    - compiler: clang
+      dist: xenial
+      env: CONFIG="--without-python"
+           CFLAGS="-O2 -g -fno-omit-frame-pointer -fsanitize=address,undefined -fno-sanitize-recover=all -Werror -Wno-error=cast-align"
+           UBSAN_OPTIONS=print_stacktrace=1
+    # clang with MemorySanitizer.
+    - compiler: clang
+      dist: xenial
+      env: CONFIG="--without-python --without-zlib --without-lzma --without-crypto"
+           CFLAGS="-O2 -g -fno-omit-frame-pointer -fsanitize=memory -Werror -Wno-error=cast-align"
+script:
+- |
+    git clone --depth 1 https://gitlab.gnome.org/GNOME/libxml2.git
+    cd libxml2
+    sh autogen.sh $CONFIG
+    make -j2
+    cd ..
+    sh autogen.sh $CONFIG --with-libxml-src=libxml2
+    # Don't run make in "doc" directory
+    for target in libxslt libexslt xsltproc python tests/plugins; do
+        make -j2 -C $target V=1
+    done
+    make -j2 -C tests/fuzz testTargets
+    make tests | tee test.log
+    ! grep -qv '^## Running' test.log
+git:
+  depth: 10

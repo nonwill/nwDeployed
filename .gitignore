@@ -1,0 +1,13 @@
+*.o
+*~
+
+lib*/*.dll
+bin*/*
+*.exp
+*.ilk
+*.pdb
+*.7z
+*.exp
+*.pro.user
+debug.log
+*.pro.user.*

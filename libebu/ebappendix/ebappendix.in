@@ -1,0 +1,757 @@
+#! @PERL@
+
+#
+# Copyright (c) 1997-2006  Motoyuki Kasahara
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the project nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+require 5.005;
+use File::Basename;
+
+# Program name, program version and mailing address.
+my $progname='ebappendix';
+my $version = '@VERSION@';
+my $mailing_address = '@MAILING_ADDRESS@';
+
+# Help message.
+my $help = "Usage: $progname [option...] [input-directory]
+Options:
+  -b BOOK-TYPE  --book-type BOOK-TYPE
+                             make an appendix as BOOK-TYPE; eb or epwing
+                             (default: depend on \`catalog(s).app\')
+  -d  --debug  --verbose     debug mode
+  -h  --help                 output this help, then exit
+  -n  --no-catalog           don't output a catalog file
+  -o DIRECTORY  --output-directory DIRECTORY
+                             output files to DIRECTORY
+                             (default: .)
+  -t  --test                 only check for input files
+  -v  --version              output version number, then exit
+
+Argument:
+  input-directory            input files at this directory
+                             (default: .)
+
+Report bugs to $mailing_address.
+";
+
+# `try ...' message.
+my $tryhelp = "try \`$0 --help\' for more information\n";
+
+# Disc type: `eb' or `epwing'.
+my $disc = '';
+
+# Read files on the directory.
+my $indir = '.';
+
+# Create files under the directory.
+my $outdir = '.';
+
+# The maximum number of subbooks in a book.
+my $max_subbooks = 50;
+
+# Subbook list.
+my @subbooks = ();
+
+# The maximum length of an alternation text for a character.
+my $maxlen_alt = 31;
+
+# The maximum length of a subbook name.
+my $maxlen_subname = 8;
+
+# Page size.
+my $size_page = 2048;
+
+# File mode for mkdir.
+my $dirmode = umask ^ 0777;
+
+# Test mode flag.
+my $check_only = 0;
+
+# Debug mode flag.
+my $debug = 0;
+
+# No-catalog mode.
+my $no_catalog = 0;
+
+# Show help then exit.
+my $help_only = 0;
+
+# Show version then exit.
+my $version_only = 0;
+
+# Command line options.
+@long_options = ('-b --book-type        required-argument',
+                 '-d --debug --verbose  no-argument',
+                 '-h --help             no-argument',
+                 '-n --no-catalog       no-argument',
+                 '-o --output-directory required-argument',
+                 '-t --test             no-argument',
+                 '-v --version          no-argument');
+
+#
+# Parse command line options.
+#
+&getopt_initialize(@long_options);
+while (($optname, $optarg) = &getopt_long) {
+    if ($optname eq '-b') {
+	if ($optarg !~ /^(eb|epwing)$/i) {
+	    warn "$0: unknown book type \`$optarg\'\n";
+	    die $tryhelp;
+	}
+	$disc = lc($optarg);
+    } elsif ($optname eq '-d') {
+	$debug = 1;
+    } elsif ($optname eq '-h') {
+	print $help;
+	exit(0);
+    } elsif ($optname eq '-n') {
+	$no_catalog = 1;
+    } elsif ($optname eq '-o') {
+	$outdir = $optarg;
+    } elsif ($optname eq '-v') {
+	print "$progname (EB Library) version $version\n";
+	print $copyright;
+	exit(0);
+    } elsif ($optname eq '-t') {
+	$check_only = 1;
+    } else {
+	die $tryhelp;
+    }
+}
+
+$indir = shift if (0 < @ARGV);
+if (@ARGV != 0) {
+    warn "$0: too many arguments\n";
+    die $tryhelp;
+}
+
+#
+# Remove a slash (`/') in the tail of the directory names.
+#
+$indir =~ s/\/$//;
+$outdir =~ s/\/$//;
+
+#
+# Compose filenames.
+#
+my $infile = find_file($indir, 'catalog.app', 'undef');
+if (!defined($infile)) {
+    $infile = find_file($indir, 'catalogs.app', 'undef');
+}
+if (!defined($infile)) {
+    die "catalog(s).app: no such file\n";
+}
+
+if ($disc ne 'eb' && $disc ne 'epwing') {
+    if (basename($infile) =~ /^catalog\.app/i) {
+	$disc = 'eb';
+    } else {
+	$disc = 'epwing';
+    }
+}
+
+my $outfile;
+if ($disc eq 'eb') {
+    $outfile = find_file($outdir, 'catalog', 'default');
+} else {
+    $outfile = find_file($outdir, 'catalogs', 'default');
+}
+
+#
+# Open the `CATALOG(S).APP' file to read.
+#
+if (!open(CATALOG_APP, $infile)) {
+    die "$infile: cannot open the file, $!\n";
+}
+
+#
+# Read a subbook list from `CATALOG(S).APP'.
+#
+while (<CATALOG_APP>) {
+    s/^\s+//;
+    s/\s+$//;
+    next if (/^$/ || /^\#/);
+    push(@subbooks, lc($_));
+}
+
+#
+# Checks for subbook names.
+#
+die "$infile: no subbooks described\n" if (@subbooks == 0);
+die "$infile: too many subbooks\n" if ($max_subbooks < @subbooks);
+foreach my $sub (@subbooks) {
+    die "$infile: invalid subbook name \`$sub\'\n"
+	if ($sub !~ /\w{1,$maxlen_subname}/);
+}
+
+#
+# Close the file `CATALOG(S).APP'.
+#
+close(CATALOG_APP);
+
+#
+# Create the `CATALOG(S)' file.
+#
+if (!$check_only && !$no_catalog) {
+    #
+    # Open the `CATALOG(S)' file to write.
+    #
+    if (!open(CATALOG, "> $outfile")) {
+	die "$outfile: cannot open the file, $!\n";
+    }
+
+    #
+    # Write the number of subbooks in the book.
+    #
+    print CATALOG "\0", pack('C', scalar(@subbooks)), "\0" x 14;
+
+    #
+    # Write subbook names.
+    #
+    for (my $i = 0; $i < @subbooks; $i++) {
+	if ($disc eq 'eb') {
+	    print CATALOG pack('C', $i + 1), "\0";
+	    print CATALOG "\0" x 30;
+	    print CATALOG uc($subbooks[$i]);
+	    print CATALOG "\0" x ($maxlen_subname - length($subbooks[$i]));
+	} else {
+	    print CATALOG pack('C', $i + 1), "\0";
+	    print CATALOG "\0" x 80;
+	    print CATALOG uc($subbooks[$i]);
+	    print CATALOG "\0" x ($maxlen_subname - length($subbooks[$i]));
+	    print CATALOG "\0" x 74;
+	}
+    }
+
+    #
+    # Close the `CATALOG(S)' file.
+    #
+    close(CATALOG);
+}
+
+#
+# Create `APPENDIX (or FUROKU)' files.
+#
+foreach my $sub (@subbooks) {
+    #
+    # Compose filenames.
+    #
+    $infile = find_file($indir, "$sub.app");
+    die "$sub.app: no such file\n" if (!defined($infile));
+
+    if ($disc eq 'eb') {
+	$outfile = find_file($outdir, "$sub/appendix", 'default');
+    } else {
+	$outfile = find_file($outdir, "$sub/data/furoku", 'default');
+    }
+    $outfile =~ s|//+|/|g;
+
+    #
+    # Open the `<SUBBOOK>.APP' file to read.
+    #
+    if (!open(SUBBOOK_APP, $infile)) {
+	warn "$infile: cannot open the file, $!\n";
+	next;
+    }
+    warn "$infile: debug: opened\n" if ($debug);
+
+    my $narrow_def = 0;
+    my $narrow_start = 0;
+    my $narrow_start_def = 0;
+    my $narrow_end = 0;
+    my $narrow_end_def = 0;
+    my $narrow_len = 0;
+    my %narrow_alt = ();
+    my %narrow_lineno = ();
+
+    my $wide_def = 0;
+    my $wide_start = 0;
+    my $wide_start_def = 0;
+    my $wide_end = 0;
+    my $wide_end_def = 0;
+    my $wide_len = 0;
+    my %wide_alt = ();
+    my %wide_lineno = ();
+
+    my @stop = ();
+    my $stop_def = 0;
+    my $code = 'JISX0208';
+    my $code_def = 0;
+    my $block = '';
+
+    my $start     = \$narrow_start;
+    my $start_def = \$narrow_start_def;
+    my $end       = \$narrow_end;
+    my $end_def   = \$narrow_end_def;
+    my $alt       = \%narrow_alt;
+    my $lineno    = \%narrow_lineno;
+
+    #
+    # Parse each line in `<SUBBOOK>.APP'.
+    #
+    while (<SUBBOOK_APP>) {
+	s/^\s+//;
+	s/\s+$//;
+	next if (/^$/ || /^\#/);
+
+	my ($key, $arg) = split(/[ \t]+/, $_, 2);
+
+	if ($key eq 'begin') {
+	    #
+	    # `begin ...'
+	    #
+	    die "$infile:$.: unexpected \`$key\'\n" if ($block ne '');
+	    die "$infile:$.: missing argument to \`$key\'\n" if ($arg eq '');
+
+	    if ($arg eq 'narrow') {
+		#
+		# `begin narrow'
+		#
+		die "$infile:$.: block \`$arg\' is redefined\n"
+		    if (0 < $narrow_def++);
+
+		$block = $arg;
+		$start     = \$narrow_start;
+		$start_def = \$narrow_start_def;
+		$end       = \$narrow_end;
+		$end_def   = \$narrow_end_def;
+		$alt       = \%narrow_alt;
+		$lineno    = \%narrow_lineno;
+		warn "$infile:$.: debug: $key $arg\n" if ($debug);
+
+	    } elsif ($arg eq 'wide') {
+		#
+		# `begin wide'
+		#
+		die "$infile:$.: block \`$arg\' is redefined\n"
+		    if (0 < $wide_def++);
+
+		$block = $arg;
+		$start     = \$wide_start;
+		$start_def = \$wide_start_def;
+		$end       = \$wide_end;
+		$end_def   = \$wide_end_def;
+		$alt       = \%wide_alt;
+		$lineno    = \%wide_lineno;
+		warn "$infile:$.: debug: $key $arg\n" if ($debug);
+
+	    } else {
+		die "$infile:$.: invalid argument \`$arg\'\n";
+	    }
+
+	} elsif ($key eq 'end') {
+	    #
+	    # `end'
+	    #
+	    die "$infile:$.: unexpected \`$key\'\n" if ($block eq '');
+	    die "$infile:$.: not allowed argument to \`$key\'\n"
+		if ($arg ne '');
+
+	    $block = '';
+	    warn "$infile:$.: debug: $key\n" if ($debug);
+
+	} elsif ($key eq 'range-start') {
+	    #
+	    # `range-start'
+	    #
+	    die "$infile:$.: unexpected \`$key\'\n"
+		if ($block ne 'narrow' && $block ne 'wide');
+	    die "$infile:$.: incorrect hexadecimal number.\n"
+		if ($arg !~ /^0[xX]([0-9a-fA-F]{4})$/);
+	    die "$infile:$.: \`$key\' is redefined\n" if (0 < $$start_def++);
+
+	    $$start = hex($1);
+	    warn "$infile:$.: debug: $key $arg\n" if ($debug);
+
+	} elsif ($key eq 'range-end') {
+	    #
+	    # `range-end'
+	    #
+	    die "$infile:$.: unexpected \`$key\'\n"
+		if ($block ne 'narrow' && $block ne 'wide');
+	    die "$infile:$.: incorrect hexadecimal number.\n"
+		if ($arg !~ /^0[xX]([0-9a-fA-F]{4})$/);
+	    die "$infile:$.: \`$key\' is redefined\n" if (0 < $$end_def++);
+
+	    $$end = hex($1);
+	    warn "$infile:$.: debug: $key $arg\n" if ($debug);
+
+	} elsif ($key =~ /^0[xX]/) {
+	    #
+	    # `0x<HEX><HEX><HEX><HEX>'
+	    #
+	    die "$infile:$.: unexpected \`$key\'\n"
+		if ($block ne 'narrow' && $block ne 'wide');
+	    die "$infile:$.: incorrect hexadecimal number.\n"
+		if ($key !~ /^0[xX]([0-9a-fA-F]{4})$/);
+
+	    my $ch = hex($1);
+	    $arg = &convert_to_euc($arg);
+	    my $len = length($arg);
+
+	    die "$infile:$.: alternation string too long\n"
+		if ($maxlen_alt < $len);
+	    die "$infile:$.: character \`$key\' redefined\n"
+		if (defined($alt->{$ch}));
+
+	    $alt->{$ch} = $arg;
+	    $lineno->{$ch} = $.;
+	    warn "$infile:$.: debug: $key\n" if ($debug);
+
+	} elsif ($key eq 'character-code') {
+	    #
+	    # `character-code'
+	    #
+	    die "$infile:$.: unexpected \`$key\'\n" if ($block ne '');
+	    die "$infile:$.: \`$key\' redefined\n" if (0 < $code_def++);
+	    die "$infile:$.: invalid character code \`$arg\'\n"
+		if ($arg !~ /^(JISX0208|ISO8859-1|UTF-8)$/i);
+	    $code = uc($arg);
+	    warn "$infile:$.: debug: $key $arg\n" if ($debug);
+		    
+	} elsif ($key eq 'stop-code') {
+	    #
+	    # `stop-code'
+	    #
+	    die "$infile:$.: unexpected \`$key\'\n" if ($block ne '');
+	    die "$infile:$.: \`$key\' redefined\n" if (0 < $stop_def++);
+	    die "$infile:$.: invalid stop-code \`$arg\'\n"
+		if ($arg !~ /^0x1f(09|41)\s*0x([0-9a-f]{2})([0-9a-f]{2})$/i);
+	    @stop = (0x1f, hex($1), hex($2), hex($3));
+	    warn "$infile:$.: debug: $key $arg\n" if ($debug);
+		    
+	} else {
+	    die "$infile:$.: unknown keyword \`$key\'\n";
+	}
+    }
+    # End of parsing each line in `<SUBBOOK>.APP'.
+
+    #
+    # Close the `<SUBBOOK>.APP' file.
+    #
+    close(SUBBOOK_APP);
+    warn "$infile: debug: closed\n" if ($debug);
+
+    #
+    # Check for `character-code' definition.
+    #
+    die "$infile: missing \`character-code\'\n"
+	if ($code_def == 0 && ($narrow_def != 0 || $wide_def != 0));
+	
+    #
+    # Check for the range of alternation.
+    #
+    if (0 < $narrow_def) {
+	die "$infile: missing \`range-start\' in the narrow block\n"
+	    if ($narrow_start_def == 0);
+	die "$infile: missing \`range-end\' in the narrow block\n"
+	    if ($narrow_end_def == 0);
+
+	if ($code eq 'JISX0208' || $code eq 'UTF-8') {
+	    $narrow_len = (($narrow_end >> 8) - ($narrow_start >> 8)) * 0x5e
+		+ (($narrow_end & 0xff) - ($narrow_start & 0xff)) + 1;
+	} else {
+	    $narrow_len = (($narrow_end >> 8) - ($narrow_start >> 8)) * 0xfe
+		+ (($narrow_end & 0xff) - ($narrow_start & 0xff)) + 1;
+	}
+
+	if ($code eq 'JISX0208' || $code eq 'UTF-8') {
+	    while (my ($key, $arg) = each(%narrow_alt)) {
+		warn "$infile:$narrow_lineno{$key}: out of range\n"
+		    if ($key < $narrow_start || $narrow_end < $key
+			|| ($key & 0xff) < 0x21 || 0x7e < ($key & 0xff));
+	    }
+	} else {
+	    while (my ($key, $arg) = each(%narrow_alt)) {
+		warn "$infile:$narrow_lineno{$key}: out of range\n"
+		    if ($key < $narrow_start || $narrow_end < $key
+			|| ($key & 0xff) < 0x01 || 0xfe < ($key & 0xff));
+	    }
+	}
+    }
+
+    if (0 < $wide_def) {
+	die "$infile: missing \`range-start\' in the wide block\n"
+	    if ($wide_start_def == 0);
+	die "$infile: missing \`range-end\' in the wide block\n"
+	    if ($wide_end_def == 0);
+
+	if ($code eq 'JISX0208' || $code eq 'UTF-8') {
+	    $wide_len = (($wide_end >> 8) - ($wide_start >> 8)) * 0x5e
+		+ (($wide_end & 0xff) - ($wide_start & 0xff)) + 1;
+	} else {
+	    $wide_len = (($wide_end >> 8) - ($wide_start >> 8)) * 0xfe
+		+ (($wide_end & 0xff) - ($wide_start & 0xff)) + 1;
+	}
+
+	if ($code eq 'JISX0208' || $code eq 'UTF-8') {
+	    while (my ($key, $arg) = each(%wide_alt)) {
+		warn "$infile:$wide_lineno{$key}: out of range\n"
+		    if ($key < $wide_start || $wide_end < $key
+			|| ($key & 0xff) < 0x21 || 0x7f < ($key & 0xff));
+	    }
+	} else {
+	    while (my ($key, $arg) = each(%wide_alt)) {
+		warn "$infile:$wide_lineno{$key}: out of range\n"
+		    if ($key < $wide_start || $wide_end < $key
+			|| ($key & 0xff) < 0x01 || 0xfe < ($key & 0xff));
+	    }
+	}
+    }
+
+    next if ($check_only);
+
+    #
+    # Create a subdirectory for the subbook, if missing.
+    #
+    my $outsubdir = dirname($outfile);
+    if (mkinstalldirs($outsubdir, $dirmode)) {
+	warn "$outdir: debug: directory cleated\n" if ($debug);
+    } else {
+	die "$outdir: cannot create the directory, $!\n";
+    }
+
+    #
+    # Open the file `APPENDIX (or FUROKU)' to read.
+    #
+    if (!open(APPENDIX, "> $outfile")) {
+	die "$outfile: cannot open the file, $!\n";
+    }
+    warn "$outfile: debug: opened\n" if ($debug);
+
+    #
+    # Fill the index page with zero.
+    #
+    seek(APPENDIX, 0, 0);
+    print APPENDIX "\0" x $size_page;
+
+    #
+    # Output alternation text for narrow font characters.
+    #
+    my $narrow_page = 0;
+    if (0 < $narrow_def) {
+	$narrow_page = int(1 + tell(APPENDIX) / $size_page);
+
+	#
+	# Output alternation text.
+	#
+	my $i = $narrow_start;
+	while ($i <= $narrow_end) {
+	    if (defined($narrow_alt{$i})) {
+		print APPENDIX $narrow_alt{$i}, "\0",
+		"\0" x ($maxlen_alt - length($narrow_alt{$i}));
+	    } else {
+		print APPENDIX "\0" x 32;
+	    }
+	    printf STDERR "$outfile: debug: wrote 0x%04x\n", $i
+		if ($debug);
+
+	    if ($code eq 'JISX0208' || $code eq 'UTF-8') {
+		$i += (($i & 0xff) < 0x7e) ? 1 : 0xa3;
+	    } else {
+		$i += (($i & 0xff) < 0xfe) ? 1 : 3;
+	    }
+	}
+	my $pad = $size_page - tell(APPENDIX) % $size_page;
+	print APPENDIX "\0" x $pad if ($pad != 0);
+    }
+
+    #
+    # Output alternation text for wide font characters.
+    #
+    my $wide_page = 0;
+    if (0 < $wide_def) {
+	$wide_page = 1 + int(tell(APPENDIX) / $size_page);
+
+	#
+	# Output alternation text.
+	#
+	my $i = $wide_start;
+	while ($i <= $wide_end) {
+	    if (defined($wide_alt{$i})) {
+		print APPENDIX $wide_alt{$i}, "\0",
+		"\0" x ($maxlen_alt - length($wide_alt{$i}));
+	    } else {
+		print APPENDIX "\0" x 32;
+	    }
+	    printf STDERR "$outfile: debug: wrote 0x%04x\n", $i
+		if ($debug);
+
+	    if ($code eq 'JISX0208' || $code eq 'UTF-8') {
+		$i += (($i & 0xff) < 0x7e) ? 1 : 0xa3;
+	    } else {
+		$i += (($i & 0xff) < 0xfe) ? 1 : 3;
+	    }
+	}
+	my $pad = $size_page - tell(APPENDIX) % $size_page;
+	print APPENDIX "\0" x $pad if ($pad != 0);
+    }
+
+    #
+    # Output a stop-code.
+    #
+    my $stop_page = 1 + int(tell(APPENDIX) / $size_page);
+    if (0 < $stop_def) {
+	print APPENDIX "\0\1", pack("C4", @stop);
+	warn "$outfile: debug: wrote stop-code\n" if ($debug);
+    }
+    my $pad = $size_page - tell(APPENDIX) % $size_page;
+    print APPENDIX "\0" x $pad if ($pad != 0);
+
+    #
+    # Output an index page.
+    #
+    my %character_code_table = (
+	'ISO8859-1' => "\0\001",
+	'JISX0208' => "\0\002",
+	'UTF-8' => "\0\004",
+	);
+    seek(APPENDIX, 0, 0);
+    print APPENDIX "\0\3", $character_code_table{$code}, "\0" x 12;
+
+    if (0 < $narrow_def) {
+	print APPENDIX pack("N", $narrow_page), "\0" x 6,
+	pack("n n", $narrow_start, $narrow_len), "\0\0";
+    } else {
+	print APPENDIX "\0" x 16;
+    }
+
+    if (0 < $wide_def) {
+	print APPENDIX pack("N", $wide_page), "\0" x 6,
+	pack("n n", $wide_start, $wide_len), "\0\0";
+    } else {
+	print APPENDIX "\0" x 16;
+    }
+
+    if (0 < $stop_def) {
+	print APPENDIX pack("N", $stop_page), "\0" x 12;
+    } else {
+	print APPENDIX "\0" x 16;
+    }
+
+    close(APPENDIX);
+    warn "$outfile: debug: closed\n" if ($debug);
+}
+
+exit;
+
+#
+# Find file $target under $dir.
+#
+sub find_file {
+    my ($dir, $target, $mode) = @_;
+    my $result = $dir;
+    my @target_entries = split(/\/+/, $target);
+
+    for (my $i = 0; $i < @target_entries; $i++) {
+	my $found;
+	my $normalized_target_entry = lc($target_entries[$i]);
+	$normalized_target_entry =~ s/;\d$//;
+	$normalized_target_entry =~ s/\.$//;
+
+	if (opendir(DIR, $result)) {
+	    while (my $entry = readdir(DIR)) {
+		if ($i < @target_entries - 1) {
+		    next if (! -d "$result/$entry");
+		} else {
+		    next if (! -f "$result/$entry");
+		}
+		my $normalized_entry = lc($entry);
+		$normalized_entry =~ s/;\d$//;
+		$normalized_entry =~ s/\.$//;
+		if ($normalized_target_entry eq $normalized_entry) {
+		    $found = $entry;
+		    last;
+		}
+	    }
+	    closedir(DIR);
+	}
+
+	if (defined($found)) {
+	    $result = $result . '/' . $found;
+	} elsif ($mode eq 'undef') {
+	    return undef;
+	} else {
+	    $result = $result . '/' . $target_entries[$i];
+	}
+    }
+
+    return $result;
+}
+
+sub dirname {
+    my ($dir) = @_;
+    my $result;
+
+    if ($dir !~ /\//) {
+	$result = '.';
+    } else {
+	$result = $dir;
+	$result =~ s/\/+[^\/]+$//;
+    }
+
+    return $result;
+}
+
+sub mkinstalldirs {
+    my ($dir, $mode) = @_;
+    my $path = '';
+
+    foreach my $d (split(/\/+/, $dir)) {
+	if ($path eq '') {
+	    $path = ($dir =~ /^\//) ? '/' : $d;
+	} else {
+	    $path = "$path/$d";
+	}
+	next if (-d $path);
+	return 0 if (!mkdir($path, $mode));
+    }
+
+    return 1;
+}
+
+#
+# Convert a string to EUC JP.
+#
+sub convert_to_euc {
+    my ($s) = @_;
+    while ($s =~ /\033(\([BJ]|\$[\@B])/) {
+	$s =~ s/\033\$[\@B]([^\033]*)/&convert_to_euc_tr($1)/eg;
+	$s =~ s/\033\([BJ]([^\033]*)/$1/eg;
+    }
+    return $s;
+}
+
+sub convert_to_euc_tr {
+    my ($s) = @_;
+    $s =~ tr/\041-\176/\241-\376/;
+    return $s;
+}
+
+# Local Variables: 
+# mode: perl
+# End: 

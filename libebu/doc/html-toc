@@ -1,0 +1,151 @@
+#! /usr/bin/perl
+#
+# Copyright (c) 2005-2006  Motoyuki Kasahara
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the project nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+#
+# html-toc -- make `table of contents' of HTML files.
+#
+# Usage:
+#     html-index [option...] input-file...
+#
+# `html-toc' reads HTML files, and generates `table of contents' (TOC)
+# of the HTML files. The TOC is created from <h1>...<h6> tags and
+# <a name="..."> tag in the HTML files.  Since `html-toc' doesn't parse
+# HTML precisely, the tags must be the following form:
+# 
+#      <h?><a name="...">heading</a></h?>
+#
+# where `?' is 1..6.  Note that <h?> and </h?> above must be in the same
+# line.
+#
+# `html-toc' outputs TOC to standard out by default.
+#
+# Options:
+#     -o file               specify output file.
+#     -h                    do not output file name in <a href="....">.
+#     -m level              minimum target heading level
+#                           (default: h1)
+#     -M level              maximum target heading level
+#                           (default: h6)
+
+require 5.005;
+use Getopt::Std;
+
+#
+# Usage
+#
+my $usage = "Usage: $0 [option...] input-file...\n";
+
+#
+# Variables
+#
+my $out_file = '-';
+my @preamble = ();
+my $fragment_only = 0;
+my $min_level = 1;
+my $max_level = 6;
+
+#
+# Parse command line arguments.
+#
+my %options;
+getopts('o:hm:M:', \%options) or die $usage;
+die $usage if (@ARGV == 0);
+
+$fragment_only = 1 if (defined($options{h}) || @ARGV == 1);
+$out_file = $options{o} if (defined($options{o}));
+if (defined($options{m})) {
+    $options{m} =~ s/^h//;
+    $min_level = $options{m};
+}
+if (defined($options{M})) {
+    $options{M} =~ s/^h//;
+    $max_level = $options{M};
+}
+
+#
+# Read an HTML file.
+#
+$current_level = $min_level;
+
+if ($out_file eq '-') {
+    $out_file = 'stdout'; 
+    open(OUT_FILE, ">& STDOUT");
+} else {
+    if (!open(OUT_FILE, "> $out_file")) {
+	die "$0: failed to open the file, $!: $out_file\n";
+    }
+}
+
+print OUT_FILE "<ul>\n";
+
+foreach my $in_file (@ARGV) {
+    if (!open(IN_FILE, "< $in_file")) {
+	die "$0: failed to open the file, $!: $in_file\n";
+    }
+
+    while (<IN_FILE>) {
+	chomp;
+	next unless (m|^<h([1-6])><a name="([^\"]+)">(.*)</a>|);
+	my ($level, $tag, $heading) = ($1, $2, $3);
+
+	if ($level >= $min_level && $level <= $max_level) {
+	    while ($current_level > $level) {
+		$current_level--;
+		print OUT_FILE ' ' x ($current_level - $min_level + 1);
+		print OUT_FILE "</ul>\n";
+	    }
+	    while ($current_level < $level) {
+		print OUT_FILE ' ' x ($current_level - $min_level + 1);
+		print OUT_FILE "<ul>\n";
+		$current_level++;
+	    }
+
+	    print OUT_FILE ' ' x ($current_level - $min_level + 1);
+	    if ($fragment_only) {
+		print OUT_FILE sprintf("<li><a href=\"\#%s\">%s</a>\n",
+				       $tag, $heading);
+	    } else {
+		print OUT_FILE sprintf("<li><a href=\"%s\#%s\">%s</a>\n",
+				       $in_file, $tag, $heading);
+	    }
+	}
+    }
+
+    close(IN_FILE);
+}
+
+while ($current_level > $min_level) {
+    $current_level--;
+    print OUT_FILE ' ' x ($current_level - $min_level + 1);
+    print OUT_FILE "</ul>\n";
+}
+
+print OUT_FILE "</ul>\n";
+
+close(OUT_FILE);

@@ -1,0 +1,43 @@
+default:
+  # Reuse libxml2 image
+  image: registry.gitlab.gnome.org/gnome/libxml2
+
+.test:
+  script:
+    - |
+      git clone --depth 1 https://gitlab.gnome.org/GNOME/libxml2.git
+      cd libxml2
+      sh autogen.sh $CONFIG
+      make -j$(nproc)
+      cd ..
+      sh autogen.sh $CONFIG --with-libxml-src=libxml2
+      # Don't run make in "doc" directory
+      for target in libxslt libexslt xsltproc python tests/plugins; do
+          make -j$(nproc) -C $target V=1 CFLAGS="$CFLAGS -Werror"
+      done
+      make -j$(nproc) -C tests/fuzz V=1 CFLAGS="$CFLAGS -Werror" testTargets
+      make -s -C tests tests | tee test.log
+      make -s -C xsltproc tests | tee -a test.log
+      ! grep -qv '^## Running' test.log
+      make -s -C python tests
+
+gcc:
+  extends: .test
+  variables:
+    CFLAGS: "-O2 -std=c89 -D_POSIX_C_SOURCE=200112L"
+
+clang:asan:
+  extends: .test
+  variables:
+    CONFIG: "--without-python"
+    CC: clang
+    CFLAGS: "-O2 -g -fno-omit-frame-pointer -fsanitize=address,undefined -fno-sanitize-recover=all -Wno-error=cast-align"
+    UBSAN_OPTIONS: "print_stacktrace=1"
+
+clang:msan:
+  extends: .test
+  variables:
+    CONFIG: "--without-python --without-zlib --without-lzma --without-crypto"
+    CC: clang
+    CFLAGS: "-O2 -g -fno-omit-frame-pointer -fsanitize=memory -Wno-error=cast-align"
+

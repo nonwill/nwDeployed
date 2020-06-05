@@ -1,0 +1,662 @@
+2020-03-10  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* ebu/zio.c (zio_unzip_slice_epwing): Fix wrong variable type
+	definition.
+	Cf. https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=833085#5
+
+2019-06-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* ebzip/zipfile.c (ebzip_zip_file_internal): Fix progress messages
+	were showed too frequently.
+
+2019-06-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Add libdeflate library support.  To enable it, run configure with
+	--enable-libdeflate option.
+
+	* configure.ac: Accept --enable-libdeflate,
+	--with-libdeflate-includes, --with-libdeflate-libraries options.
+
+	* ebu/bitmap.c (png_compress): Add libdeflate support.  Return 0
+	when succeeded, otherwise -1.
+	(eb_bitmap_to_png): Adopt to the change.
+
+	* ebzip/zipfile.c (ebzip_zip_file_internal): Add libdeflate support.
+
+	* ebzip/unzipfile.c (ebzip_unzip_file_internal): Likewise.
+
+	* ebzip/ebzip1.c (ebzip1_slice): Likewise.
+
+	* ebzip/ebzip.h: Likewise.
+
+	* ebu/zio.c (zio_unzip_slice_ebzip1)
+	(zio_unzip_slice_ebzip1_internal): zio_unzip_slice_ebzip1_internal
+	is extracted uncompressing part from zio_unzip_slice_ebzip1 and
+	libdeflate support is added.
+
+	* libebutils/ebutils.c (output_version): output "LIBDEFLATE"
+	feature when build with libdeflate.
+
+2019-06-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* ebzip/ebzip1.c (ebzip1_slice): Use Z_BEST_COMPRESSION instead of
+	Z_DEFAULT_COMPRESSION when compression level is higher than 3.
+
+2015-03-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* ebfont/ebfont.c (make_subbook_size_fonts): Fix error handling.
+
+2015-02-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* m4/gettext.m4 (eb_GNU_GETTEXT): Support Cygwin environment.
+
+	* libebutils/puts_eucjp.c (fputs_eucjp_to_locale): Support the
+	case which has libiconv_open and doesn't have iconv_open.
+
+2015-02-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* libebutils/makedir.c (make_missing_directory): Fix the case of
+	64-bit Windows.
+
+2015-02-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* ebu/urlparts.c (url_parts_parse): Do not perform a NULL-pointer
+	dereference.
+	Cf. Origin: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=715855#20
+
+2015-02-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* libebutils/makedir.c (make_missing_directory): Correct parameter
+	declarations.
+	Cf. https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=748030#12
+
+	* libebutils/makedir.h: Include sys/types.h.
+
+2015-02-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* ebinfo/ebinfo.c (output_multi_information, output_information):
+	Fix too many arguments for format string.
+	Cf. https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=776602#5
+
+2010-03-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.4.3.
+
+	* configure.ac (AC_INIT): Set version to 4.4.3.
+	* eb/ebnet.c (ebnet_open): Use _atoi64() or atol(), when atoll()
+	is not available.
+	* configure.ac (LIBEB_VERSION_INFO):
+	EB Library verison 4.2.2 sets LIBEB_VERSION_INFO to 15:0:2,
+	but it is wrong.  To avoid the confusion, I decide to update
+	LIBEB_VERSION_INFO to 16:0:0.
+
+2010-01-16  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.4.2.
+
+	* eb/readtext.c (eb_read_text_internal): In the escape sequence
+	0x1c and 0x1d sections, separate EBXA-C codes from others.
+
+2010-01-03  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.ac (AC_INIT): Set version to 4.4.2.
+	* configure.ac (LIBEB_VERSION_INFO): Set LIBEB_VERSION_INFO to 15:0:2.
+
+	* ebzip/speedup.c (ebzip_set_zip_speedup):
+	Add missing ebzip_close() and ebzip_finalize() calls for zio.
+	* ebzip/ebzip.c (main): Don't call(1) just after unzip_book().
+	* ebzip/copyfile.c (ebzip_copy_file): Don't copy a file in
+	case of test mode.
+
+	* ebzip/unlinkfile.c: New file.
+	* ebzip/Makefile.am (ebzip_SOURCES): Add unlinkfile.c
+	* ebzip/zipfile.c (ebzip_zip_file): Don't call unlink() directly
+	for an input file. Call unlink_files_add() instead.
+	* ebzip/unzipfile.c (ebzip_unzip_file): Likewise.
+	* ebzip/copyfile.c (ebzip_copy_file): Likewise.
+	
+2009-05-02  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/text.h (EB_HOOK_BEGIN_UNICODE, EB_HOOK_END_UNICODE,
+	EB_HOOK_BEGIN_EBXAC_GAIJI, EB_HOOK_END_EBXAC_GAIJI,
+	EB_HOOK_EBXAC_GAIJI): Added.
+	* eb/defs.h (EB_NUMBER_OF_HOOKS): Defined as 54.
+	* eb/defs.h (EB_Text_Context_Struct): Add `ebxac_gaiji_flag'.
+	* eb/readtext.c (eb_read_text_internal): Also recognize escape 
+	sequences 0x0b, 0x0c, 0x1c and 0x1d.
+
+2009-03-14  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.4.1.
+
+	* configure.ac (AC_INIT): Set version to 4.4.1.
+	* configure.ac (LIBEB_VERSION_INFO): Set LIBEB_VERSION_INFO to 14:0:1.
+
+	* eb/binary.c (eb_set_binary_mono_graphic, eb_set_binary_gray_graphic,
+	eb_set_binary_wave, eb_set_binary_color_graphic): Apply large
+	file support patch by Kazuhiro Ito.
+
+2009-02-28  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.4.
+
+	* configure.ac (AC_CHECK_FUNCS): Also checks atoll() and _atoi64().
+	* eb/ebnet.c (ebnet_open, ebnet_lseek, ebnet_read): 
+	Support large files.
+	* eb/multiplex.c (EBNet_Socket_Entry_Struct, ebnet_get_file_size): 
+	Likewise.
+	* eb/ebnet.h: Likewise.
+	
+2009-01-29  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.4.
+
+	* eb/zio.c (zio_open_ebzip): Always set zio->code to ZIO_EBZIP1,
+	regardless of ebzip-mode value in an EBZIP header.
+
+	* ebzip/zipfile.c (ebzip_zip_file_internal): Improve compression
+	progress messages.  Don't output a message with the same percent
+	as the previous.
+	* ebzip/unzipfile.c (ebzip_unzip_file_internal): Also improve
+	uncompression messages.
+
+	* ebzip/zipbook.c (ebzip_zip_book_eb, ebzip_zip_book_epwing):
+	Output an error message when make_missing_directory() fails.
+	* ebzip/unzipbook.c (ebzip_unzip_book_eb, ebzip_unzip_book_epwing):
+	Ditto.
+	* ebzip/copyfile.c (ebzip_copy_files_in_directory): Ditto.
+
+2009-01-23  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* INSTALL: Describe `--enable-largefile' option of configure.
+
+	* eb/subbook.c (eb_set_subbook): If eb_set_subbook_eb() or
+	eb_set_subbook_epwing() returns -1, also this function returns -1.
+
+	* ebzip/zipbook.c (ebzip_zip_book_eb, ebzip_zip_book_epwing): 
+	Output a warning mesage when eb_load_all_subbooks() fails.
+	* ebzip/unzipbook.c (ebzip_unzip_book_eb,
+	ebzip_unzip_book_epwing): Ditto.
+	* ebzip/zipinfobook.c (ebzip_zipinfo_book_eb,
+	ebzip_zipinfo_book_epwing): Ditto.
+
+	* ebzip/zipfile.c (ebzip_zip_file_internal): Don't output
+	strerror(errno) in an error message when zio_open(), zio_lseek() or
+	zio_read() fails, since errno may be 0.
+	* ebzip/unzipfile.c (ebzip_unzip_file_internal): Likewise.
+	* ebzip/sppedup.c (ebzip_zipinfo_file_internal): Likewise.
+
+2009-01-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.ac (AC_INIT): Set version to 4.4.
+	* configure.ac (EB_VERSION_MINOR): Set EB_VERSION_MINOR to 4.
+	* configure.ac (LIBEB_VERSION_INFO): Set LIBEB_VERSION_INFO to 13:0:0.
+	
+	* configure.ac (eb_SYS_LARGEFILE): Added.
+	* m4/largefile.m4: New file. It defines macros to check
+	large file support.
+
+	* m4/libtool.m4, m4/m4/ltdl.m4, m4/ltoptions.m4, m4/ltsugar.m4,
+	m4/ltversion.m4, m4/lt~obsolete.m4, ltmain.sh, config.guess,
+	config.sub: Import from libtool-2.2.6.
+
+	* depcomp, missing, compile, install-sh: Import from Autoconf-1.63.
+	* po-eb/Makefile.in, po-ebutils/Makefile.in (datarootdir):
+	Set `datarootdir' macro.
+
+	* m4/eb.m4 (AC_C_CONST, AC_C_PROTOTYPES, AC_HEADER_TIME):
+	Don't call those obsolete macros any longer.
+
+	* po-ep/Makefile.in, po-ebutils/Makefile.in (datarootdir): Defined.
+
+2009-01-07  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/build-post.h.in (off_t_is_large): New macro.
+	* eb/zio.c (off_t_is_large): Likewise.
+
+	* ebzip/zipinfofile.c, ebzip/sebxa.c, ebzip/zipfile.c,
+	ebzip/speedup.c, ebzip/unzipfile.c, ebzip/copyfile.c:
+	Support large files (over 2GB).
+
+	* eb/narwfont.c, eb/zio.c, eb/subbook.c, eb/readtext.c, eb/binary.c,
+	eb/appsub.c, eb/multi.c, eb/search.c: Likewise.
+
+2008-12-25  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.3.3.
+
+	* configure.ac (AC_INIT): Set version to 4.3.4.
+
+	* m4/gettext.m4 (eb_GNU_GETTEXT): Fix a bug of iconv() and
+	iconv_open() checks. Don't add '-liconv' to LIBS at all times.
+
+2008-09-29  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.3.3.
+
+	* configure.ac (AC_INIT): Set version to 4.3.3.
+	* configure.ac (LIBEB_VERSION_INFO): Set it to 12:7:0.
+	* ltmain.sh, m4/libtool.m4, config.guess, config.sub: Import from
+	libtool-1.5.26.
+
+2008-09-17  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/Makefile.am (libeb_la_LDFLAGS): Add `-no-undefined' option
+	Add $(ZLIBLIBS) and $(INTLLIBS) arguments.
+	* ebzip/Makefile.am (ebzip_LDADD): Exchange the order of
+	$(LIBEBUTILS) and $(LIBEB).
+
+2008-02-04  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/zipinfofile.c (ebzip_zipinfo_file_internal): Don't close
+	`in_file' directly.  On Windows, it raises an exception.
+
+2008-01-28  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.3.2.
+
+	* configure.ac (LIBEB_VERSION_INFO): Set it to 12:6:0.
+	In EB Library version 4.3.1, LIBEB_VERSION_INFO is set to 12:4:1,
+	but it is incorrect.  It would be 12:5:0.
+
+	* po-ebutils/ja.po: Add a missing space to a msgstr corresponding
+	to the msgid "image-menu ".
+
+2008-01-14  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.3.1.
+
+	* ltmain.sh, config.sub, config.guess: Imported from libtool-1.5.24.
+
+2007-02-13  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ltmain.sh, config.sub, config.guess: Imported from libtool-1.5.22.
+
+	* eb/multiplex.c (ebnet_set_book_name): Fix a buffer overrun bug.
+	* eb/binary.c (eb_set_binary_mpeg): Fix a bug that it doesn't 
+	compose a movie file name correctly.
+	* eb/book.c (misleaded_book_table): Add Panasonic KX-EBP2 accessories.
+
+2006-08-31  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.3.
+
+	* configure.ac (LIBEB_VERSION_INFO): Set it to 12:4:0.
+	* configure.ac (AC_INIT): Set version to 4.3.0.
+	* configure.ac (EB_VERSION_MINOR): Set it to 3.
+
+	* eb/subbook.c (eb_load_subbook_indexes): Support for image menu,
+	contributed by Kazuhiro Ito.
+	* eb/readtext.c (eb_read_text_internal): Ditto.
+	* eb/readtext.c (EB_MAX_ARGV): Change the value from 6 to 7.
+	* eb/text.h (EB_HOOK_BEGIN_IMAGE_PAGE, EB_HOOK_END_IMAGE_PAGE,
+	EB_HOOK_BEGIN_CLICKABLE_AREA, EB_HOOK_END_CLICKABLE_AREA):
+	Add the four hooks.
+	* eb/menu.c (eb_have_image_menu, eb_image_menu): New functions.
+	* eb/defs.h (EB_NUMBER_OF_HOOKS): Change the value from 45 to 49.
+	* eb/defs.h (EB_Subbook_Struct): Add the member `image_menu'.
+	* ebinfo/ebinfo.c (output_information): Also display "image-menu".
+
+2006-06-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Makefile.am (EXTRA_DIST): Add `ChangeLog.2'.
+
+	* ebappendix/ebappendix.in: Use `File::Basename' module.
+	* ebappendix/ebappendix.in: Specify `my' modifier to local variables.
+	* ebappendix/ebappendix.in: Use reference (\$var, \@array and \%hash)
+	instead of alias (*name).
+
+	* ebzip/ebunzip.c (ebzip_unzip_book_eb): Fix a bug that `ebunzip
+	--test' rewrites START files.
+
+	* eb/zio.c (zio_unzip_slice_sebxa): Fix a bug in the uncompression
+	algorithm.
+
+2006-06-16  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/subbook.c (eb_set_subbook_epwing): Fix a bug that EB
+	cannot initialize a book if a subbook has stream data only
+	and the subbook shares `data' sub-directory with another
+	subbook.
+
+	* libebutils/strlist.c, libebutils/strlist.h: New file.
+	* libebutils/Makefile.am (libebutils_a_SOURCES): Add strlist.c.
+	* libebutils/Makefile.am (dist_noinst_HEADERS): Add strlist.h.
+	* ebzip/zipbook.c (ebzip_zip_book_eb, ebzip_zip_book_epwing):
+	Use `String_List' to avoid compressing a file twice.
+	* ebzip/unzipbook.c (ebzip_unzip_book_eb, ebzip_unzip_book_epwing):
+	Ditto.
+
+2006-05-15  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebappendix/ebappendix.in: Fix a bug that ebappendix creates
+	an appendix in EB style even when it reads `catalogs.app'.
+	
+2005-11-26  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.2.2.
+	
+	* ltmain.sh, config.sub, config.guess, depcomp, install-sh:
+	Imported from libtool-1.5.20 and Automake-1.9.6.
+
+	* m4/lcmessage.m4, m4/gettext.m4, m4/sockaddrin6.m4, m4/in6addr.m4,
+	m4/sockinttypes.m4, configure.ac: Substitute AC_TRY_COMPILE, 
+	AC_TRY_LINK and AC_TRY_RUN with AC_COMPILE_IFELSE, AC_LINK_IFELSE 
+	and AC_RUN_IFELSE.
+
+2005-11-21  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* m4/gettext.m4: Check for existance of libintl and libiconv even
+	when `--with-gettext-libraries' or `--with-iconv-libraries' option
+	is not specified.
+	* m4/gettext.m4: Do not perform AC_TRY_RUN to check for gettext().
+	We perform AC_TRY_LINK instead.  On Debian Linux, the test program
+	doesn't succeed though gettext() is available.  The test program
+	called setlocale(LC_ALL, "en_US") but it didn't change the locale
+	to `en' or `en_US' since "en_US" is not acceptable locale name on
+	that environment.
+	* gttest.po, gttest.mo: Deleted.
+	* Makefile.am (EXTRA_DIST): Likewise.
+
+2005-11-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/binary.c (eb_set_binary_wave): Fix a bug that it set wrong
+	wave data size to `context'.
+	* eb/binary.c (eb_set_binary_wave): Fix a bug that it generated
+	wrong RIFF header when the CD-ROM book provided fmt block of the
+	wave data.
+
+	* eb/multiplex.c (ebnet_get_addresses): Retry getnameinfo()
+	without the NI_WITHSCOPEID flag if getnameinfo() with that flag
+	doesn't succeed.
+
+2005-10-25  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb.conf.in (EBCONF_ENABLE_NLS): Fix a bug that Makefile filled
+	an incorrect value.
+	* Makefile.am (eb.conf): Likewise.
+
+	* eb/book.c (eb_load_catalog_epwing): When EPWING version is 1,
+	the function never read an extra information block.
+
+2005-09-16  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/book.c (eb_load_catalog_epwing): Fix a bug that it sometimes
+	raises an error when the catalog file doesn't have extra information
+	block.
+
+2005-09-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/search.c (eb_and_hit_lists): Fix a bug that it outputs
+        a wrong debug mesasge at the end of the function.
+
+2005-08-14  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.2.1.
+
+	* eb/book.c (eb_load_catalog_epwing): Fix a bug that EB Library
+	sets wrong graphic and sound file names if target subbook contains
+	graphic and/or sound data in a text file.
+
+	* eb/book.c (eb_load_catalog_epwing): Correct a debug message
+	that shows EB_ERR_FAIL_READ_CAT error.
+
+2005-05-29  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.2.
+
+	* eb/book.c (eb_load_catalog_epwing): Fix a bug that EB Library
+	sets wrong graphic and sound file names if target subbook has
+	HONMON2 only.
+
+	* eb/binary.c (eb_set_binary_wave): Fix a bug that the function
+	appends "fmt " to the wave data mistakenly.
+
+2005-04-18  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ltmain.sh, config.guess, config.sub, install-sh, m4/libtool.m4:
+	Import from libtool 1.5.18.
+
+2005-04-10  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/build-post.h.in (EB_TEXT_TEXT): Renamed to EB_TEXT_MAIN_TEXT.
+	* eb/ebinfo.c: Support `Cross Search'.
+
+	* eb/multiplex.c (ebnet_create_new_connection): Set stream socket
+	to non-blocking I/O mode.
+
+2005-03-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/binary.c (eb_read_binary_mono_graphic,
+	eb_read_binary_gray_graphic): Fix the 2nd argument to zio_lseek().
+	`line_length * -2' must be `(off_t)line_length * -2' since
+	`line_length' is `size_t' which is usually unsigned integral type.
+
+2005-02-05  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/multi.c (eb_initialize_multi_searches,
+	eb_finalize_multi_searches): Remove the internal functions.
+
+	* eb/defs.h (EB_Subbook_Struct): Add the member `cross'.
+	* eb/defs.h (EB_MAX_CROSS_ENTRIES): Defined.
+	* eb/build-post.h.in (EB_SEARCH_CROSS): Defined.
+	* eb/Makefile.am (libeb_la_SOURCES): Add `cross.c'.
+	* eb/cross.c: New file.
+	* eb/search.c (eb_initialize_searches, eb_hit_list): Support for
+	cross search.
+	* eb/subbook.c (eb_load_subbook_indexes): Ditto.
+
+	* eb/filename.c (eb_compose_movie_path_name): New function.
+
+	* configure.ac (AC_CONFIG_SUBDIRS): Remove `zlib'.
+	* Makefile.am (SUBDIRS): Remove $(ZLIB_SUBDIR).
+
+2005-01-29  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebrefile/ebrefile.c (copy_file, refile_book): `ebrefile'
+	preserves an original catalog file in an output directory as
+	"catalogs.old" and then it overwrites the original catalog file.
+
+2004-12-05  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.1.3.
+
+	* po-eb/Makefile.in, po-ebutils/Makefile.in (mkinstalldirs):
+	Defined as `$(install_sh) -d'.
+	* po-eb/Makefile.in, po-ebutils/Makefile.in (install_sh): 
+	Defined as `@install_sh@'.
+
+	* configure.ac (LIBEB_VERSION_INFO): Set it to 9:1:0.
+	* configure.ac (AC_INIT): Set version to 4.1.3.
+
+2004-11-28  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.1.2.
+
+	* ebzip/ebzip.c (main): Also recognize `\' as a path separator when
+	DOS_FILE_PATH is defined.
+
+	* po-eb/Makefile.in, po-ebutils/Makefile.in (mkinstalldirs): 
+	Defined as `$(SHELL) $(top_srcdir)/mkinstalldirs'.
+	It was defined as `$(mkdir_p)', but it causes cycric reference
+	on FreeBSD-5.3-RELEASE.
+
+	* eb/readtext.c (eb_seek_text): Accept position whose offset is
+	greater than or equal to EB_SIZE_PAGE.
+	* eb/binary.c (eb_set_binary_mono_graphic, eb_set_binary_gray_graphic,
+	eb_set_binary_wave, eb_set_binary_color_graphic, eb_set_binary_mpeg): 
+	Don't accept position whose offset is less than 0.
+
+2004-11-22  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/search.c (eb_hit_list_word, eb_hit_list_keyword,
+	eb_hit_list_multi): Fix a historical bug that EB Library cannot
+	find matched entries in particular books.
+
+	* eb/eb.c (eb_initialize_library): In debug mode, EB Library
+	displays its version number.
+
+	* eb/searh.c (eb_presearch_word, eb_hit_list_word,
+	eb_hit_list_keyword, eb_hit_list_multi): The debug messages also
+	outputs index page number.
+
+2004-10-24  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.1.1.
+
+	* libebutils/getopt.c: Fix a bug in getopt_long().
+	It may abort when it outputs the message "option `--xxx' requires
+	an argument".
+
+	* eb/readtext.c (eb_write_text_byte2): Fix a bug that the function
+	writes incorrect data on the text buffer.
+
+2004-07-03  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.1.
+
+	* doc/Makefile.am (uninstall-hook): Defined.
+	* doc/Makefile.am: Fix bugs that `make all' fails when $(srcdir)
+	!= `.'.
+
+2004-06-23  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* doc/Makefile.am (pkgdoc_DATA): Do not use meta characters to
+	specify splitted HTML files.  Use `install-data-hook' instead.
+
+2004-05-27  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* README-ja, INSTALL-ja: Removed.
+	* README, INSTALL: These documents are now written in Japanese.
+
+	* doc-ja: Directory removed.
+	* doc: The documents under the directory are now written in Japanese
+	and with HTML format.
+
+	* Makefile.am (SUBDIRS): Delete `doc-ja'.
+	* configure.ac (AC_CONFIG_FILES): Ditto.
+
+	* configure.ac (AC_ARG_WITH): Add `--with-pkgdocdir' option.
+
+	* move-if-change: Rewrite it from scratch.
+
+2004-05-22  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* EB Library now adopts BSD License.
+
+	* ebzip/zipfile.c (ebzip_zip_file_internal), 
+	ebzip/zipbook.c (ebzip_zip_book_eb, ebzip_zip_book_epwing):
+	Support for partial compression.
+	* ebzip/speedup.c: New file.
+	* ebzip/Makefile.am (ebzip_SOURCES): Add `ebzip/speedup.c'.
+	* po-ebutils/Makefile.in (POTFILES): Ditto.
+
+2004-05-16  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/sebxa.c (fix_sebxa_start): Renamed to rewrite_sebxa_start().
+	* ebzip/sebxa.c (fix_sebxa_start): Fix a bug that ebzip outputs
+	`completed' message even when quiet flag is enabled.
+
+2004-05-09  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/zipfile.c (ebzip_zip_file_internal): Output compression
+	result even when input is an empty file.
+
+2004-05-08  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* configure.ac (AC_CHECK_HEADERS): Delete `utime.h' and `sys/utime.h'.
+	Add `mbstring.h' instead.
+	* ebzip/ebzip.h (EBZIP_OVERWRITE_QUERY): Renamed to
+	EBZIP_OVERWRITE_CONFIRM.
+
+	* ebzip/ebzip.c: Add `--overwrite' (-w) option.
+
+	* ebzip/zipfile.c (ebzip_zip_file_internal): Don't abort when ebzip
+	fails to delete an original file.  Delete an original file even when
+	ebzip outputs "already exists, skip the file" message.
+	ebzip/unzipfile.c (ebzip_unzip_file_internal): Ditto.
+	ebzip/copyfile.c (ebzip_copy_file): Ditto.
+
+2004-05-07  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Use Automake-1.8.4 and Libtool-1.5.6.
+
+	* configure.ac (AC_TYPE_SIGNAL, AC_STRUCT_UTIMBUF): Removed.
+	* configure.ac (AC_CHECK_FUNCS): Remove dup2() and utime().
+	* m4/herrno.m4, m4/utimbuf,m4, m4/voidpointer.m4: Removed.
+	
+2004-04-29  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/bitmap.c (eb_bitmap_to_png): New function.
+	* eb/bitmap.c (eb_bitmap_to_xbm, eb_bitmap_to_xpm, eb_bitmap_to_gif,
+	eb_bitmap_to_bmp, eb_bitmap_to_png): They return EB_Error_Code.
+	* ebfont/ebfont.c: `ebfont' supports PNG format images.
+
+	* eb/zio.c: Enlarge cache buffer, contributed by Takashi NEMOTO.
+
+	* eb/setword.c (eb_convert_euc_jp): Fix argument order.
+
+	* configure.ac (AC_INIT): Set version to 4.1.
+	* configure.ac (EB_VERSION_MINOR): Set minor version to 1.
+	* configure.ac (LIBEB_VERSION_INFO): Set version to 9:0:0.
+	
+	* configure.ac (AC_C_CONST, AC_C_PROTOTYPES, AC_C_VOID_POINTER,
+	AC_HEADER_STDC, AC_HEADER_STAT, AC_HEADER_TIME, AC_HEADER_DIRENT, 
+	AC_FUNC_VPRINTF, AC_TYPE_OFF_T, AC_TYPE_SIZE_T): Removed.
+	* configure.ac (AC_CHECK_HEADERS): Remove checks for fcntl.h,
+	limits.h, memory.h, stdlib.h and unistd.h.
+	* eb/Makefile.am
+	* configure.ac (AC_CHECK_FUNCS): Remove checks for getcwd(), memcpy(),
+	memmove() and strchr().
+	* configure.ac (AC_REPLACE_FUNCS): Remove checks for memset() and
+	strerror().
+	
+	* eb/appendix.c, eb/appendix.h, eb/appsub.c, eb/bcd.c, eb/binary.c,
+	eb/binary.h, eb/bitmap.c, eb/book.c, eb/booklist.c, eb/booklist.h,
+	eb/build-post.h.in, eb/build-pre.h, eb/copyright.c, eb/defs.h,
+	eb/eb.c, eb/eb.h, eb/ebnet.c, eb/ebnet.h, eb/endword.c, eb/error.c,
+	eb/error.h, eb/exactword.c, eb/filename.c, eb/font.c, eb/font.h, 
+	eb/getaddrinfo.c, eb/getaddrinfo.h, eb/hook.c, eb/jacode.c, 
+	eb/keyword.c, eb/linebuf.c, eb/linebuf.h, eb/lock.c, eb/log.c, 
+	eb/makeproto, eb/match.c, eb/menu.c, eb/multi.c, eb/multiplex.c, 
+	eb/narwalt.c, eb/narwfont.c, eb/readtext.c, eb/search.c, eb/setword.c, 
+	eb/stopcode.c, eb/strcasecmp.c, eb/subbook.c, eb/text.c, eb/text.h, 
+	eb/urlparts.c, eb/urlparts.h, eb/word.c, eb/zio.c, eb/zio.h, 
+	ebfont/ebfont.c, ebinfo/ebinfo.c, ebrefile/ebrefile.c, 
+	ebstopcode/ebstopcode.c, ebzip/copyfile.c, ebzip/ebzip.c, 
+	ebzip/ebzip.h, ebzip/ebzip1.c, ebzip/sebxa.c, ebzip/unzipbook.c, 
+	ebzip/unzipfile.c, ebzip/zipbook.c, ebzip/zipfile.c, 
+	ebzip/zipinfobook.c, ebzip/zipinfofile.c, libebutils/ebutils.c, 
+	libebutils/ebutils.h.in, libebutils/getopt.c, libebutils/getopt.h, 
+	libebutils/getumask.c, libebutils/getumask.h, libebutils/makedir.c, 
+	libebutils/makedir.h, libebutils/puts_eucjp.c, libebutils/samefile.c, 
+	libebutils/samefile.h, libebutils/strcasecmp.c, libebutils/yesno.c, 
+	libebutils/yesno.h, samples/appendix.c, samples/booklist.c, 
+	samples/disctype.c, samples/font.c, samples/initexit.c, 
+	samples/subbook.c, samples/text.c, samples/word.c:
+	EB Library now assumes POSIX.1-1990 systems and requires ANSI C89
+	compiler.
+
+2004-03-20  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* Version 4.0.1.
+
+	* ebzip/zipfile.c, ebzip/unzipfile.c, ebzip/copyfile.c, ebzip/sebxa.c:
+	Output progress messages to stderr, not stdout.
+
+	* ebzip/zipbook.c (ebzip_zip_book, ebzip_zip_book_eb,
+	ebzip_zip_book_epwing): Abort if ebzip_zip_file() fails.
+	* ebzip/unzipbook.c (ebzip_unzip_book, ebzip_unzip_book_eb,
+	ebzip_unzip_book_epwing): Abort if ebzip_unzip_file() or
+	ebzip_unzip_start_file() fails.
+
+2004-02-29  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* ebzip/zipinfobook.c (ebzip_zipinfo_book_epwing): Also display
+	movie files.
+
+2004-01-30  Motoyuki Kasahara  <m-kasahr@sra.co.jp>
+
+	* eb/build-pre.h, eb/defs.h, ebzip/ebzip.h (EB_P): Fix typo in
+	the definition of EB_P.
+	* eb/zio.h (ZIO_P): Likewise.

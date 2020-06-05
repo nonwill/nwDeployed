@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-jp">
+<link rel="stylesheet" type="text/css" href="ebutils.css">
+<link rev="made" href="mailto:m-kasahr@sra.co.jp">
+<title>ebstopcode コマンド</title>
+</head>
+
+<body>
+<h1><a name="toc">ebstopcode コマンド</a></h1>
+<p>
+この文書は EB ライブラリバージョン
+<!-- #include "version.html" -->
+に対応しています。
+</p>
+
+<p>
+目次:
+</p>
+
+<!-- #include "ebstopcode-toc.html" -->
+
+<p>
+Copyright (c) 2003-2006  Motoyuki Kasahara
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="introduction">はじめに</a></h2>
+
+<p>
+あなたが EB ライブラリのアプリケーションを使って CD-ROM 書籍の中のある
+単語を引く際、その単語の説明が終了する箇所で、アプリケーションが本文の
+出力を止めることをあなたは期待するのではないでしょうか。
+しかし、EB ライブラリはそのような動作を保証することができません。
+なぜなら、CD-ROM 書籍の本文には、項目の終わりを示す印が存在しないから
+です。
+</p>
+
+<p>
+幸いにも、多くの CD-ROM 書籍には、項目の終わりを示す印の代替として
+使える、<dfn>本文の区切りコード (text stop code)</dfn> というものを持って
+います。
+通常、EB ライブラリはこの区切りコードを自動的に推測するようになって
+いるのですが、時々誤った区切りコードを導き出すことがあります。
+その場合は、<dfn>appendix (付録)</dfn> というものを用いて、EB ライブラリに
+正しい区切りコードを教えてやらなくてはなりません。
+</p>
+
+<p>
+<code>ebstopcode</code> コマンドは、CD-ROM 書籍の本文の区切りコードを解析
+するためのツールです。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="invoke-ebstopcode"><code>ebstopcode</code> の実行</a></h2>
+
+<p>
+<code>ebstopcode</code> の一般的な起動方法は次の通りです。
+</p>
+
+<blockquote>
+<pre>
+% ebstopcode <var>書籍へのパス</var>　<var>副本</var>
+</pre>
+</blockquote>
+
+<p>
+<var>書籍へのパス</var> には、CD-ROM 書籍のトップディレクトリ、つまり 
+<code>catalog</code> または <code>catalogs</code> ファイルが存在する
+ディレクトリを指定します。
+遠隔アクセス用の識別子 (<samp>ebnet://...</samp>) を指定することも可能です。
+<var>書籍へのパス</var> が省略された場合は、カレントディレクトリが指定された
+ものと見なされます。
+</p>
+
+<p>
+<var>副本</var> には、処理の対象とする副本のディレクトリ名を指定します。
+<code>ebinfo</code> コマンドを用いると、CD-ROM 書籍にどのような副本が
+含まれているのかを知ることができます。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo /cdrom
+ディスクの形式: EB/EBG/EBXA/EBXA-C/S-EBXA
+文字コード: JIS X 0208
+副本の数: 2
+
+副本 1:
+  題名: 新英和辞典（第四版）
+  ディレクトリ: english
+  検索方式: 前方一致 後方一致 条件 メニュー
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 0xa121 -- 0xa24e
+  全角フォントの文字: 0xa321 -- 0xa27e
+
+副本 2:
+  題名: CD-ROM 仏和辞典（第三版）
+  ディレクトリ: french
+  検索方式: 前方一致 後方一致 条件 メニュー
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 
+  全角フォントの文字: 0xa321 -- 0xa27e
+
+</pre>
+</blockquote>
+
+<p>
+(<code>ebinfo</code> コマンドに関しての詳細は、
+<a href="ebinfo.html">ebinfo コマンドのマニュアル</a> を参照のこと。)
+この例では、2 つの副本が書籍には含まれており、その名前は <code>english</code>
+と <code>french</code> だということが分かります。
+</p>
+
+<p>
+副本 <code>english</code> の区切りコードを解析するには、以下を実行します。
+</p>
+
+<blockquote>
+<pre>
+% ebstopcode /cdrom english
+</pre>
+</blockquote>
+
+<p>
+<code>ebstopcode</code> は、副本の本文と区切りコードの候補を次のように
+出力します。
+</p>
+
+<blockquote>
+<pre>
+=== stop-code?: 0x1f09 0x0001 ===
+
+=== stop-code?: 0x1f41 0x0100 ===
+A
+
+=== stop-code?: 0x1f09 0x0001 ===
+[名] 1: A 抗原を有する赤血球を持つ血液型
+
+=== stop-code?: 0x1f09 0x0001 ===
+2: メートル基準の長さの単位。10億分の 1 メートル。
+
+=== stop-code?: 0x1f09 0x0001 ===
+3: アンペア。電流の基本単位で、SI単位系の一つ。
+
+=== stop-code?: 0x1f09 0x0001 ===
+
+=== stop-code?: 0x1f41 0x0100 ===
+(以下略)
+</pre>
+</blockquote>
+
+<p>
+<samp>stop-code?:</samp> と書かれた行はそれぞれ、区切りコードの候補を
+示しています。
+これを区切りコードとして指定すると、EB ライブラリはその地点で本文の
+出力を停止します。
+</p>
+
+<p>
+この <code>english</code> という副本の適切な区切りコードは、"0x1f41 0x0100"
+になります。
+<samp>--no-candidate</samp> と <samp>--code</samp> オプションを使用して、この
+区切りコードを試してみます。
+</p>
+
+<blockquote>
+<pre>
+% ebstopcode --no-candidate --code "0x1f41 0x0100" /cdrom english
+A
+[名] 1: A 抗原を有する赤血球を持つ血液型。
+2: メートル基準の長さの単位。10億分の 1 メートル。
+3: アンペア。電流の基本単位で、SI単位系の一つ。
+</pre>
+</blockquote>
+
+<!-- ================================================================ -->
+<h2><a name="summary-of-options"><code>ebstopcode</code> のオプション一覧</a></h2>
+
+<p>
+<code>ebstopcode</code> コマンドは、伝統的な一文字オプション名と覚えやすい長い
+オプション名の両方を扱うことができます。
+長いオプション名を表すには、<samp>-</samp> ではなく <samp>--</samp> を
+用います。
+オプション名が一意に決まる範囲内で、名前の後方部分を省略することが
+できます。
+</p>
+
+<dl>
+<dt><code>-c <var>コード</var></code></dt>
+<dt><code>--code <var>コード</var></code></dt>
+<dd>
+<var>コード</var> を区切りコードに指定します (例: "0x1f09 0x0001")。
+<code>ebstopcode</code> は、<var>コード</var> を見つけるまで本文を出力します。
+
+<dt><code>-h</code></dt>
+<dt><code>--help</code></dt>
+<dd>
+ヘルプメッセージを標準出力に出力して、終了します。
+
+<dt><code>-l <var>長さ</var></code></dt>
+<dt><code>--length <var>長さ</var></code></dt>
+<dd>
+本文データを最長で <var>長さ</var> バイトまで出力します。
+<var>長さ</var> を 0 にすると、<code>ebstopcode</code> は本文全体を出力します。
+このオプションを指定しなかったときは、2048 になります。
+
+<dt><code>-n</code></dt>
+<dt><code>--no-candidates</code></dt>
+<dd>
+区切りコードの候補を出力しないようにします。
+
+<dt><code>-p <var>ページ:オフセット</var></code></dt>
+<dt><code>--text-position <var>ページ:オフセット</var></code></dt>
+<dd>
+本文データの出力をこの位置から開始します。
+<var>ページ</var> には 0 より大きい 16進整数を、<var>オフセット</var> には、
+0〜0x7FF の間の 16進整数をそれぞれ指定します。
+このオプションを指定しなかったときは、本文データの先頭位置から出力します。
+
+<dt><code>-v</code></dt>
+<dt><code>--version</code></dt>
+<dd>
+バージョン番号を標準出力に出力して、終了します。
+</dl>
+
+<p>
+<samp>--code</samp> (<samp>-c</samp>) と <samp>--length</samp>
+(<samp>-l</samp>) オプションは、互いにもう一方のオプションを打ち消します。
+</p>
+
+</body>
+</html>

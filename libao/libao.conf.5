@@ -1,0 +1,82 @@
+.\" Process this file with
+.\" groff -man -Tascii libao.conf.5
+.\"
+.TH libao.conf 5 "September 1, 2003" "" "libao configuration"
+
+.SH NAME
+libao.conf \- configuration for libao.
+
+.SH SYNOPSIS
+
+.B /etc/libao.conf
+
+.B ~/.libao
+
+.SH DESCRIPTION
+.B libao.conf
+and
+.B .libao
+are configuration files for libao, the audio output library.  They
+specify various options to libao, as described below.
+.B libao.conf
+sets system-wide options, whereas
+.B ~/.libao
+sets user-specific options.  When an option is set in 
+both places, the option in
+.B ~/.libao
+takes precedence.
+
+.SH FILE FORMAT
+The file consists of comments and key-value pairs.  Comments are on separate lines that start with a
+.B #
+symbol.  The key-value pairs are of the form:
+.RS
+.BR
+.B key=value
+.RE
+where
+.B key
+contains no whitespace and no equal signs.
+.B value
+will be all of the text after the equal sign until (but not including)
+the ending newline.  Beware of extra spaces at the end of the line!
+They will probably be interpreted as part of the option value.
+
+The following is a list of valid global option keys. Any driver specific option
+may be used as well as those keys.
+.RS
+.IP default_driver
+The short name of the driver libao should use by default.  Valid values
+include (not all are available on every platform): pulse, oss, esd, arts, alsa,
+nas, irix, sun, roar and sndio.  Note that "sun" is used on many BSD
+systems as well as Solaris.
+.IP "debug (Value optional/ignored)"
+Sets all the drivers as well as AO itself into debugging output mode.
+Unlike passing the debug option to a driver, debug will also print
+debugging information from driver loading and testing.
+.IP "quiet (Value optional/ignored)"
+Sets all the drivers as well as AO itself into silent mode.
+Errors will return only error codes; neither ao nor the drivers will
+print any output whatsoever to stderr.
+.IP "verbose (Value optional/ignored)"
+Sets all the drivers as well as AO itself into verbose mode.
+.RE
+
+.SH EXAMPLE
+
+Here is an example
+.B libao.conf
+that forces the OSS driver to be used by default:
+
+    # This is a comment.
+    default_driver=oss
+
+.SH BUGS
+
+.B libao.conf
+is missing a number of potentially useful options.
+
+.SH AUTHORS
+
+.br
+Stan Seibert <volsung@xiph.org>

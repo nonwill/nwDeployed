@@ -1,0 +1,1314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-jp">
+<link rel="stylesheet" type="text/css" href="ebutils.css">
+<link rev="made" href="mailto:m-kasahr@sra.co.jp">
+<title>ebzip コマンド</title>
+</head>
+
+<body>
+<h1><a name="toc">ebzip コマンド</a></h1>
+<p>
+この文書は EB ライブラリバージョン
+<!-- #include "version.html" -->
+に対応しています。
+</p>
+
+<p>
+目次:
+</p>
+
+<!-- #include "ebzip-toc.html" -->
+
+<p>
+Copyright (c) 1998-2006  Motoyuki Kasahara
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="introduction">はじめに</a></h2>
+
+<p>
+<code>ebzip</code> は EB ライブラリのアプリケーション用に、CD-ROM 書籍の
+圧縮・伸長を行います。
+EB ライブラリのアプリケーションは、機能的には何の制限もなく圧縮された
+CD-ROM 書籍にアクセスできます (ただし、処理速度はもとの書籍に比べて遅
+くなるかも知れません)。
+圧縮データ形式は、CPU の種類や、OS、ファイルシステムには依存していませ
+んので、<code>ebzip</code> で圧縮したファイルは共用が可能です。
+<code>ebzip</code> は EB ライブラリと一緒に配布されています。
+</p>
+
+<p>
+あなたは、自分の所有する CD-ROM 書籍の使用許諾を守らなくてはいけません。
+<code>ebzip</code> はフリーソフトウェアですが、あなたの書籍が自由に使える
+ものであるとは限りません。
+CD-ROM 書籍の出版社がハードディスク (および他の補助記憶装置) に書籍を
+コピーすることを許可していないのであれば、その書籍の圧縮は諦めて下さい。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="action-and-command-name">動作とコマンド名</a></h2>
+
+<p>
+<code>ebzip</code> は三つの <dfn>動作</dfn> (<dfn>action</dfn>) モードを
+備えています。
+圧縮 (compression)、伸長 (uncompression) と情報出力 (information) です。
+</p>
+
+<ul>
+<li>圧縮 (compression)<br>
+一冊の CD-ROM 書籍を圧縮します。
+
+<li>伸長 (uncompression)<br>
+<code>ebzip</code> で圧縮された、一冊の CD-ROM 書籍を伸長します。
+
+<li>情報出力 (information)<br>
+<code>ebzip</code> で圧縮された、一冊の CD-ROM 書籍の圧縮状態に関する
+情報を出力します。
+
+</ul>
+
+<p>
+<code>ebzip</code> は起動時に、起動時に使用されたコマンド名と
+コマンドラインオプションから動作モードを決定します。
+<code>ebzip</code> の一回の実行の間で、動作モードが変わることは
+ありません。
+</p>
+
+<p>
+<code>ebzip</code> は <code>ebzip</code>、<code>ebunzip</code>, 
+<code>ebzipinfo</code> という異なる 3 つのコマンド名でインストール
+されます。
+(一部の環境では、<code>ebzipinfo</code> は <code>ebzipinf</code> 
+という名前になっています。)
+
+<p>
+<code>ebunzip</code> という名前で起動された場合は、伸長を行います。
+<code>ebzipinfo</code> という名前で起動された場合、情報出力を行います。
+それ以外の場合は、圧縮を行います。
+</p>
+
+<p>
+コマンドラインオプションでも、動作モードを決定することができます。
+<samp>--compress</samp> (<samp>-z</samp>) で圧縮、<samp>--uncompress</samp>
+(<samp>-u</samp>) で伸長、<samp>--information</samp> (<samp>-i</samp>)
+で情報出力を行います。
+オプションは、起動時のコマンド名より優先します。
+次の例では、いずれも動作モードが「伸長」になります。
+</p>
+
+<blockquote>
+<pre>
+ebunzip
+ebzip --uncompress
+ebzipinfo --uncompress
+</pre>
+</blockquote>
+
+<p>
+遠隔アクセスには対応していませんので、遠隔アクセス識別子は使用できません。
+</p>
+
+<blockquote>
+<pre>
+% ebzip ebnet://localhost/cdrom
+ebzip: ebnet には対応していません。
+</pre>
+</blockquote>
+
+<!-- ================================================================ -->
+<h2><a name="invoke-ebzip"><code>ebzip</code> の実行</a></h2>
+
+<p>
+<code>ebinfo</code>、<code>ebunzip</code>、<code>ebzipinfo</code> の
+一般的な起動方法は次の通りです。
+</p>
+
+<blockquote>
+<pre>
+% ebzip <var>書籍へのパス</var>
+% ebunzip <var>書籍へのパス</var>
+% ebzipinfo <var>書籍へのパス</var>
+</pre>
+</blockquote>
+
+<p>
+<var>書籍へのパス</var> には、CD-ROM 書籍のトップディレクトリ、つまり 
+<code>catalog</code> または <code>catalogs</code> ファイルが存在する
+ディレクトリを指定します。
+複数のパスを書くことはできませんが、以下のように、パスの指定を省くことは
+できます。
+</p>
+
+<blockquote>
+<pre>
+% ebzip
+% ebunzip
+% ebzipinfo
+</pre>
+</blockquote>
+
+<p>
+この場合は、カレントディレクトリ (<code>.</code>) が指定されたものと
+判断されます。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="compression">圧縮</a></h2>
+
+<p>
+<code>ebzip</code> (<code>ebunzip --compress</code>、
+<code>ebzipinfo --compress</code> と等価) は CD-ROM 書籍の圧縮を行います。
+</p>
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="compression-example-1">圧縮の実行例 (1)</a></h3>
+
+<p>
+この節では、ハードディスクにすでにコピーしてある CD-ROM 書籍を圧縮するには
+どうしたらいいかを説明します。
+CD-ROM 書籍がすでに <code>/dict</code> にコピーされているものの、まだ圧縮
+されていないと仮定します。
+この書籍は <code>/dict</code> の下に、次のようなファイルを持っています。
+</p>
+
+<blockquote>
+<pre>
+/dict/catalog
+/dict/language
+/dict/kanji/start
+/dict/english/start
+</pre>
+</blockquote>
+
+<p>
+この書籍を圧縮するには、次のようにします。
+</p>
+
+<blockquote>
+<pre>
+% cd /dict
+% ebzip
+</pre>
+</blockquote>
+
+<p>
+これは次のようにしても同じです。
+</p>
+
+<blockquote>
+<pre>
+% ebzip --output-directory /dict /dict
+</pre>
+</blockquote>
+
+<p>
+圧縮には、しばらくかかることがあります。
+圧縮の間、<code>ebzip</code> は、次のように状況を知らせるメッセージを出力
+します。
+</p>
+
+<blockquote>
+<pre>
+==&gt; /dict/kanji/start を圧縮 &lt;==
+./dict/kanji/start.ebz に出力
+ 1.0% 処理済み (2097152 / 220069888 バイト)
+ 1.9% 処理済み (4194304 / 220069888 バイト)
+ 2.9% 処理済み (6291456 / 220069888 バイト)
+        : (略)
+完了 (220069888 / 220069888 バイト)
+220069888 -&gt; 78163751 バイト (35.5%)
+</pre>
+</blockquote>
+
+<p>
+圧縮が完了すると、<code>/dict</code> の下のディレクトリ構成が少し変化して
+いるのが分かります。
+</p>
+
+<blockquote>
+<pre>
+/dict/catalog
+/dict/language.ebz
+/dict/kanji/start.ebz
+/dict/english/start.ebz
+</pre>
+</blockquote>
+
+<p>
+拡張子 <samp>.ebz</samp> がいくつかのファイル
+(<code>/dict/language.ebz</code>、<code>/dict/kanji/start.ebz</code>、
+<code>/dict/english/start.ebz</code>) に付いています。
+これらが圧縮されたファイルです。
+他のファイルは変化していません。
+</p>
+
+<p>
+<code>ebzip</code> が圧縮するファイルは、
+<code>START</code>、<code>HONMON</code>、<code>HONMON2</code>、
+<code>HONMONS</code>、<code>LANGUAGE</code> ファイルと <code>GAIJI</code>
+ディレクトリにある外字ファイルです。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="compression-example-2">圧縮の実行例 (2)</a></h3>
+
+<p>
+この節ではもう一つ別の例として、CD-ROM ディスクのファイルを圧縮し、それ
+をハードディスクに置く方法について説明します。
+元の CD-ROM 書籍が <code>/cdrom</code> にマウントされ、書籍は
+<code>/cdrom</code> の下に次のようなファイルを持っていると仮定します。
+</p>
+
+<blockquote>
+<pre>
+/cdrom/catalog
+/cdrom/language
+/cdrom/german/start
+/cdrom/french/start
+/cdrom/italian/start
+</pre>
+</blockquote>
+
+<p>
+この書籍を圧縮し、<code>/dict</code> の下に置くためには、次のコマンドを
+実行します。
+</p>
+
+<blockquote>
+<pre>
+% cd /dict
+% ebzip --keep /cdrom
+</pre>
+</blockquote>
+
+<p>
+これは次のようにしても同じです。
+</p>
+
+<blockquote>
+<pre>
+% ebzip --keep --output-directory /dict /cdrom
+</pre>
+</blockquote>
+
+<p>
+出力側のディレクトリ <code>/dict</code> は空でも構いませんが、圧縮前に
+あらかじめ作っておかなければならないので、注意して下さい。
+この例では、<samp>--keep</samp> オプションを使っています。
+特に指定しなければ、<code>ebzip</code> は、圧縮後に元のファイルを削除
+しますが、<samp>--keep</samp> オプションはこの振る舞いを抑制します。
+</p>
+
+<p>
+<code>/dict</code> と <code>/cdrom</code> のディレクトリ構成はほとんど
+同じですが、<code>/dict</code> の下の圧縮されたファイルには拡張子
+<samp>.ebz</samp> が付いています。
+</p>
+
+<blockquote>
+<pre>
+/dict/catalog
+/dict/language.ebz
+/dict/german/start.ebz
+/dict/french/start.ebz
+/dict/italian/start.ebz
+</pre>
+</blockquote>
+
+<p>
+中間のディレクトリ <code>/dict/german</code>、<code>/dict/french</code>、
+<code>/dict/italian</code> は、もし無ければ <code>ebzip</code> によって
+作成されます。
+<code>catalog</code> と <code>catalogs</code> は、出力側のディレクトリ
+にコピーされます。
+EB ライブラリが対応していないファイル、ディレクトリについては、
+<code>ebzip</code> は無視します (圧縮もコピーもしません)。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="compression-level">圧縮レベル</a></h3>
+
+<p>
+<code>ebzip</code> は、0 〜 5 という 6 つの圧縮レベルを持っています。
+圧縮レベル 0 は、圧縮・伸長が最も速いですが、圧縮率は最悪です。
+圧縮レベル 5 は、圧縮率が最良ですが、圧縮・伸長は最も遅くなります。
+圧縮レベルは、<samp>--level</samp> (<samp>-l</samp>) オプションで設定します。
+</p>
+
+<blockquote>
+<pre>
+% ebzip --level 2 --output-directory /dict /dict
+</pre>
+</blockquote>
+
+<p>
+無指定時のレベルは 0 (最速だが圧縮率は最悪) です。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="test">テスト</a></h3>
+
+<p>
+<code>ebzip</code> を <code>--test</code> (<code>-t</code>) オプション付き
+で実行すると、<code>ebzip</code> は圧縮したデータを実際のファイルには
+書き込まなくなります。
+圧縮する前に圧縮後のファイルの大きさを知りたいときに、便利です。
+</p>
+
+<blockquote>
+<pre>
+% ebzip --test /dict /dict
+</pre>
+</blockquote>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="partial-compression">一部だけの圧縮</a></h3>
+
+<p>
+なにも設定しないと、<code>ebzip</code> は書籍一冊の全体を圧縮しますが、
+<samp>--subbook</samp> (<samp>-S</samp>) や <samp>--skip-content</samp>
+(<samp>-s</samp>) オプションを使うと一部だけを圧縮できます。
+</p>
+
+<p>
+<samp>--subbook</samp> オプションは引数を一つ取り、そこにカンマ
+(<samp>,</samp>) で区切って、圧縮したい副本のディレクトリ名を並べて
+書きます。
+<code>ebinfo</code> コマンドを用いると、あなたの所有している書籍に
+どのような副本が含まれているのかを知ることができます。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo /mnt/cdrom
+ディスクの形式: EB/EBG/EBXA/EBXA-C/S-EBXA
+文字コード: JIS X 0208
+副本の数: 3
+
+副本 1:
+  題名: 新英和辞典（第四版）
+  ディレクトリ: english
+  検索方式: 前方一致 後方一致 条件 メニュー
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 0xa121 -- 0xa24e
+  全角フォントの文字: 0xa321 -- 0xa27e
+
+副本 2:
+  題名: CD-ROM 仏和辞典（第三版）
+  ディレクトリ: french
+  検索方式: 前方一致 後方一致 条件 メニュー
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 
+  全角フォントの文字: 0xa321 -- 0xa27e
+
+副本 3:
+  題名: ポケット独和辞典（第三版）
+  ディレクトリ: german
+  検索方式: メニュー
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 
+  全角フォントの文字: 0xa321 -- 0xa27e
+</pre>
+</blockquote>
+
+<p>
+(<code>ebinfo</code> コマンドに関しての詳細は、
+<a href="ebinfo.html">ebinfo コマンドのマニュアル</a> を参照のこと。)
+この例では、3 つの副本が書籍には含まれており、それらのディレクトリ名は
+<code>english</code>, <code>french</code>, <code>german</code> 
+だということが分かります。
+</p>
+
+<p>
+<code>english</code> と <code>german</code> だけを圧縮するには、次の
+ようにします。
+</p>
+
+<blockquote>
+<pre>
+% ebzip --subbook english,french /dict
+</pre>
+</blockquote>
+
+<p>
+ディレクトリ名の大文字、小文字の違いは無視されます。
+<samp>--subbook</samp> の引数は、次のように分けて書くこともできます。
+</p>
+
+<blockquote>
+<pre>
+% ebzip --subbook english --subbook french /dict
+</pre>
+</blockquote>
+
+<p>
+残りの副本 (この例では <code>german</code>) のファイルは圧縮されることも
+コピーされることもありませんので、この時点ではまだこの書籍に対する圧縮の
+作業は完了していません。
+この書籍を使用するためには、さらなる操作を行って残りの副本を圧縮するか、
+<code>ebrefile</code> コマンドを使って残りの副本を <code>catalog(s)</code>
+ファイルの副本登録リストから削除しなくてはなりません
+(<code>ebrefile</code> コマンドについて詳しくは、
+<a href="ebrefile.html">ebrefile コマンド のマニュアル</a>
+の「<code>ebzip</code> との連携」項を参照のこと)。
+</p>
+
+<p>
+副本の一部ずつを複数回に分けて圧縮する場合、すべての副本で同じ圧縮レベル
+を指定する必要はありません。
+(たとえば、<code>english</code> と <code>french</code> はレベル 0 で圧縮し、
+<code>german</code> はレベル 2 で圧縮する)。
+</p>
+
+<p>
+<samp>--skip-content</samp> (<samp>-s</samp>) は <samp>--subbook</samp>
+に似ていますが、<samp>--skip-content</samp> では無視するファイルの
+データ型を指定します。
+</p>
+
+<blockquote>
+<pre>
+% ebzip --skip-content sound,movie --subbook french /dict
+</pre>
+</blockquote>
+
+<p>
+この例では、<code>ebzip</code> は音声と動画ファイルを飛ばします。
+現在のところ、<code>ebzip</code> によって認識されるデータ型は、
+次の通りです。
+</p>
+
+<ul>
+<li><code>font</code><br>
+外字のフォント
+<li><code>graphic</code><br>
+画像データ
+<li><code>sound</code><br>
+音声データ
+<li><code>movie</code><br>
+動画データ
+</ul>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="overwrite-old-files">古いファイルの上書き</a></h3>
+
+<p>
+書き込もうとしたファイルがすでに存在するとき、<code>ebzip</code> は
+上書きして良いかどうかの確認を求めてきます。
+</p>
+
+<blockquote>
+<pre>
+==&gt; /dict/science/data/honmon を圧縮 &lt;==
+/dict/science/data/honmon.ebz に出力
+
+ファイルがすでに存在します: /dict/science/data/honmon.ebz
+上書きしますか (はい:y, いいえ:n)?
+</pre>
+</blockquote>
+
+<p>
+<samp>y</samp> か <samp>n</samp> で答えて下さい。
+<samp>n</samp> と答えると、<code>ebzip</code> はそのファイルを飛ばして、
+次に進みます。
+</p>
+
+<p>
+<samp>--force-overwrite</samp> オプションを指定すると、<code>ebzip</code>
+はすでに存在しているファイルを、確認なしに上書きします。
+同様に、<samp>--no-overwrite</samp> オプションを指定すると、
+<code>ebzip</code> は確認なしにそのファイルを飛ばして次に進みます。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="compress-compressed-book">圧縮された書籍の圧縮</a></h3>
+
+<p>
+S-EBXA および EPWING 規格においても圧縮形式を定義しており、CD-ROM 書籍
+にはこれらの圧縮形式を実際に採用しているものがあります。
+これらの圧縮形式は、ebzip の圧縮形式とは異なるものです。
+</p>
+
+<p>
+<code>ebzip</code> は S-EBXA や EPWING 圧縮形式で圧縮された CD-ROM 書籍も
+伸長することができますが、圧縮することはできません。
+</p>
+
+<p>
+<code>ebzip</code> に対して、既に圧縮されている CD-ROM 書籍を圧縮するように
+命じると、<code>ebzip</code> はいったん書籍を伸長してから、ebzip の圧縮形式で
+圧縮し直します。
+</p>
+
+<p>
+一般に ebzip の圧縮形式の方が S-EBXA や EPWING の圧縮形式よりも圧縮率が
+良好です。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="uncompression">伸長</a></h2>
+
+<p>
+<code>ebunzip</code> (<code>ebzip --uncompress</code>、
+<code>ebzipinfo --uncompress</code> と同じ) は、<code>ebzip</code> で
+圧縮した CD-ROM 書籍を伸長します。
+</p>
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="uncompression-example">伸長の実行例</a></h3>
+
+<p>
+伸長の処理手順は、圧縮とかなり似ています。
+<code>/dict</code> の下に圧縮された書籍が置かれているものと仮定します。
+この書籍には、<code>/dict</code> の下に次のようなファイルを持っています。
+</p>
+
+<blockquote>
+<pre>
+/dict/catalog
+/dict/language.ebz
+/dict/kanji/start.ebz
+/dict/english/start.ebz
+</pre>
+</blockquote>
+
+<p>
+この書籍を伸長するには、次のコマンドを実行します。
+</p>
+
+<blockquote>
+<pre>
+% cd /dict
+% ebunzip
+</pre>
+</blockquote>
+
+<p>
+これは次のようにしても同じです。
+</p>
+
+<blockquote>
+<pre>
+% ebunzip --output-directory /dict /dict
+</pre>
+</blockquote>
+
+<p>
+伸長には、しばらくかかることがあります。
+伸長の間、<code>ebunzip</code> は、次のように状況を知らせるメッセージを出力
+します。
+</p>
+
+<blockquote>
+<pre>
+==&gt; /dict/kanji/start.ebz を伸長 &lt;==
+./kanji/start.ebz に出力
+ 5.1% 処理済み (4194304 / 82460672 バイト)
+10.2% 処理済み (8388608 / 82460672 バイト)
+15.3% 処理済み (12582912 / 82460672 バイト)
+        : (略)
+完了 (82460672 / 82460672 バイト)
+25681439 -&gt; 82460672 バイト
+</pre>
+</blockquote>
+
+<p>
+伸長の間、<code>ebunzip</code> は、すでに存在するファイルを上書きしても良いか
+どうか確認を求めてきます。
+</p>
+
+<blockquote>
+<pre>
+==&gt; /dict/kanji/start.ebz を伸長 &lt;==
+/dict/kanji/start に出力
+
+ファイルがすでに存在します: /dict/kanji/start
+上書きしますか (はい:y, いいえ:n)?
+</pre>
+</blockquote>
+
+<p>
+伸長が完了すると、<code>/dict</code> の下のディレクトリ構成は少し変化して
+います。
+</p>
+
+<blockquote>
+<pre>
+/dict/catalog
+/dict/language
+/dict/kanji/start
+/dict/english/start
+</pre>
+</blockquote>
+
+<p>
+伸長されたファイルはファイル名が変化し、
+拡張子 <samp>.ebz</samp> が取り除かれています。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="options-for-uncompression">伸長のオプション</a></h3>
+
+<p>
+多くのオプションは、圧縮時と伸長時とで同じ意味を持っています。
+</p>
+
+<p>
+<samp>--keep</samp> オプションを指定すると、<code>ebunzip</code> は、
+伸長した後に圧縮ファイルを削除しなくなります。
+</p>
+
+<p>
+<samp>--test</samp> オプションを指定すると、<code>ebunzip</code> は伸長
+したデータを実際のファイルには書き込みません。
+このオプションは、ファイルが正しく圧縮されているのかを確認するときに便利
+です
+(<samp>--test</samp> オプションについての詳細は、
+<a href="#test">「テスト」</a>を参照のこと)。
+</p>
+
+<p>
+<samp>--subbook</samp> や <samp>--skip-content</samp> オプションを指定
+すると、条件に合致したファイルだけしか伸長しません
+(これらのオプションについての詳細は、
+<a href="#partial-compression">「一部だけの圧縮」</a> を参照のこと)。
+</p>
+
+<p>
+<samp>--force-overwrite</samp> や <samp>--no-overwrite</samp> オプション
+を指定すると、<code>ebunzip</code> は上書きしても良いかどうかの確認なしに、
+ファイルを上書きしたり飛ばして次に進んだりします
+(<samp>--force-overwrite</samp> と <samp>--no-overwrite</samp> オプション
+についての詳細は、
+<a href="#overwrite-old-files">「古いファイルの上書き」</a> を参照のこと)。
+</p>
+
+<p>
+<code>ebunzip</code> は、<samp>--level</samp> オプションを無視します。
+伸長時に <samp>--level</samp> オプションを指定する必要はありません。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="uncompress-compressed-book">圧縮された書籍の伸長</a></h3>
+
+<p>
+S-EBXA および EPWING 規格でも圧縮形式を定義しており、CD-ROM 書籍には
+これらの圧縮形式を実際に採用しているものがあります。
+しかし、S-EBXA や EPWINGの圧縮形式は、ebzip の圧縮形式とは異なります。
+</p>
+
+<p>
+<code>ebzip</code> は S-EBXA や EPWING 圧縮形式で圧縮された CD-ROM 書籍も
+伸長することができますが、圧縮することはできません。
+</p>
+
+<p>
+S-EBXA 形式で圧縮された <code>START</code> ファイルや、EPWING 形式で圧縮
+された <code>HONMON2</code>, <code>HONMONS</code> ファイルを伸長すると、
+伸長後のファイルには拡張子 <samp>.org</samp> が付加されます
+(例: <code>honmon2</code> → <code>honmon2.org</code>)。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="information">情報出力</a></h2>
+
+<p>
+<code>ebzipinfo</code> (<code>ebzip --information</code>
+<code>ebunzip --information</code> と同じ) は CD-ROM 書籍の圧縮状態を出力
+します。
+</p>
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="information-example">情報出力の実行例</a></h3>
+
+<p>
+<code>/dict</code> にある、圧縮された CD-ROM 書籍の情報を出力するには
+次のコマンドを実行します。
+<code>/dict</code> に置かれている、圧縮された CD-ROM 書籍の情報を出力
+するには、次のようにします。
+</p>
+
+<blockquote>
+<pre>
+% ebzipifo /dict
+</pre>
+</blockquote>
+
+<p>
+<code>ebzipinfo</code> は標準出力に次のような情報を出力します。
+</p>
+
+<blockquote>
+<pre>
+==&gt; /dict/spanish/spanish/start.ebz &lt;==
+154290176 -&gt; 54881862 バイト (35.6%, ebzip 圧縮レベル 0)
+
+==&gt; /dict/spanish/language.ebz &lt;==
+compressed: 12288 -&gt; 4121 バイト (33.5%, ebzip 圧縮レベル 0)
+
+==&gt; /dict/spanish/catalog &lt;==
+2048 バイト (非圧縮)
+</pre>
+</blockquote>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="options-for-information">情報出力のオプション</a></h3>
+
+<p>
+<samp>--subbook</samp> や <samp>--skip-content</samp> オプションを
+指定すると、条件に合致したファイルの情報だけを出力します
+(これらのオプションについての詳細は、
+<a href="#partial-compression">「一部だけの圧縮」</a>を参照のこと)。
+</p>
+
+<p>
+<code>ebzipinfo</code> は <samp>--force-overwrite</samp>、
+<samp>--keep</samp>、<samp>--level</samp>、<samp>--no-overwrite</samp>、
+<samp>--output-directory</samp>、<samp>--quiet</samp>、<samp>--silence</samp>、
+<samp>--test</samp> オプションを無視します。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="delete-a-book">書籍の削除</a></h2>
+
+<p>
+<code>ebzip</code> は、ハードディスク上に圧縮した辞書の削除機能は持って
+いません。
+代わりに <code>rm</code> コマンドを使って下さい。
+</p>
+
+<blockquote>
+<pre>
+% rm -r /dict
+</pre>
+</blockquote>
+
+<p>
+この作業は、注意して行って下さい。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="summary-of-options"><code>ebzip</code> のオプション一覧</a></h2>
+
+<p>
+<code>ebzip</code> コマンドは、伝統的な一文字オプション名と覚えやすい長い
+オプション名の両方を扱うことができます。
+長いオプション名を表すには、<samp>-</samp> ではなく <samp>--</samp> を
+用います。
+オプション名が一意に決まる範囲内で、名前の後方部分を省略することができます。
+</p>
+
+<dl>
+<dt><code>-f</code></dt>
+<dt><code>--force-overwrite</code></dt>
+<dd>
+確認を求めずに、既に存在しているファイルを上書きします。
+このオプションは、情報出力の動作のときや、<samp>--test</samp>
+(<samp>-t</samp>) オプションを指定したときは無視されます
+(詳しくは、<a href="#overwrite-old-files">「古いファイルの上書き」</a> を
+参照のこと)。
+
+<dt><code>-h</code></dt>
+<dt><code>--help</code></dt>
+<dd>
+ヘルプメッセージを標準出力に出力して、終了します。
+
+<dt><code>-i</code></dt>
+<dt><code>--information</code></dt>
+<dd>
+指定された CD-ROM 書籍の圧縮状態を出力します
+(詳しくは、 <a href="#information">「情報出力」</a> を参照のこと)。
+
+<dt><code>-k</code></dt>
+<dt><code>--keep</code></dt>
+<dd>
+出力側のファイルを書き込み終わっても、対応する入力側のファイルは
+削除しません。
+このオプションは、情報出力の動作のときや、<samp>--test</samp>
+(<samp>-t</samp>) オプションを指定したときは無視されます
+(詳しくは、<a href="#compression-example-2">「圧縮の実行例 (2)」</a> 
+を参照のこと)。
+
+<dt><code>-l <var>整数</var></code></dt>
+<dt><code>--level <var>整数</var></code></dt>
+<dd>
+圧縮レベルを指定します。
+<var>整数</var> は、<samp>0</samp>、<samp>1</samp>、<samp>2</samp>、
+<samp>3</samp>、<samp>4</samp>、<samp>5</samp> のいずれかでなくては
+いけません。
+レベル 0 は、最も速いものの圧縮率は最悪です。
+レベル 3 は、最も遅いものの圧縮率は最良です。
+指定しなかったときのレベルは 0 です。
+このオプションは、圧縮以外の動作のときは無視されます。
+(詳しくは、<a href="#compression-level">「圧縮レベル」</a> を参照のこと。)
+
+<dt><code>-n</code></dt>
+<dt><code>--no-overwrite</code></dt>
+<dd>
+既に存在するファイルがあった場合、上書きの確認を求めずに、そのファイル
+は飛ばして次のファイルに進みます。
+このオプションは、情報出力の動作のときや、<samp>--test</samp>
+(<samp>-t</samp>) オプションを指定したときは無視されます。
+(詳しくは、<a href="#overwrite-old-files">「古いファイルの上書き」</a>
+を参照のこと。)
+
+<dt><code>-o <var>ディレクトリ</var></code></dt>
+<dt><code>--output-directory <var>ディレクトリ</var></code></dt>
+<dd>
+出力側のファイルを置くディレクトリを指定します。
+指定しなかったときは、カレントディレクトリ (<samp>.</samp>) になります。
+このオプションは、情報出力の動作のときや、<samp>--test</samp>
+(<samp>-t</samp>) オプションを指定したときは無視されます
+
+<dt><code>-q</code></dt>
+<dt><code>--quiet</code></dt>
+<dt><code>--silence</code></dt>
+<dd>
+情報、警告メッセージを出力しません。
+ただし、圧縮・伸長時に出力側のファイルが既に存在していると、
+<code>ebzip</code> はその出力側のファイルを上書きして良いかどうか
+訊いてきます。
+この質問を抑制するには、<samp>--force-overwrite</samp>(<samp>-f</samp>)
+または <samp>--no-overwrite</samp>(<samp>-n</samp>) を指定して下さい。
+このオプションは、情報出力の動作のときは、無視されます
+
+<dt><code>-s <var>型</var></code></dt>
+<dt><code>--skip-content <var>型</var></code></dt>
+<dd>
+無視するファイルのデータ型を指定します。
+<var>型</var> は、データ型の名前をカンマ (<samp>,</samp>) で区切って
+並べたものでなくてはいけません。
+<code>ebzip</code> が現在のところ認識するデータ型の名前は、
+<code>font</code> (外字のフォント)、<code>graphic</code> (画像データ)、
+<code>sound</code> (音声データ)、<code>movie</code> (動画データ) です。
+指定しなかったときは、どのファイルも無視されません。
+
+<dt><code>-S <var>副本</var></code></dt>
+<dt><code>--subbook <var>副本</var></code></dt>
+<dd>
+圧縮・伸長・情報出力の対象とする副本を指定します。
+<var>副本</var> は、副本のディレクトリ名をカンマ (<samp>,</samp>) で
+区切って並べたものでなくてはいけません。
+指定しなかったときは、すべての副本が対象になります。
+(詳しくは <a href="#partial-compression">「一部だけの圧縮」</a> を参照
+のこと。)
+
+<dt><code>-t</code></dt>
+<dt><code>--test</code></dt>
+<dd>
+圧縮・伸長したデータを、実際のファイルには書き込みません。
+このオプションは、情報出力の動作のときは無視されます。
+(詳しくは <a href="#test">「テスト」</a> を参照のこと。)
+
+<dt><code>-u</code></dt>
+<dt><code>--uncompress</code></dt>
+<dd>
+CD-ROM 書籍を伸長します。
+(詳しくは <a href="#uncompression">「伸長」</a> を参照のこと。)
+
+<dt><code>-v</code></dt>
+<dt><code>--version</code></dt>
+<dd>
+バージョン番号を標準出力に出力して、終了します。
+
+<dt><code>-z</code></dt>
+<dt><code>--compress</code></dt>
+<dd>
+CD-ROM 書籍を圧縮します。
+(詳しくは <a href="#compression">「圧縮」</a> を参照のこと。)
+
+</dl>
+
+<!-- ================================================================ -->
+<h2><a name="compression-samples">圧縮結果の例</a></h2>
+
+<p>
+次の表は、ある英和・和英辞典 (EBXA) の <code>START</code> ファイルを
+圧縮した結果:
+</p>
+
+<table summary="英和・和英辞典 (EBXA) の START ファイルの圧縮結果">
+<tr><td>圧縮レベル             <td>  ファイルサイズ   <td>  圧縮率</tr>
+<tr><td>(元のファイル)         <td>  154476544 bytes  <td>  100.0%</tr>
+<tr><td>レベル 0               <td>  54922039 bytes   <td>  35.6%</tr>
+<tr><td>レベル 1               <td>  49615791 bytes   <td>  32.1%</tr>
+<tr><td>レベル 2               <td>  45983464 bytes   <td>  29.8%</tr>
+<tr><td>レベル 3               <td>  43431397 bytes   <td>  28.1%</tr>
+<tr><td>(参考: gzip -6)        <td>  38712247 bytes   <td>  25.0%</tr>
+</table>
+
+<p>
+ある英々辞典 (EBG) の <code>START</code> ファイルを圧縮した結果:
+</p>
+
+<table summary="英々辞典 (EBG) の START ファイルの圧縮結果">
+<tr><td>圧縮レベル             <td>  ファイルサイズ  <td>  圧縮率</tr>
+<tr><td>(元のファイル)         <td>  55511040 bytes  <td>  100.0%</tr>
+<tr><td>レベル 0               <td>  25866491 bytes  <td>  46.6%</tr>
+<tr><td>レベル 1               <td>  24419066 bytes  <td>  44.0%</tr>
+<tr><td>レベル 2               <td>  23453212 bytes  <td>  42.2%</tr>
+<tr><td>レベル 3               <td>  22748840 bytes  <td>  41.0%</tr>
+<tr><td>(参考: gzip -6)        <td>  20930009 bytes  <td>  37.7%</tr>
+</table>
+
+<p>
+ある国語辞典 (EPWING V1) の <code>HONMON</code> ファイルを圧縮した結果:
+</p>
+
+<table summary="国語辞典 (EPWING V1) の HONMON ファイルの圧縮結果">
+<tr><td>圧縮レベル             <td>  ファイルサイズ  <td>  圧縮率</tr>
+<tr><td>(元のファイル)         <td>  23642112 bytes  <td>  100.0%</tr>
+<tr><td>レベル 0               <td>   9927048 bytes  <td>  42.0%</tr>
+<tr><td>レベル 1               <td>   9213184 bytes  <td>  39.0%</tr>
+<tr><td>レベル 2               <td>   8767603 bytes  <td>  37.1%</tr>
+<tr><td>レベル 3               <td>   8495563 bytes  <td>  35.9%</tr>
+<tr><td>(参考: gzip -6)        <td>   8114658 bytes  <td>  34.3%</tr>
+</table>
+
+<p>
+ある国語辞典 (EPWING V5) の <code>HONMON2</code> ファイルを圧縮した結果:
+</p>
+
+<table summary="国語辞典 (EPWING V5) の HONMON2 ファイルの圧縮結果">
+<tr><td>圧縮レベル             <td>  ファイルサイズ   <td>  圧縮率</tr>
+<tr><td>(非圧縮)               <td>  220069888 bytes  <td>  100.0%</tr>
+<tr><td>(元のファイル)         <td>  149139690 bytes  <td>  67.8%</tr>
+<tr><td>レベル 0               <td>   82973263 bytes  <td>  37.7%</tr>
+<tr><td>レベル 1               <td>   78163751 bytes  <td>  35.5%</tr>
+</table>
+
+<p>
+ある百科事典 (S-EBXA) の <code>START</code> ファイルを圧縮した結果:
+</p>
+
+<table summary="百科事典 (S-EBXA) の START ファイルの圧縮結果">
+<tr><td>圧縮レベル            <td>  file size        <td>  ratio</tr>
+<tr><td>(非圧縮)              <td>  225140735 bytes  <td> 100.0%</tr>
+<tr><td>(元のファイル)        <td>  176467968 bytes  <td>  78.4%</tr>
+<tr><td>レベル 0              <td>  146045331 bytes  <td>  64.9%</tr>
+<tr><td>レベル 1              <td>  138137218 bytes  <td>  61.4%</tr>
+</table>
+
+<!-- ================================================================ -->
+<h2><a name="compressed-file-format">圧縮ファイルの形式</a></h2>
+
+<p>
+この章では、<code>ebzip</code> が扱っている圧縮ファイル形式の詳細について説
+明します。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="format-overview">圧縮ファイル形式の概要</a></h3>
+
+<p>
+圧縮ファイル形式は次のような特徴を持っています。
+</p>
+
+<ul>
+<li>CPU の種類、オペレーティングシステム、ファイルシステムに依存しません。
+
+<li>非損失圧縮です。<br>
+圧縮ファイルを伸長することによって、元のファイルを復元できます。
+
+<li>6 つの圧縮レベルがあります。<br>
+伸長の速さか圧縮率の良さの、いずれかを選ぶことができます。
+</ul>
+
+<p>
+圧縮されたファイルは、ヘッダ部、インデックス部、およびデータ部から構成
+され、この順でファイルに配置されます。
+</p>
+
+<blockquote>
+<pre>
++--------+-------------+-----------------------------+
+| ヘッダ |インデックス |          データ             |
++--------+-------------+-----------------------------+
+                                                     EOF
+</pre>
+</blockquote>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="format-data-part">データ部</a></h3>
+
+<p>
+元のファイルは、次の行程で圧縮されます。
+</p>
+
+<p>
+まず、<code>ebzip</code> は元のファイルを分割します。
+個々の <dfn>スライス</dfn> (<dfn>slice</dfn>) は、末尾のものを除けば、
+同じ大きさになっています。
+</p>
+
+<blockquote>
+<pre>
++---------------+---------------+--   --+----------+
+|  スライス 1   |  スライス 2   |  ...  |スライス N|
++---------------+---------------+--   --+----------+
+                                                  EOF
+</pre>
+</blockquote>
+
+<p>
+スライス・サイズは、圧縮レベルから決まります
+(圧縮レベルについては <a href="#compression-level">「圧縮レベル」</a>を
+参照のこと)。
+</p>
+
+<table summary="圧縮レベルとスライスの大きさの対応表">
+<tr><td>圧縮レベル  <td>  スライスの大きさ</tr>
+<tr><td>0           <td>   2048 バイト</tr>
+<tr><td>1           <td>   4096 バイト</tr>
+<tr><td>2           <td>   8192 バイト</tr>
+<tr><td>3           <td>  16384 バイト</tr>
+<tr><td>4           <td>  32768 バイト</tr>
+<tr><td>5           <td>  65536 バイト</tr>
+</table>
+
+<p>
+次に、末尾のスライスがスライス・サイズよりも短かった場合、
+<code>ebzip</code> はスライス・サイズと同じになるまで伸ばし、伸ばした
+部分に 0x00 を埋めます。
+</p>
+
+<blockquote>
+<pre>
+                                                 伸した部分
++---------------+---------------+--   --+---------+-----+
+|  スライス 1   |  スライス 2   |  ...  |  スライス N   |
++---------------+---------------+--   --+---------+-----+
+                                                        EOF
+</pre>
+</blockquote>
+
+<p>
+最後に、<code>ebzip</code> は個々のスライスを、RFC 1951 に記されている
+DEFLATE 圧縮データ形式で圧縮します。
+おのおののスライスは、他のスライスとは独立して圧縮されます。
+圧縮されたスライスのビット数が 8 の倍数でなければ、1 〜 7 ビットを圧
+縮されたスライスの末尾に足し、8 の倍数になるようにします。
+これにより、圧縮されたそれぞれのスライスはバイトの境界から開始されます。
+足されたビットの内容は未定義ですが、このビットは決して使用されません。
+</p>
+
+<blockquote>
+<pre>
++------------+----------+--   --+--------------+
+| 圧縮された |圧縮された|  ...  |  圧縮された  |
+| スライス 1 |スライス 2|  ...  |  スライス N  |
++------------+----------+--   --+--------------+
+</pre>
+</blockquote>
+
+<p>
+これが圧縮ファイル形式における <dfn>データ部</dfn> になり、圧縮された
+スライスから構成されます。
+</p>
+
+<p>
+末尾のスライスの伸ばした部分は、末尾のスライスの一部として圧縮され
+ます。
+<code>ebunzip</code> が末尾のスライスを復元するときは、スライスを伸長して
+から伸ばした部分を取り除くという作業を行います。
+</p>
+
+<p>
+圧縮したスライスの大きさが、スライス・サイズよりも大きいか等しいときは、
+<code>ebzip</code> はそのスライスの圧縮データを廃棄します。
+この場合、<code>ebzip</code> は元のデータをそのスライスの圧縮データとして
+代わりに記録します。
+</p>
+
+<p>
+元のファイルが空だったときは、圧縮ファイルのデータ部はありません。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="format-index-part">インデックス部</a></h3>
+
+<p>
+圧縮時に、<code>ebzip</code> は圧縮した個々のスライスの 
+<dfn>インデックス</dfn> (<dfn>index</dfn>) を記録します。
+個々のインデックスは、圧縮ファイルの先頭から圧縮されたスライスの先頭
+までの距離を表します。
+距離の単位はバイトです。
+</p>
+
+<blockquote>
+<pre>
++---------+---------+--           --+---------+---------+
+|インデッ |インデッ |  ...........  |インデッ |インデッ |
+|クス 1   |クス 2   |  ...........  |クス N   |クス END |
++---------+---------+--           --+---------+---------+
+     |         |                        |         |
+ +---+         +----+                   +------+  +-----------+
+ V                  V                          V              V
++------------------+------------------+--   --+--------------+
+|    圧縮された    |    圧縮された    |  ...  |  圧縮された  |
+|    スライス 1    |    スライス 2    |  ...  |  スライス N  |
++------------------+------------------+--   --+--------------+
+</pre>
+</blockquote>
+
+<p>
+個々のインデックスは 2 〜 5 バイトの大きさを持ちます。
+インデックスの大きさは、元のファイルの大きさで決まります。
+</p>
+
+<table summary="元のファイルの大きさとインデックスの大きさの対応表">
+<tr><td>元のファイルの大きさ                 <td>  インデックスの大きさ</tr>
+<tr><td>         0 〜         65535 バイト  <td>  2 バイト</tr>
+<tr><td>     65535 〜      16777215 バイト  <td>  3 バイト</tr>
+<tr><td>  16777216 〜    4294967295 バイト  <td>  4 バイト</tr>
+<tr><td>4294967296 〜 1099511627775 バイト  <td>  5 バイト</tr>
+</table>
+
+<p>
+インデックス内での、複数バイトからなる数値はすべて、値の大きい方の部分
+を表すバイト (most significant byte) が先に来た形で記録されます。
+たとえば、0x1234 は次のように記録されます。
+最初のバイトは 0x12 となり、次のバイトは 0x34 になります。
+</p>
+
+<blockquote>
+<pre>
++---------+---------+
+|0001 0010|0011 0100|
++---------+---------+
+  (0x12)    (0x34)
+</pre>
+</blockquote>
+
+<p>
+インデックス部は、圧縮されたスライス 1 のインデックスで始まり、その後ろ
+に圧縮されたスライス 2 のインデックスが続きます。
+圧縮されたスライス N のインデックスの後ろには、「終端」へのインデックス
+が置かれます。
+このインデックスは、圧縮されたスライス N の末尾の次のバイトへの
+インデックスになります。
+また、圧縮されたファイルのサイズを示すことにもなります。
+</p>
+
+<blockquote>
+<pre>
++---------+---------+--           --+---------+---------+
+|インデッ |インデッ |  ...........  |インデッ |インデッ |
+|クス 1   |クス 2   |  ...........  |クス N   |クス END |
++---------+---------+--           --+---------+---------+
+</pre>
+</blockquote>
+
+<p>
+圧縮されたスライスの大きさがスライスサイズに等しいときは、そのスライス
+のデータは実際には圧縮されていないことを示します。
+</p>
+
+<p>
+元のファイルが空だったときは、インデックス部はインデックスを一つだけ
+持ちます。
+このインデックスは圧縮されたファイルの大きさを表します。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="format-header-part">ヘッダ部</a></h3>
+
+<p>
+ヘッダ部は 22 バイトからなります。
+次のフィールドから構成されます。
+</p>
+
+<blockquote>
+<pre>
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+| マジック ID  |*1| *2  |ファイルの大きさ | Adler-32  | 修正時刻  |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+ 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21
+
+*1: zip モードと圧縮レベル
+*2: 予約領域
+</pre>
+</blockquote>
+
+<dl>
+<dt><code>マジック ID (5 バイト)</code></dt>
+<dd>
+0x45, 0x42, 0x5a, 0x69, 0x70 (ASCII 文字列で表すと <samp>EBZip</samp>) 
+という固定した値を持ちます。
+
+<dt><code>zip モード (MSB 側の 4 ビット)</code></dt>
+<dd>
+圧縮モードを表します。
+元の (非圧縮時の) ファイルの大きさが 4294967295 バイト (= 4Gバイト)
+以内のときは 1 (2 進数で 0001)、それより大きいときは 2 (2 進数で 0002)
+をセットします。
+
+<p>
+ファイルの大きさで値が変わるのは、歴史的な事情によります。
+以前の EB Library は圧縮モード 1 しか既定しておらず、また 4GB バイト
+を超えるファイルを扱えませんでした。
+4G バイトを超えるファイルを扱えるように EB Library を改良した際に、
+「4G バイトを超えたら、圧縮モードは 2 にセットする」というルールを
+新たに設けました。
+これにより、以前の EB Library で 4GB バイトを超えたファイルを扱おう
+とすると、非対応の圧縮モードとみなされ、エラーが発生するようになって
+います。
+</p>
+
+<dt><code>圧縮レベル (LSB 側の 4 ビット)</code></dt>
+<dd>
+圧縮レベルを表します。
+
+<dt><code>予約領域 (2 バイト)</code></dt>
+<dd>
+予約されていますが、使われていません。
+0x0000 で埋められます。
+
+<dt><code>ファイルの大きさ (6 バイト)</code></dt>
+<dd>
+元の (非圧縮時の) ファイルの大きさを記録しています。
+
+<dt><code>Adler-32 (4 バイト)</code></dt>
+<dd>
+RFC 1950 に記されている Adler-32 というアルゴリズムを用いて計算した、
+非圧縮データのチェックサムの値です。
+
+<dt><code>修正時刻 (4 バイト)</code></dt>
+<dd>
+元のファイルの最終修正時刻です。
+グリニッジ標準時の 1970 年 1 月 1 日 0 時 0 分 0 秒からの経過秒数で
+表します。
+</dl>
+
+<p>
+<code>zip モード</code> と <code>圧縮レベル</code> は、両方ともヘッダの
+5 バイト目に入ります。
+<code>zip モード</code> は、値の最も大きい部分を表すビット
+(most significant bit) を含み、<code>圧縮レベル</code> は最も小さい部分を
+表すビット (least significant bit) を含んでいます。
+<code>zip モード</code> が 1 で、<code>圧縮レベル</code> が 2 なら、
+ヘッダの 5 バイト目は 0x12 になります。
+</p>
+
+<blockquote>
+<pre>
+ MSB                         LSB
++---+---+---+---+---+---+---+---+
+| 0   0   0   1   0   0   1   0 | = 0x12
++---+---+---+---+---+---+---+---+
+  (zip モード)  |  (圧縮レベル)
+</pre>
+</blockquote>
+
+<p>
+ヘッダ内での、複数バイトからなる数値はすべて、値の大きい方の部分
+を表すバイト (most significant byte) が先に来た形で記録されます。
+</p>
+
+</body>
+</html>

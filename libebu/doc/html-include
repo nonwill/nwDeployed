@@ -1,0 +1,211 @@
+#! /usr/bin/perl
+#
+# Copyright (c) 2005-2006  Motoyuki Kasahara
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the project nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+#
+# html-include -- tiny file inclusion processoor for HTML.
+#
+# Usage:
+#     html-include [-o output-file] [input-file]
+#
+# `html-include' extracts file inclusion directives in HTML, and output
+# the result.  The following is file inclusion directive line that
+# `html-include' recognizes:
+# 
+#      <!-- #include "file-name" -->
+#
+# Note that "<!--" must located at the beginning of the line.
+#
+# `html-include' outputs contents of "file-name" instead of the directive
+# line itself.  If `file-name' also contains the file inclusion directive,
+# `html-include' processes the line as well.
+#
+# If `input-file' is specified, `html-include' reads it.  Otherwise,
+# it reads HTML from standard input.  `html-include' outputs the result
+# to standard out by default, but you can specify output file by using
+# `-o' option.
+#
+# Options:
+#     -o output-file        output the result to the file.
+#     -c                    add inclusion log lines to the result.
+#     -I path               add file search path.
+#
+
+require 5.005;
+use FileHandle;
+
+#
+# Usage
+#
+my $usage = "Usage: $0 [-o output-file] [input-file]\n";
+
+#
+# Variables
+#
+my @in_files = ();
+my $out_file;
+my @search_paths = ();
+
+my $max_nest_level = 5;
+my $comment_mode = 0;
+
+$in_files[0] = {'handle' => new FileHandle,
+		'name' => '-',
+		'lineno' => 0};
+$out_file =    {'handle' => new FileHandle,
+		'name' => '-',
+		'lineno' => 0};
+
+#
+# Parse command line arguments.
+#
+while (@ARGV > 0 && $ARGV[0] =~ /^-(.)(.*)/) {
+    my ($first, $rest) = ($1, $2);
+    if ($ARGV[0] eq '--') {
+	shift;
+	last;
+    }
+
+    if ($first eq 'o') {
+	if ($rest ne '') {
+	    $out_file->{name} = $rest;
+	    shift;
+	} elsif (@ARGV > 1) {
+	    $out_file->{name} = $ARGV[1];
+	    shift;
+	    shift;
+	} else {
+	    die "$0: option requires an argument -- $first\n";
+	}
+    } elsif ($first eq 'c') {
+	$comment_mode = 1;
+	if ($rest ne '') {
+	    $ARGV[0] = "-$rest";
+	} else {
+	    shift;
+	}
+    } elsif ($first eq 'I') {
+	if ($rest ne '') {
+	    push(@search_paths, $rest);
+	    shift;
+	} elsif (@ARGV > 1) {
+	    push(@search_paths, $rest);
+	    shift;
+	    shift;
+	} else {
+	    die "$0: option requires an argument -- $first\n";
+	}
+    } else {
+	die "$0: invalid option -- $first\n";
+    }
+}
+
+die $usage if (@ARGV > 1);
+
+#
+# Open input and output files.
+#
+if (@ARGV == 0 || $ARGV[0] eq '-') {
+    $in_files[0]->{name} = 'stdin';
+    $in_files[0]->{handle}->open("<& STDIN");
+} else {
+    $in_files[0]->{name} = $ARGV[0];
+    if (!$in_files[0]->{handle}->open('<' . $in_files[0]->{name})) {
+	die "$0: failed to open the file, $!: " . $in_files[0]->{name} . "\n";
+    }
+}
+
+if ($out_file->{name} eq '-') {
+    $out_file->{name} = 'stdout'; 
+    $out_file->{handle}->open(">& STDOUT");
+} else {
+    if (!$out_file->{handle}->open('>' . $out_file->{name})) {
+	die "$0: failed to open the file, $!: " . $out_file->{name} . "\n";
+    }
+}
+
+#
+# Read input files and write the result.
+#
+my $i = 0;
+
+for (;;) {
+    for (;;) {
+	$_ = $in_files[$i]->{handle}->getline();
+	last if (!defined($_));
+	$in_files[$i]->{lineno}++;
+	chomp;
+
+	if (m|^<!--[ \t]+\#include[ \t]+\"([^\"]+)\"[ \t]+-->[ \t]*$|) {
+	    #
+	    # This is file inclusion directive line.
+	    #
+	    if (++$i >= $max_nest_level) {
+		die "$0: too deep inclusion\n";
+	    }
+
+	    $in_files[$i] = {'handle' => new FileHandle,
+			     'name' => search_file($1),
+			     'lineno' => 0};
+	    if (!$in_files[$i]->{handle}->open('<' . $in_files[$i]->{name})) {
+		die "$0: failed to open the file, $!: " .
+		    $in_files[$i]->{name} . "\n";
+	    }
+
+	    if ($comment_mode) {
+		print $out_file->{handle}->printf("<!-- \"%s\" line %d -->\n",
+						  $in_files[$i]->{name},
+						  $in_files[$i]->{lineno} + 1);
+	    }
+	} else {
+	    $out_file->{handle}->print($_, "\n");
+	}
+
+	$out_file->{lineno}++;
+    }
+    
+    $in_files[$i]->{handle}->close();
+    last if (--$i < 0);
+
+    if ($comment_mode) {
+	$out_file->{handle}->printf("<!-- \"%s\" line %d -->\n",
+				    $in_files[$i]->{name},
+				    $in_files[$i]->{lineno} + 1);
+    }
+}
+
+
+sub search_file ($) {
+    my ($file) = @_;
+
+    foreach my $dir (@search_paths) {
+	return "$dir/$file" if (-r "$dir/$file");
+    }
+
+    return $file;
+}

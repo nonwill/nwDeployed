@@ -1,0 +1,729 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-jp">
+<link rel="stylesheet" type="text/css" href="ebutils.css">
+<link rev="made" href="mailto:m-kasahr@sra.co.jp">
+<title>ebappendix コマンド</title>
+</head>
+
+<body>
+<h1><a name="toc">ebappendix コマンド</a></h1>
+<p>
+この文書は EB ライブラリバージョン
+<!-- #include "version.html" -->
+に対応しています。
+</p>
+
+<p>
+目次:
+</p>
+
+<!-- #include "ebappendix-toc.html" -->
+
+<p>
+Copyright (c) 2003-2006  Motoyuki Kasahara
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="what-is-appendix">appendix (付録) とは</a></h2>
+
+<p>
+<dfn>appendix</dfn> (<dfn>付録</dfn>) とは CD-ROM 書籍の補助データのことです。
+appendix は CD-ROM 書籍の出版社から提供されているものではなく、
+EB ライブラリに固有のものです。
+</p>
+
+<p>
+appendix は以下のデータを CD-ROM 書籍に対して提供します。
+</p>
+
+<dl>
+<dt>本文の区切りコード</dt>
+<dd>
+あなたが EB ライブラリを使って CD-ROM 辞書の中のある単語を引く際、その
+単語の説明が終了する箇所で、EB ライブラリが本文の出力を止めることを
+あなたは期待するのではないでしょうか。
+しかし、EB ライブラリはそのような動作を保証することができません。
+なぜなら、CD-ROM 書籍の本文には、項目の終わりを示す印が存在しないから
+です。
+
+幸いにも、多くの CD-ROM 書籍には、項目の終わりを示す印の代替として
+使える、<dfn>区切りコード</dfn> (<dfn>stop code</dfn>) というものを持って
+います。
+通常、EB ライブラリはこの区切りコードを自動的に推測するようになって
+いるのですが、時々誤った区切りコードを導き出すことがあります。
+appendix の区切りコードは、その書籍の正しい区切りコードを EB ライブラリ
+に教えてやるために用います。
+
+<dt>外字の代替文字列</dt>
+<dd>
+多くの CD-ROM 書籍は、外字 (独自に定義した文字) を持っており、本文中で
+その外字を使っています。
+CD-ROM 書籍では外字のビットマップフォントを用意しており、
+クライアントアプリケーションが外字を出力するには、そのフォントを描画
+しなくてはなりません。
+
+appendix では、外字の <dfn>代替文字列</dfn> (<dfn>alternation text</dfn>)
+を定義することができます。
+アプリケーションは、ビットマップフォントを描画する代わりに、その
+代替文字列を出力することにしても良いでしょう。
+</dl>
+
+<p>
+appendix のレイアウトは CD-ROM 書籍のものとよく似ています。
+トップディレクトリには <code>catalog</code> もしくは <code>catalogs</code>
+ファイルが存在し、各副本のデータは対応するサブディレクトリに配置されて
+います。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="what-is-ebappendix"><code>ebappendix</code> コマンドとは</a></h2>
+
+<p>
+appendix はバイナリ形式のデータファイルで構成されますので、手で直接
+編集するのは容易ではありません。
+そこで、EB ライブラリでは <code>ebappendix</code> コマンドを用意しています。
+<code>ebappendix</code> コマンドは、テキスト形式で書かれたデータを読み込み、
+バイナリ形式の appendix を生成します。
+</p>
+
+<p>
+EB ライブラリの公式な FTP サイト
+<a href="ftp://ftp.sra.co.jp/pub/misc/eb/appendix/">ftp://ftp.sra.co.jp/pub/misc/eb/appendix/</a>
+には、既にいくつかの書籍用の appendix が置いてあります。
+ここに載っていない CD-ROM 書籍用の appendix を用意したい場合は、
+<code>ebappendix</code> コマンドを使いましょう。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="write-appendix-source">appendix のソースデータの書き方</a></h2>
+
+<p>
+この章では、appendix のソースデータの書き方を説明します。
+ここで、「ソースデータ」と言っているのは、<code>ebappendix</code> が読み込む
+テキスト形式で書かれたデータのことです。
+</p>
+
+<p>
+appendix を生成するためには、次に挙げるソースデータファイルが必要です。
+これらのファイルをすべて、同じディレクトリ上に用意するようにします。
+</p>
+
+<dl>
+<dt><code>catalog.app</code> または <code>catalogs.app</code></dt>
+<dd>
+appendix には必ず、<code>catalog</code> または <code>catalogs</code> という
+名前のファイルが必要です。
+<code>catalog.app</code>, <code>catalogs.app</code> はその生成元となる
+ファイルです。
+appendix に収録されている <dfn>副本 (subbook)</dfn>
+(詳しくは
+<a href="#write-catalog.app">「<code>catalog(s).app</code> の書き方」</a>
+を参照) の一覧を記します。
+
+<dt><var>副本</var><code>.app</code></dt>
+<dd>
+appendix が収録している副本それぞれに対して、一つずつ用意する必要が
+あります (<var>副本</var> の部分は、実際は個々の副本の名前になります)。
+appendix のメインデータである、本文の区切りコードや外字の代替文字列は、
+このファイルに記します。
+</dl>
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="what-is-catalog.app"><code>catalog(s).app</code> とは</a></h3>
+
+<p>
+CD-ROM 書籍と同様に、appendix パッケージにも必ず <code>catalog</code>
+もしくは <code>catalogs</code> という名前のファイルのどちらか一方が
+必要です。
+<code>catalog.app</code>, <code>catalogs.app</code> ファイルは、その
+生成元となります。
+</p>
+
+<p>
+<code>ebappendix</code> コマンドに appendix を生成させる際には、
+<code>catalog.app</code> か <code>catalogs.app</code> のどちらかを必ず
+用意しておく必要があります。
+</p>
+
+<p>
+<code>ebappendix</code> の標準の動作では、<code>catalog.app</code> という
+ファイル名にしておくと、生成するファイル名も <code>catalog</code> に
+なります。
+また、appendix 全体のディレクトリ構造が、電子ブックに似た形式になります。
+</p>
+
+<p>
+反対に、<code>catalogs.app</code> というファイル名にしておくと、生成する
+ファイル名も <code>catalogs</code> になります。
+また、appendix 全体のディレクトリ構造が、EPWING に似た形式になります。
+</p>
+
+<p>
+ただし、EPWING の書籍に対して電子ブック形式の appendix を使用しても、
+動作そのものには支障がありません。
+逆も同様です。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="write-catalog.app"><code>catalog(s).app</code> の書き方</a></h3>
+
+<p>
+<code>catalog(s).app</code> には、書籍に収録されている副本のディレクトリ名を
+1 行に 1 つずつ書き並べます。
+副本のディレクトリ名は、<code>ebinfo</code> コマンドを使うと容易に分かります。
+</p>
+
+<p>
+以下は、<code>ebinfo</code> の実行例です。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo /mnt/cdrom
+ディスクの形式: EB/EBG/EBXA/EBXA-C/S-EBXA
+文字コード: JIS X 0208
+副本の数: 2
+
+副本  1:
+  題名: 新英和辞典（第三版）
+  ディレクトリ: ejdict
+  検索方式: 前方一致 後方一致 条件 メニュー 
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 0xa121 -- 0xa24e
+  全角フォントの文字: 0xa321 -- 0xa27e
+
+副本  2:
+  題名: この書籍の使い方
+  ディレクトリ: howto
+  検索方式: 前方一致 後方一致 条件 メニュー 
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 
+  全角フォントの文字: 0xa321 -- 0xa27e
+</pre>
+</blockquote>
+
+<p>
+この辞書用の appendix を作成する場合、<code>catalog(s).app</code> には次の
+ように記します。
+</p>
+
+<blockquote>
+<pre>
+ejdict
+howto
+</pre>
+</blockquote>
+
+<p>
+(<code>ebinfo</code> コマンドに関しての詳細は、
+<a href="ebinfo.html">ebinfo コマンドのマニュアル</a> を参照のこと。)
+</p>
+
+<p>
+ディレクトリ名の大文字、小文字は、同じものとして扱われます。
+また、空行およびおよび空白以外の最初の文字がハッシュ記号 (<samp>#</samp>)
+である行は無視されます。
+</p>
+
+<p>
+必ずもとの書籍の副本すべてを、同じ順序で <code>catalog(s).app</code> に
+記すようにして下さい。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="what-is-subbook.app"><var>副本</var><code>.app</code> とは</a></h3>
+
+<p>
+appendix が収録している副本それぞれに対して、ソースデータファイル
+<var>副本</var><code>.app</code> を用意する必要があります。
+<var>副本</var> の部分は、実際には個々の副本の使用する
+ディレクトリ名になります。
+</p>
+
+<p>
+たとえば、前節の例では、書籍が <code>ejdict</code> と <code>howto</code> 
+というディレクトリ名を持った副本を持っていました。
+この場合、用意するファイルは <code>ejdict.app</code> と <code>howto.app</code>
+になります。
+</p>
+
+<p>
+<var>副本</var><code>.app</code> ファイルは appendix のメインデータである、
+本文の区切りコードや外字の代替文字列を収録した <code>appendix</code> や
+<code>furoku</code> といったファイルの生成元になります。
+(appendix を電子ブック形式で生成すると <code>appendix</code>、EPWING 形式
+で生成すると <code>furoku</code> というファイル名になります。)
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="subbook.app-syntax"><var>副本</var><code>.app</code> の文法</a></h3>
+
+<p>
+各副本のソースデータを記したファイル「<var>副本</var><code>.app</code>」
+の中では、空行、および空白以外の最初の文字がハッシュ記号 (<samp>#</samp>)
+である行は無視されます。
+</p>
+
+<p>
+他の行はすべて、<dfn>単独指示子 (single directive)</dfn> か
+<dfn>複合指示子 (group directive)</dfn> のいずれかでなくてはなりません。
+単独指示子と複合指示子は、どのような順序で定義しても差し支えありません。
+</p>
+
+<p>
+単独指示子とは、1 行で完結する指示子です。
+単独指示子の一般形は次の通りです。
+</p>
+
+<blockquote>
+<pre>
+<var>指示子の名前</var>    <var>指示子の値</var>
+</pre>
+</blockquote>
+
+<p>
+以下の例では、<code>stop-code</code> が指示子の名前、
+<samp>0x1f09 0x0001</samp> がその値です。
+</p>
+
+<blockquote>
+<pre>
+stop-code          0x1f09 0x0001
+</pre>
+</blockquote>
+
+<p>
+指示子名の大文字と小文字は区別されますので、<samp>stop-code</samp> を
+<samp>Stop-Code</samp> と書くことはできません。
+指示子の名前と値の区切りには、空白かタブを用います。
+連続した空白とタブが、行頭および行末にあった場合、それらは無視されます。
+</p>
+
+<p>
+複合指示子とは、記述が設定ファイル内の複数行に渡る指示子です。
+複合指示子の一般形は次の通りです。
+</p>
+
+<blockquote>
+<pre>
+begin <var>複合指示子の名前</var>
+    <var>副指示子の名前</var>    <var>副指示子の値</var>
+             : 
+             : (繰り返し)
+             : 
+end
+</pre>
+</blockquote>
+
+<p>
+キーワード <code>begin</code> が、複合指示子の開始を表します。
+<code>begin</code> は後ろに <var>複合指示子の名前</var> を引数として
+取ります。
+<code>begin</code> と <var>複合指示子の名前</var> は空白かタブで区切り、
+両方とも同じ行の中に置きます。
+キーワード <code>end</code> は、複合指示子の終了を表します。
+<code>end</code> は、単独で 1 行にして置きます。
+</p>
+
+<p>
+今のところ <var>副本</var><code>.app</code> で使用できる複合指示子の名前は、
+<code>narrow</code> と <code>wide</code> の 2 つだけです。
+それぞれの <dfn>副指示子</dfn> は、<code>begin</code> と <code>end</code>
+の行の間に置きます。
+副指示子に関する記述の一般的な規則は、単独指示子と変わりません
+(たとえば、<var>副指示子の名前</var>と <var>副指示子の値</var> は空白か
+タブで区切ることなど)。
+</p>
+
+<p>
+以下は、 <code>narrow</code> 複合指示子の記述例です。
+</p>
+
+<blockquote>
+<pre>
+begin narrow
+    range-start     0xa121
+    range-end       0xa123
+    0xa121          [→参照]
+    0xa122          [→音声]
+    0xa123          [→図解]
+end
+</pre>
+</blockquote>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="single-directives"><var>副本</var><code>.app</code> の単独指示子</a></h3>
+
+<p>
+単独指示子には次のようなものがあります。
+</p>
+
+<dl>
+<dt><code>character-code</code></dt>
+<dd>
+appendix の文字コードを指定します。
+文字コードは必ず、CD-ROM 書籍に合わせるようにします。
+CD-ROM 書籍の文字コードは、<code>ebinfo</code> コマンドの出力を見れば確認
+できます。
+
+CD-ROM 書籍が ISO 8859-1 で書かれている場合は、指示子の値として
+<samp>ISO8859-1</samp> を指定します。
+それ以外の場合は、<samp>JISX0208</samp> を指定して下さい。
+
+<blockquote>
+<pre>
+character-code          JISX0208
+</pre>
+</blockquote>
+
+この指示子は、<var>副本</var><code>.app</code> ファイル内で必ず一回定義
+されなければなりません。
+定義しなかったり、二度以上定義するとエラーになります。
+
+<dt><code>stop-code</code></dt>
+<dd>
+副本の本文の区切りコードを指定します。
+指示子の値は、区切りコードの文字番号を 2 つ書き並べたものになります。
+
+<blockquote>
+<pre>
+stop-code          0x1f09 0x0001
+</pre>
+</blockquote>
+
+文字番号は、<samp>0x</samp> ないし <samp>0X</samp> に続けて 16進数 4 桁
+で記します。
+ただし、1つ目の文字番号は、<samp>0x1f09</samp> か <samp>0x1f41</samp> で
+なければなりません。
+それ以外だとエラーになります。
+
+<code>ebstopcode</code> コマンドを使うと、副本に適切な区切りコードを
+特定することができます (詳しくは
+<a href="ebstopcode.html">ebstopcode コマンドのマニュアル</a> を参照の
+こと)。
+
+この指示子は定義しなくても構いませんが、二度以上定義するとエラーになります。
+</dl>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="group-directives"><var>副本</var><code>.app</code> の複合指示子</a></h3>
+
+<p>
+<code>narrow</code> および <code>wide</code> 複合指示子は、それぞれ副本に
+対する半角外字および全角外字に対する代替文字列を定義するために用います。
+ただし、副本が外字を定義していても、代替文字列を利用する必要がなければ、
+<code>narrow</code>, <code>wide</code> 複合指示子を記述する必要はありません。
+</p>
+
+<p>
+<code>narrow</code> と <code>wide</code> 複合指示子内で定義できる副指示子は、
+まったく同じです。
+副指示子には次のようなものがあります。
+</p>
+
+<dl>
+<dt><code>range-start</code></dt>
+<dd>
+外字の定義範囲を記します。
+開始位置の文字番号を <code>range-start</code> で、終了位置の文字番号を
+<code>range-end</code> で指定します。
+文字番号は、<samp>0x</samp> ないし <samp>0X</samp> に続けて 16進数 4 桁で
+記します。
+以下は記述例です。
+
+<blockquote>
+<pre>
+    range-start     0xa121
+    range-end       0xa123
+</pre>
+</blockquote>
+
+定義範囲は、<code>ebinfo</code> コマンドの出力結果の
+「半角フォントの文字 (narrow font characters)」
+「全角フォントの文字 (wide font characters)」
+で記された範囲と一致させるようにして下さい。
+
+<code>narrow</code> および <code>wide</code> 複合指示子内では、
+必ず一回ずつ <code>range-start</code> および <code>range-end</code> を
+定義しなければなりません。
+定義しなかったり、二度以上定義したりするとエラーになります。
+
+<dt><code>0x<var>hhhh</var></code></dt>
+<dd>
+<var>hhhh</var> は、4 桁 の 16進数です。
+文字番号 <code>0x</code><var>hhhh</var> の全角外字ないし半角外字に対して、
+代替文字列を定義します。
+
+<blockquote>
+<pre>
+    0xa121          [名]
+</pre>
+</blockquote>
+
+appendix が ISO 8859-1 で書かれている場合は、代替文字列も ISO 8859-1 
+で定義します。
+それ以外の場合は、代替文字列を日本語 EUC で定義します。
+いずれも、代替文字列は最長で 31 バイトまでで、それを超えるとエラーに
+なります。
+
+<code>range-start</code>, <code>range-end</code> で指定した定義範囲内の
+外字すべてについて、代替文字列を設定する必要はありません。
+ただし、同一の複合指示子内で、一つの文字番号の外字に対して代替文字列を
+定義できるのは一回までです。
+複数回設定しようとすると、エラーになります。
+また、範囲外の文字番号の代替文字列を定義しようとしても、やはりエラーに
+なります。
+
+CD-ROM 書籍がどのような外字を定義しているのかは、<code>ebfont</code> コマンド
+で調べることができます (詳しくは
+<a href="ebfont.html">ebfont コマンドのマニュアル</a> を参照のこと)。
+</dl>
+
+<!-- ================================================================ -->
+<h2><a name="generate-appendix">appendix の生成</a></h2>
+
+<p>
+appendix のソースデータが書けたら、<code>ebappendix</code> コマンドを用いて
+実際の (バイナリ形式の) appendix を生成します。
+</p>
+
+<p>
+以下、この章では <code>ebappendix</code> の実行方法について詳しく説明します。
+</p>
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="invoke-ebappendix"><code>ebappendix</code> の実行</a></h3>
+
+<p>
+<code>ebappendix</code> の一般的な起動方法は次の通りです。
+</p>
+
+<blockquote>
+<pre>
+% ebappendix <var>入力ディレクトリのパス</var>
+</pre>
+</blockquote>
+
+<p>
+<var>入力ディレクトリのパス</var> には、読み込む appendix ソースデータの
+ディレクトリ、つまり <code>catalog.app</code> または <code>catalogs.app</code> 
+ファイルが存在するディレクトリを指定します。
+省略した場合は、カレントディレクトリを指定したとみなされます。
+</p>
+
+<p>
+標準では、出力ファイルはカレントディレクトリに作成されます。
+</p>
+
+<p>
+<samp>--output-directory</samp> オプションを指定することで、
+<code>ebappendix</code> はカレントディレクトリ以外の場所に出力することが
+できます。
+</p>
+
+<blockquote>
+<pre>
+% ebappendix --output-directory <var>出力ディレクトリのパス</var> \
+  <var>入力ディレクトリのパス</var>
+</pre>
+</blockquote>
+
+<p>
+もし出力ディレクトリが存在していなければ、自動的に <code>ebappendix</code>
+が生成します。
+</p>
+
+<p>
+実行すると、<code>ebappendix</code> は出力ディレクトリの下にサブディレクトリ
+を作り、いくつかのファイルを生成します。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="merge-appendix">appendix と CD-ROM 書籍の重ね合わせ</a></h3>
+
+<p>
+HDD 上にコピーした CD-ROM 書籍と同じディレクトリに、appendix を重ねて
+置くことができます。
+</p>
+
+<p>
+これには、<code>ebappendix</code> の <samp>--output-directory</samp> と
+<samp>--no-catalog</samp> オプションを使います。
+<samp>--output-directory</samp> オプションには、CD-ROM 書籍の
+トップディレクトリを指定します。
+</p>
+
+<blockquote>
+<pre>
+% ebappendix --no-catalog --output-directory <var>出力ディレクトリのパス</var> \
+  <var>入力ディレクトリのパス</var>
+</pre>
+</blockquote>
+
+<p>
+なお、appendix の形式 (電子ブックか EPWING か) は CD-ROM 書籍に合わせる
+ようにします
+(詳しくは
+<a href="#write-catalog.app">「<code>catalog(s).app</code> の書き方」</a>
+を参照)。
+</p>
+
+<p>
+<code>ebappendix</code> の実行前後で CD-ROM 書籍のディレクトリ構成が
+どのように変化するのか、例を記してみます。
+まず電子ブックの場合ですが、実行前のディレクトリ構成が次のように
+なっていたとします。
+</p>
+
+<blockquote>
+<pre>
+catalog
+ejdict/start
+howto/start
+</pre>
+</blockquote>
+
+<p>
+<code>ebappendix</code> で appendix を重ね合わせると、次のような構成に
+なります。
+</p>
+
+<blockquote>
+<pre>
+catalog
+ejdict/start
+ejdict/appendix  ← appendix のファイル
+howto/start
+howto/appendix   ← appendix のファイル
+</pre>
+</blockquote>
+
+<p>
+同様に、EPWING で実行前のディレクトリ構成が次のようになっていたと
+すると、
+</p>
+
+<blockquote>
+<pre>
+catalogs
+ejdict/data/honmon
+howto/data/honmon
+</pre>
+</blockquote>
+
+<p>
+実行後は、次のような構成になります。
+</p>
+
+<blockquote>
+<pre>
+catalogs
+ejdict/data/honmon
+ejdict/data/furoku  ← appendix のファイル
+howto/data/honmon
+howto/data/furoku   ← appendix のファイル
+</pre>
+</blockquote>
+
+<p>
+CD-ROM 書籍によっては、ディレクトリ名に大文字が混じっていることが
+ありますが、<code>ebappendix</code> はそれを検出しますので、名前を小文字に
+変えたディレクトリを別途作ってしまうことはありません。
+</p>
+
+<p>
+<samp>--no-catalog</samp> オプションを指定すると、<code>ebappendix</code> は
+カタログファイル <code>catalog</code> や <code>catalogs</code> ファイルを
+生成しなくなります。
+この appendix を EB ライブラリのアプリケーションから使う際は、
+CD-ROM 書籍に最初から用意されている <code>catalog</code> や
+<code>catalogs</code> ファイルを CD-ROM 書籍、appendix 共用の
+カタログファイルとして流用することになります。
+</p>
+
+<p>
+appendix のカタログファイルは、CD-ROM 書籍のカタログファイルの部分集合
+となっているため、こうした事が可能となっています。
+<samp>--no-catalog</samp> オプションを指定し忘れると、
+<code>ebappendix</code> は CD-ROM 書籍のカタログファイルを上書き
+してしまいますので、注意して下さい。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="options-to-ebappendix"><code>ebappendix</code> のオプション</a></h3>
+
+<p>
+<code>ebappendix</code> コマンドは、伝統的な一文字オプション名と覚えやすい
+長いオプション名の両方を扱うことができます。
+長いオプション名を表すには、<samp>-</samp> ではなく <samp>--</samp> を
+用います。
+オプション名が一意に決まる範囲内で、名前の後方部分を省略することができま
+す。
+</p>
+
+<dl>
+<dt><code>-b <var>書籍の形式</var></code></dt>
+<dt><code>--booktype <var>書籍の形式</var></code></dt>
+<dd>
+appendix を電子ブック、EPWING のどちらの形式のレイアウトに似せて作る
+のかを指定します。
+電子ブック形式なら <code>eb</code>、EPWING 形式なら <code>epwing</code>
+と指定します。
+
+このオプションを指定しなかった場合、次の要領でどちらの形式で生成する
+のかがが決定されます。
+まず、入力ディレクトリに <code>catalog.app</code> ファイルが存在すれば
+それが読み込まれ、電子ブック形式の appendix が生成されます。
+<code>catalog.app</code> がなく、代わりに <code>catalogs.app</code> が
+存在すればそれが読み込まれ、EPWING 形式の appendix が生成されます。
+(<code>catalogs.app</code> も <code>catalog.app</code> なければ、エラー
+になります。)
+
+<dt><code>-d</code></dt>
+<dt><code>--debug</code></dt>
+<dt><code>--verbose</code></dt>
+<dd>
+デバッグ用のメッセージを、標準エラー出力に出力します。
+
+<dt><code>-h</code></dt>
+<dt><code>--help</code></dt>
+<dd>
+ヘルプメッセージを標準出力に出力して、終了します。
+
+<dt><code>-n</code></dt>
+<dt><code>--no-catalog</code></dt>
+<dd>
+カタログファイル (<code>catalog</code> および <code>catalogs</code>) を
+生成しません。
+このオプションは、書籍と appendix を同じディレクトリに重ね合わせる際に
+有効です
+(詳しくは 
+<a href="#merge-appendix">「appendix と CD-ROM 書籍の重ね合わせ」</a>
+を参照のこと)。
+
+<dt><code>-o <var>ディレクトリ</var></code></dt>
+<dt><code>--output-directory <var>ディレクトリ</var></code></dt>
+<dd>
+出力先のディレクトリを指定します。
+このオプションを省略すると、カレントディレクトリ (<code>.</code>) に
+出力します。
+ディレクトリが存在しなければ、自動的に生成されます。
+
+<dt><code>-t</code></dt>
+<dt><code>--test</code></dt>
+<dd>
+ファイルを出力しません。
+入力ファイルを読み込んで、内容のチェックだけを行います。
+
+<dt><code>-v</code></dt>
+<dt><code>--version</code></dt>
+<dd>
+バージョン番号を標準出力に出力して、終了します。
+</dl>
+
+</body>
+</html>

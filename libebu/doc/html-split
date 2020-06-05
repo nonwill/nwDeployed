@@ -1,0 +1,238 @@
+#! /usr/bin/perl
+#
+# Copyright (c) 2005-2006  Motoyuki Kasahara
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the project nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+#
+# html-split -- split an HTML file.
+#
+# Usage:
+#     html-split [option...] input-file
+#
+# `html-split' splits an HTML file with heading tags (<h1>...<h6>).
+# Suppose that `input-file' is `foo.html', HTML files splitted by
+# `html-split' are `foo-0.html', `foo-1.html', and so on.
+#
+# Options:
+#     -Z                    do not add `-0' to the first split.
+#     -l LEVEL              split with this heading level
+#                           (default: h2)
+#     -p PREFIX             prefix of splitted HTML files.
+#     -s SUFFIX             suffix of splitted HTML files.
+#                           (default: html)
+#     -w WIDTH              minimum width of split number.
+#                           (default: 1)
+#     -t TOC                fragment name of `Table of Contents'.
+#                           (default: toc)
+#
+
+require 5.005;
+use Getopt::Std;
+use File::Basename;
+
+#
+# Usage
+#
+my $usage = "Usage: $0 [option...] input-file\n";
+
+#
+# Variables
+#
+my $in_file;
+my $out_prefix;
+my $out_suffix;
+my $counter_width = 1;
+my $split_level = 2;
+my $toc_tag = 'toc';
+my $supress_zero_flag = 0;
+
+my @toc = ();
+my @indice = ();
+my @preamble = ();
+my $toc_page = 0;
+
+#
+# Parse command line arguments.
+#
+my %options;
+getopts('Zl:w:p:s:t:', \%options) or die $usage;
+die $usage if (@ARGV != 1);
+
+$in_file = $ARGV[0];
+if (defined($options{l})) {
+    $options{l} =~ s/^h//;
+    $split_level = $options{l};
+}
+$counter_width = $options{w} if (defined($options{w}));
+$supress_zero_flag = defined($options{Z});
+$toc_tag = $options{t} if (defined($options{t}));
+
+if (defined($options{p})) {
+    $out_prefix = $options{p};
+} else {
+    $out_prefix = basename($in_file, '.htm', '.html');
+}
+
+if (defined($options{s})) {
+    $out_suffix = $options{s};
+} elsif ($in_file =~ m|\.htm$|) {
+    $out_suffix = 'htm';
+} else {
+    $out_suffix = 'html';
+}
+
+#
+# Read an HTML file.
+#
+if (!open(IN_FILE, "< $in_file")) {
+    die "$0: failed to open the file, $!: $in_file\n";
+}
+
+my $toc_found = 0;
+my $page = 0;
+
+while (<IN_FILE>) {
+    last if (m|^<body>|);
+    push(@preamble, $_);
+}
+
+while (<IN_FILE>) {
+    chomp;
+    last if (m|^</body>|);
+    if (m|^<h([1-6])>| && $1 <= $split_level) {
+	$page++ if (@toc > 0);
+	push(@toc, $_);
+    } 
+    if (m|<a name=\"([^\"]+)\">|) {
+	my $tag = $1;
+	if ($tag eq $toc_tag) {
+	    $toc_page = $page;
+	    $toc_found = 1;
+	}
+	push(@indice, {'tag' => $tag, 'page' => $page});
+    }
+}
+
+close(IN_FILE);
+
+if (!$toc_found) {
+    die "$0: <a name=\"$toc_tag\"> not found\n";
+}
+
+#
+# Generate splitted HTML files.
+#
+if (!open(IN_FILE, "< $in_file")) {
+    die "$0: failed to open the file, $!: $in_file\n";
+}
+
+while (<IN_FILE>) {
+    last if (m|^<body>|);
+}
+
+for (my $page = 0; $page < @toc; $page++) {
+    my $bar = '';
+    if ($page > 0) {
+	$bar .= sprintf("[<a href=\"%s\">前へ</a>] ",
+			splitted_file_name($page - 1));
+    }
+
+    if ($page + 1 < @toc) {
+	$bar .= sprintf("[<a href=\"%s\">次へ</a>] ",
+			splitted_file_name($page + 1));
+    }
+
+    $bar .= sprintf("[<a href=\"%s\#%s\">目次</a>] ",
+		    splitted_file_name($toc_page), $toc_tag);
+
+    my $out_file = splitted_file_name($page);
+    if (!open(OUT_FILE, "> $out_file")) {
+	die "$0: failed to open the file, $!: $out_file\n";
+    }
+
+    foreach my $j (@preamble) {
+	print OUT_FILE $j;
+    }
+
+    print OUT_FILE "<body>\n";
+    print OUT_FILE "<p>\n", $bar, "\n</p>\n<hr>\n";
+    print OUT_FILE $toc[$page], "\n";
+
+    for (;;) {
+	$_ = <IN_FILE>;
+	chomp;
+	if (!defined($_) || m|^</body>|) {
+	    1 while (<IN_FILE>);
+	    last;
+	}
+	elsif (m|^<h([1-6])>| && $1 <= $split_level) {
+	    next if ($page == 0 && $_ eq $toc[$page]);
+	    last;
+	}
+	1 while (s|<a href="\#([^\"]+)">|&rewrite_href($1)|e);
+	print OUT_FILE $_, "\n";
+    }
+
+    print OUT_FILE "<hr>\n<p>\n", $bar, "\n</p>\n";
+    print OUT_FILE "</body>\n";
+    print OUT_FILE "</html>\n";
+
+    close(OUT_FILE);
+}
+
+close(IN_FILE);
+
+#
+# Return n'th splitted file name.
+#
+sub splitted_file_name ($) {
+    my ($n) = @_;
+
+    if ($n == 0 && $supress_zero_flag) {
+	return sprintf("%s.%s", $out_prefix, $out_suffix);
+    } else {
+	return sprintf("%s-%0${counter_width}d.%s",
+		       $out_prefix, $n, $out_suffix);
+    }
+}
+
+#
+# Rewrite <a href="...">.
+#
+sub rewrite_href ($) {
+    my ($tag) = @_;
+
+    for (my $i = 0; $i < @indice; $i++) {
+	if ($indice[$i]->{tag} eq $tag) {
+	    return sprintf("<a href=\"%s\#%s\">", 
+			   splitted_file_name($indice[$i]->{page}), $tag);
+	}
+    }
+
+    warn "$0: unknown tag \`$tag'\n";
+    return "<a href=\"$tag\">";
+}

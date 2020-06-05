@@ -1,0 +1,51 @@
+#! /usr/bin/perl
+
+require 5.005;
+use Getopt::Std;
+
+#
+# Usage
+#
+my $usage = "Usage: $0 [-t tab-width] [input-file...]\n";
+
+#
+# Variables
+#
+my $tab_width = 8;
+my $out_file_name = '-';
+
+#
+# Parse command line arguments.
+#
+getopts(':t:', \%options) or die $usage;
+$tab_width = $options{t} if (defined($options{t}));
+
+#
+# Convert C to HTML.
+#
+print "<blockquote>\n";
+print "<pre>\n";
+
+while (<>) {
+    s/^([ \t]*)//;
+    my $spaces = $1;
+
+    my $col = 0;
+    foreach my $c (unpack('C*', $spaces)) {
+	if ($c eq ord(' ')) {
+	    $col++;
+	} else {
+	    $col = ($col + $tab_width) - ($col % $tab_width);
+	}
+	
+    }
+    print ' ' x $col;
+
+    s|&|&amp;|g;
+    s|<|&lt;|g;
+    s|>|&gt;|g;
+    print;
+}
+
+print "</pre>\n";
+print "</blockquote>\n";

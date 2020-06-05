@@ -1,0 +1,53 @@
+#
+# Installation status of EB Library.
+#
+
+# Version.
+EBCONF_VERSION="@VERSION@"
+
+# EB Libarry include files are in DIR.
+# (--with-eb-includes)
+EBCONF_EBINCS="@EBCONF_EBINCS@"
+
+# EB Libarry files are in DIR.
+# (--with-eb-libraries)
+EBCONF_EBLIBS="@EBCONF_EBLIBS@"
+
+# zlib include files are in DIR.
+# (--with-zlib-includes)
+EBCONF_ZLIBINCS="@EBCONF_ZLIBINCS@"
+
+# zlib libarry files are in DIR.
+# (--with-zlib-libraries)
+EBCONF_ZLIBLIBS="@EBCONF_ZLIBLIBS@"
+
+# pthread is supported or not.
+# (--enable-pthread)
+EBCONF_ENABLE_PTHREAD="@ENABLE_PTHREAD@"
+
+# additional CPPFLAGS for pthread support
+# (--with-pthread-cppflags)
+EBCONF_PTHREAD_CPPFLAGS="@PTHREAD_CPPFLAGS@"
+
+# additional CFLAGS for pthread support
+# (--with-pthread-cflags)
+EBCONF_PTHREAD_CFLAGS="@PTHREAD_CFLAGS@"
+
+# additional LDFLAGS for pthread support
+# (--with-pthread-ldflags)
+EBCONF_PTHREAD_LDFLAGS="@PTHREAD_LDFLAGS@"
+
+# native language is supported or not.
+# (--enable-nls)
+EBCONF_ENABLE_NLS="@ENABLE_NLS@"
+
+# gettext include files are in DIR.
+# (--with-gettext-includes)
+EBCONF_INTLINCS="@EBCONF_INTLINCS@"
+
+# gettext library files are in DIR.
+# (--with-gettext-libraries)
+EBCONF_INTLLIBS="@EBCONF_INTLLIBS@"
+
+# remote access is supported or not.
+EBCONF_ENABLE_EBNET="@ENABLE_EBNET@"

@@ -1,0 +1,16 @@
+# libao pkg-config source file
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ao
+Description: ao is a cross-platform audio output library
+Version: @VERSION@
+Requires:
+Conflicts:
+Libs: -L${libdir} -lao
+Libs.private: @LIBS@
+Cflags: -I${includedir}
+

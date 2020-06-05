@@ -1,0 +1,37 @@
+body {
+    color:		#000000;
+    background-color:	#ffffff;
+}
+
+td {
+    border-style:	solid;
+    border-width:	1px;
+}
+
+table {
+    border-style:	solid;
+    border-width:	2px;
+}
+
+h2 {
+    font-size:		x-large;
+    background-color:	#cfcfcf;
+    padding:		3px;
+    border-style:	solid;
+    border-width:	1px;
+}
+
+h3 {
+    font-size:		large;
+    background-color:	#cfcfcf;
+    padding:		3px;
+    border-style:	solid;
+    border-width:	1px;
+}
+
+h4 {
+    font-size:		medium;
+    border-style:	solid;
+    border-width:	2px;
+    padding:		8px;
+}

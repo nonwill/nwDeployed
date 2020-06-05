@@ -1,0 +1,6 @@
+git checkout --orphan latest_branch
+git add -A
+git commit -am "All updated to new..."
+git branch -D 3rdParty
+git branch -m 3rdParty
+git push -f origin 3rdParty

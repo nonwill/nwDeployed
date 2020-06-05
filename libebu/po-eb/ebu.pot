@@ -1,0 +1,311 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-30 17:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. 0 -- 4
+#: ../eb/error.c:167
+msgid "no error"
+msgstr ""
+
+#: ../eb/error.c:168
+msgid "memory exhausted"
+msgstr ""
+
+#: ../eb/error.c:169
+msgid "an empty file name"
+msgstr ""
+
+#: ../eb/error.c:170
+msgid "too long file name"
+msgstr ""
+
+#: ../eb/error.c:171
+msgid "bad file name"
+msgstr ""
+
+#. 5 -- 9
+#: ../eb/error.c:174
+msgid "bad directory name"
+msgstr ""
+
+#: ../eb/error.c:175
+msgid "too long word"
+msgstr ""
+
+#: ../eb/error.c:176
+msgid "a word contains bad character"
+msgstr ""
+
+#: ../eb/error.c:177
+msgid "an empty word"
+msgstr ""
+
+#: ../eb/error.c:178
+msgid "failed to get the current working directory"
+msgstr ""
+
+#. 10 -- 14
+#: ../eb/error.c:181
+msgid "failed to open a catalog file"
+msgstr ""
+
+#: ../eb/error.c:182
+msgid "failed to open an appendix catalog file"
+msgstr ""
+
+#: ../eb/error.c:183
+msgid "failed to open a text file"
+msgstr ""
+
+#: ../eb/error.c:184
+msgid "failed to open a font file"
+msgstr ""
+
+#: ../eb/error.c:185
+msgid "failed to open an appendix file"
+msgstr ""
+
+#. 15 -- 19
+#: ../eb/error.c:188
+msgid "failed to open a binary file"
+msgstr ""
+
+#: ../eb/error.c:189
+msgid "failed to read a catalog file"
+msgstr ""
+
+#: ../eb/error.c:190
+msgid "failed to read an appendix catalog file"
+msgstr ""
+
+#: ../eb/error.c:191
+msgid "failed to read a text file"
+msgstr ""
+
+#: ../eb/error.c:192
+msgid "failed to read a font file"
+msgstr ""
+
+#. 20 -- 24
+#: ../eb/error.c:195
+msgid "failed to read an appendix file"
+msgstr ""
+
+#: ../eb/error.c:196
+msgid "failed to read a binary file"
+msgstr ""
+
+#: ../eb/error.c:197
+msgid "failed to seek a catalog file"
+msgstr ""
+
+#: ../eb/error.c:198
+msgid "failed to seek an appendix catalog file"
+msgstr ""
+
+#: ../eb/error.c:199
+msgid "failed to seek a text file"
+msgstr ""
+
+#. 25 -- 29
+#: ../eb/error.c:202
+msgid "failed to seek a font file"
+msgstr ""
+
+#: ../eb/error.c:203
+msgid "failed to seek an appendix file"
+msgstr ""
+
+#: ../eb/error.c:204
+msgid "failed to seek a binary file"
+msgstr ""
+
+#: ../eb/error.c:205
+msgid "unexpected format in a catalog file"
+msgstr ""
+
+#: ../eb/error.c:206
+msgid "unexpected format in an appendix catalog file"
+msgstr ""
+
+#. 30 -- 34
+#: ../eb/error.c:209
+msgid "unexpected format in a text file"
+msgstr ""
+
+#: ../eb/error.c:210
+msgid "unexpected format in a font file"
+msgstr ""
+
+#: ../eb/error.c:211
+msgid "unexpected format in an appendix file"
+msgstr ""
+
+#: ../eb/error.c:212
+msgid "unexpected format in a binary file"
+msgstr ""
+
+#: ../eb/error.c:213
+msgid "book not bound"
+msgstr ""
+
+#. 35 -- 39
+#: ../eb/error.c:216
+msgid "appendix not bound"
+msgstr ""
+
+#: ../eb/error.c:217
+msgid "no subbook"
+msgstr ""
+
+#: ../eb/error.c:218
+msgid "no subbook in the appendix"
+msgstr ""
+
+#: ../eb/error.c:219
+msgid "no font"
+msgstr ""
+
+#: ../eb/error.c:220
+msgid "no text file"
+msgstr ""
+
+#. 40 -- 44
+#: ../eb/error.c:223
+msgid "no stop-code"
+msgstr ""
+
+#: ../eb/error.c:224
+msgid "no alternation string"
+msgstr ""
+
+#: ../eb/error.c:225
+msgid "no current subbook"
+msgstr ""
+
+#: ../eb/error.c:226
+msgid "no current appendix subbook"
+msgstr ""
+
+#: ../eb/error.c:227
+msgid "no current font"
+msgstr ""
+
+#. 45 -- 49
+#: ../eb/error.c:230
+msgid "no current binary"
+msgstr ""
+
+#: ../eb/error.c:231
+msgid "no such subbook"
+msgstr ""
+
+#: ../eb/error.c:232
+msgid "no such appendix subbook"
+msgstr ""
+
+#: ../eb/error.c:233
+msgid "no such font"
+msgstr ""
+
+#: ../eb/error.c:234
+msgid "no such character bitmap"
+msgstr ""
+
+#. 50 -- 54
+#: ../eb/error.c:237
+msgid "no such character text"
+msgstr ""
+
+#: ../eb/error.c:238
+msgid "no such search method"
+msgstr ""
+
+#: ../eb/error.c:239
+msgid "no such hook"
+msgstr ""
+
+#: ../eb/error.c:240
+msgid "no such binary"
+msgstr ""
+
+#: ../eb/error.c:241
+msgid "different content type"
+msgstr ""
+
+#. 55 -- 59
+#: ../eb/error.c:244
+msgid "no previous search"
+msgstr ""
+
+#: ../eb/error.c:245
+msgid "no such multi search"
+msgstr ""
+
+#: ../eb/error.c:246
+msgid "no such multi search entry"
+msgstr ""
+
+#: ../eb/error.c:247
+msgid "too many words specified"
+msgstr ""
+
+#: ../eb/error.c:248
+msgid "no word specified"
+msgstr ""
+
+#. 60 -- 64
+#: ../eb/error.c:251
+msgid "no candidates"
+msgstr ""
+
+#: ../eb/error.c:252
+msgid "end of content"
+msgstr ""
+
+#: ../eb/error.c:253
+msgid "no previous seek"
+msgstr ""
+
+#: ../eb/error.c:254
+msgid "ebnet is not supported"
+msgstr ""
+
+#: ../eb/error.c:255
+msgid "failed to connect to an ebnet server"
+msgstr ""
+
+#. 65 -- 69
+#: ../eb/error.c:258
+msgid "ebnet server is busy"
+msgstr ""
+
+#: ../eb/error.c:259
+msgid "no access permission"
+msgstr ""
+
+#: ../eb/error.c:260
+msgid "booklist not bound"
+msgstr ""
+
+#: ../eb/error.c:261
+msgid "no such book"
+msgstr ""
+
+#: ../eb/error.c:277
+msgid "unknown error"
+msgstr ""

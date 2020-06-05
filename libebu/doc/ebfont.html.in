@@ -1,0 +1,387 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-jp">
+<link rel="stylesheet" type="text/css" href="ebutils.css">
+<link rev="made" href="mailto:m-kasahr@sra.co.jp">
+<title>ebfont コマンド</title>
+</head>
+
+<body>
+<h1><a name="toc">ebfont コマンド</a></h1>
+<p>
+この文書は EB ライブラリバージョン
+<!-- #include "version.html" -->
+に対応しています。
+</p>
+
+<p>
+目次:
+</p>
+
+<!-- #include "ebfont-toc.html" -->
+
+<p>
+Copyright (c) 1998-2006  Motoyuki Kasahara
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="introduction">はじめに</a></h2>
+
+<p>
+<code>ebfont</code> コマンドは、CD-ROM 書籍の外字のビットマップデータを
+読み込み、それを指定された画像形式に変換し、ファイルに書き出します。
+<code>ebfont</code> は EB ライブラリを使用しており、ライブラリと一緒に
+配布されています。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="what-is-local-character">外字とは</a></h2>
+
+<p>
+CD-ROM 書籍の多くは、書籍固有の文字、外字 (local characters) を定義して
+います。
+たとえば、CD-ROM 書籍に使われる文字セットは発音記号を持っていないため、
+英和辞書の中には発音記号を定義しているものがあります。
+</p>
+
+<p>
+CD-ROM 書籍は、外字のビットマップデータも持っています。
+<code>ebfont</code> コマンドは、CD-ROM 書籍のビットマップデータを読み、
+それを指定された画像形式に変換し、ファイルに書き出します。
+<code>ebfont</code> は、XBM、XPM、GIF、BMP、PNG のうちのいずれか、
+または複数の画像ファイルを生成することができます。
+特に指定がなければ、XBM 形式が選択されます。
+</p>
+
+<p>
+外字は、<dfn>半角</dfn> (<dfn>narrow</dfn>) と <dfn>全角</dfn>
+(<dfn>wide</dfn>) の 2 種類に分類されます。
+半角の文字のビットマップデータでは、高さは幅の約半分です。
+全角の文字のビットマップデータでは、高さと幅はほぼ同じです。
+CD-ROM 書籍は、一冊の中に両方の種類の外字を定義することが可能で、
+<code>ebfont</code> は両方の種類の画像ファイルを生成します。
+</p>
+
+<p>
+CD-ROM 書籍の内部形式の仕様書では、半角と全角の両方の外字に対して
+4 種類のサイズを定義しています。
+外字の幅、高さ、サイズは次の通りです。
+</p>
+
+<table summary="外字の幅、高さ、サイズの表">
+<tr><td>高さ  <td>  半角   <td>  全角</tr>
+<tr><td>16    <td>   8x16  <td>  16x16</tr>
+<tr><td>24    <td>  16x24  <td>  24x24</tr>
+<tr><td>30    <td>  16x30  <td>  32x30</tr>
+<tr><td>48    <td>  24x48  <td>  48x48</tr>
+</table>
+
+<p>
+特に指定がなければ、<code>ebfont</code> は高さが 16 ピクセルのフォントの
+画像ファイルを生成します。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="invoke-ebfont"><code>ebfont</code> の実行</a></h2>
+
+<p>
+<code>ebfont</code> の一般的な起動方法は次の通りです。
+</p>
+
+<blockquote>
+<pre>
+% ebfont <var>書籍へのパス</var>
+</pre>
+</blockquote>
+
+<p>
+<var>書籍へのパス</var> には、CD-ROM 書籍のトップディレクトリ、つまり 
+<code>catalog</code> または <code>catalogs</code> ファイルが存在する
+ディレクトリを指定します。
+パスは、ローカルなパス (例: <samp>/mnt/dict</samp>) でも遠隔アクセス識別子
+(例: <samp>ebnet://localhost/dict</samp>) でも構いません。
+複数のパスを書くことはできませんが、以下のように、パスの指定を省くことは
+できます。
+</p>
+
+<blockquote>
+<pre>
+% ebfont
+</pre>
+</blockquote>
+
+<p>
+この場合、<code>ebfont</code> はカレントディレクトリの下に画像ファイルを
+生成します。
+このとき、ファイル名の一般形式は次の通りです。
+</p>
+
+<blockquote>
+<pre>
+<var>副本</var>/<var>高さ</var>/narrow/<var>文字番号</var>.<var>拡張子</var>
+<var>副本</var>/<var>高さ</var>/wide/<var>文字番号</var>.<var>拡張子</var>
+</pre>
+</blockquote>
+
+<p>
+<var>拡張子</var> は <samp>xbm</samp>、<samp>xpm</samp>、<samp>gif</samp>、
+<samp>bmp</samp> <samp>png</samp> のいずれかで、<var>文字番号</var> は
+16 進数 4 桁 (<samp>0</samp> から <samp>9</samp> と <samp>a</samp> から
+<samp>f</samp>) で、次のようになります。
+</p>
+
+<blockquote>
+<pre>
+ejdict/16/narrow/a121.xbm
+ejdict/16/wide/a321.xbm
+</pre>
+</blockquote>
+
+<p>
+<code>ejdict/16/xbm/narrow</code> などの中間のディレクトリは、もし
+無ければ <code>ebfont</code> が生成します。
+</p>
+
+<p>
+<samp>--output-directory</samp> オプションを指定することで、
+<code>ebfont</code> はカレントディレクトリ以外のディレクトリに
+画像ファイルを出力することができます。
+そのトップディレクトリは、<code>ebfont</code> を実行する前に作成されて
+いなければなりません。
+</p>
+
+<blockquote>
+<pre>
+% ebfont --output-directory <var>ディレクトリ</var> <var>書籍へのパス</var>
+</pre>
+</blockquote>
+
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="image-formats">画像形式</a></h3>
+
+<p>
+<code>ebfont</code> は XBM, XPM, GIF89a, BMP, PNG 形式の画像ファイルを
+生成することができます。
+画像形式は <samp>--image-format</samp> (<samp>-i</samp>) オプションで
+指定します。
+<samp>--image-format</samp> オプションは引数を一つ取り、そこにカンマ
+(<samp>,</samp>) で区切って、画像形式の名前を並べて書きます。
+たとえば、以下のコマンドを実行すると、<code>ebfont</code> は XPM 形式と
+GIF 形式の画像ファイルを生成します。
+</p>
+
+<blockquote>
+<pre>
+% ebfont --image-format xpm,gif <var>書籍へのパス</var>
+</pre>
+</blockquote>
+
+<p>
+<samp>--image-format</samp> の引数は、次のように分けて書くこともできます。
+</p>
+
+<blockquote>
+<pre>
+% ebfont --image-format xpm --image-format gif <var>書籍へのパス</var>
+</pre>
+</blockquote>
+
+<p>
+XPM, GIF, PNG 形式では、前景色は黒 (RGB の <samp>#000000</samp>) に、
+背景色は透明になります。
+BMP 形式では、前景色は黒に、背景色は白 (RGB の <samp>#ffffff</samp>) に
+なります。
+</p>
+
+<p>
+<code>ebzip</code> は GIF の画像を生成する際に LZW 圧縮アルゴリズムを
+使わないため、ファイルのサイズは相当大きくなります。
+</p>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="heights">高さ</a></h3>
+
+<p>
+特に指定がなければ、<code>ebfont</code> は、半角と全角それぞれについて、
+高さ 16 ピクセルのフォントの画像ファイルを生成します。
+<samp>--font-height</samp> (<samp>-f</samp>) オプションを使用することで、
+他の高さのフォントの画像ファイルを生成することができます。
+<samp>--font-height</samp> オプションは引数を一つ取り、そこにカンマ
+(<samp>,</samp>) で区切って、フォントの高さを並べて書きます。
+フォントの高さは、<samp>16</samp>、<samp>24</samp>、<samp>30</samp>、
+<samp>48</samp> のいずれかでなくてはいけません。
+たとえば、以下のコマンドを実行すると、<code>ebfont</code> は高さ
+16 ピクセルと 24 ピクセルのフォントの画像ファイルを生成します。
+</p>
+
+<blockquote>
+<pre>
+% ebfont --font-height 16,24 <var>書籍へのパス</var>
+</pre>
+</blockquote>
+
+<p>
+<samp>--font-height</samp> の引数は、次のように分けて書くこともできます。
+</p>
+
+<blockquote>
+<pre>
+% ebfont --font-height 16 --font-height 24 <var>書籍へのパス</var>
+</pre>
+</blockquote>
+
+<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  -->
+<h3><a name="subbooks">副本</a></h3>
+
+<p>
+なにも設定しないと、<code>ebzip</code> はすべての副本 (subbook) を対象に
+して画像ファイルを生成しますが、<samp>--subbook</samp> (<samp>-S</samp>)
+オプションを使うと、指定した副本の画像ファイルだけを生成することができます。
+</p>
+
+<p>
+<samp>--subbook</samp> オプションは引数を一つ取り、そこにカンマ
+(<samp>,</samp>) で区切って、副本のディレクトリ名を並べて書きます。
+<code>ebinfo</code> コマンドを用いると、あなたの所有している書籍に
+どのような副本が含まれているのかを知ることができます。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo /mnt/cdrom
+ディスクの形式: EB/EBG/EBXA/EBXA-C/S-EBXA
+文字コード: JIS X 0208
+副本の数: 3
+
+副本 1:
+  題名: 新英和辞典（第四版）
+  ディレクトリ: english
+  検索方式: 前方一致 後方一致 条件 メニュー
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 0xa121 -- 0xa24e
+  全角フォントの文字: 0xa321 -- 0xa27e
+
+副本 2:
+  題名: CD-ROM 仏和辞典（第三版）
+  ディレクトリ: french
+  検索方式: 前方一致 後方一致 条件 メニュー
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 
+  全角フォントの文字: 0xa321 -- 0xa27e
+
+副本 3:
+  題名: ポケット独和辞典（第三版）
+  ディレクトリ: german
+  検索方式: メニュー
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 
+  全角フォントの文字: 0xa321 -- 0xa27e
+</pre>
+</blockquote>
+
+<p>
+(<code>ebinfo</code> コマンドに関しての詳細は、
+<a href="ebinfo.html">ebinfo コマンドのマニュアル</a> を参照のこと。)
+この例では、3 つの副本が書籍には含まれており、そのディレクトリ名は
+<code>english</code>, <code>french</code>, <code>german</code> 
+だということが分かります。
+</p>
+
+<p>
+次のコマンドを実行すると, <code>ebfont</code> は <code>english</code> と
+<code>french</code> の画像ファイルだけを生成します。
+</p>
+
+<blockquote>
+<pre>
+% ebfont --subbook english,french /mnt/cdrom
+</pre>
+</blockquote>
+
+<p>
+ディレクトリ名の大文字・小文字の違いは、区別されません。
+<samp>--subbook</samp> の引数は、次のように分けて書くこともできます。
+</p>
+
+<blockquote>
+<pre>
+% ebfont --subbook english --subbook french /mnt/cdrom
+</pre>
+</blockquote>
+
+<!-- ================================================================ -->
+<h2><a name="summary-of-options"><code>ebfont</code> のオプション一覧</a></h2>
+
+<p>
+<code>ebzip</code> コマンドは、伝統的な一文字オプション名と覚えやすい長い
+オプション名の両方を扱うことができます。
+長いオプション名を表すには、<samp>-</samp> ではなく <samp>--</samp> を
+用います。
+オプション名が一意に決まる範囲内で、名前の後方部分を省略することができます。
+</p>
+
+<dl>
+<dt><code>-d</code></dt>
+<dt><code>--debug</code></dt>
+<dt><code>--verbose</code></dt>
+<dd>
+デバッグ用の情報を、標準エラー出力に出力します。
+
+<dt><code>-f <var>高さ</var></code></dt>
+<dt><code>--font-height <var>高さ</var></code></dt>
+<dd>
+高さが <var>高さ</var> の外字の画像ファイルを生成します。
+<var>高さ</var> は、高さをカンマ (<samp>,</samp>) で区切って並べたもので
+なくてはなりません。
+高さの指定として許されるのは、<samp>16</samp>、<samp>24</samp>、
+<samp>30</samp>、<samp>48</samp> です。
+指定がなければ、<code>ebfont</code> は高さが 16 ピクセルのフォントのものを
+生成します。
+(詳しくは、<a href="#heights">「高さ」</a>を参照のこと。)
+
+<dt><code>-h</code></dt>
+<dt><code>--help</code></dt>
+<dd>
+ヘルプメッセージを標準出力に出力して、終了します。
+
+<dt><code>-i <var>画像形式</var></code></dt>
+<dt><code>--image-format <var>画像形式</var></code></dt>
+<dd>
+<var>画像形式</var> 形式の画像ファイルを生成します。
+<var>画像形式</var> は、画像形式名をカンマ (<samp>,</samp>) で区切って
+並べたものでなくてはなりません。
+対応している画像形式の名前は <samp>xbm</samp>、<samp>xpm</samp>、
+<samp>gif</samp>、<samp>bmp</samp>、<samp>gif</samp>、<samp>png</samp>
+です。
+指定しなかったときは、<samp>ebfont</samp> は XBM 形式の画像ファイルを
+生成します。
+(詳しくは、<a href="#image-formats">「画像形式」</a>を参照のこと。)
+
+<dt><code>-o <var>ディレクトリ</var></code></dt>
+<dt><code>--output-directory <var>ディレクトリ</var></code></dt>
+<dd>
+画像ファイルを <var>ディレクトリ</var> 以下に出力します。
+指定しなかったときは、<code>ebfont</code> はカレントディレクトリ
+(<code>.</code>) の下に画像ファイルを生成します。
+(詳しくは、<a href="#invoke-ebfont">「<code>ebfont</code> の実行」</a>
+を参照のこと。)
+
+<dt><code>-S <var>副本</var></code></dt>
+<dt><code>--subbook <var>副本</var></code></dt>
+<dd>
+<code>ebfont</code> に、どの副本の外字を生成させるのかを指定します。
+<var>副本</var> は、副本のディレクトリ名をカンマ (<samp>,</samp>) で
+区切って並べたものでなくてはなりません。
+指定しなかったときは、すべての副本が生成の対象になります。
+(詳しくは、<a href="#subbooks">「副本」</a>を参照のこと。)
+
+<dt><code>-v</code></dt>
+<dt><code>--version</code></dt>
+<dd>
+バージョン番号を標準出力に出力して、終了します。
+</dl>
+
+</body>
+</html>

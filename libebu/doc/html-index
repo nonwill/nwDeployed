@@ -1,0 +1,157 @@
+#! /usr/bin/perl
+#
+# Copyright (c) 2005  Motoyuki Kasahara
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the project nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+#
+# html-index -- make index page of HTML files.
+#
+# Usage:
+#     html-index [option...] input-file...
+#
+# `html-index' reads HTML files, and generates their indice.  The indice
+# are created from <a> tags in the HTML files.  Since `html-index'
+# doesn't parse HTML precisely, `<' and `>' in <a> tag must be in the same
+# line and be the following form:
+# 
+#      <a name="category:name">
+#
+# The corresponding reference in the index looks like:
+#
+#      <a href="#category:name">name</a>
+#
+# or, if two or more input files are specified:
+#
+#      <a href="file#category:name">name</a>
+#
+# `category' above is category name of index.  It is used to generate
+# more than one indice: function index and concept index, for example.
+# By default, the script generates `index-<category>.html' for each index
+# category.
+# 
+# In input HTML files, the following line has the special meaning:
+#
+#      <!-- #file "file-name" -->
+#
+# It sets file name in <a href="..."> in the indice.
+#
+# Options:
+#     -p prefix             set prefix of index files.
+#                           (default: `index-')
+#     -s suffix             set suffix of index files.
+#                           (default: `html')
+#     -h                    do not output file name in <a href="....">.
+#
+
+require 5.005;
+use Getopt::Std;
+
+#
+# Usage
+#
+my $usage = "Usage: $0 [-p prefix] [-s suffix] [-h] file...\n";
+
+#
+# Variables
+#
+my $out_prefix = 'index';
+my $out_suffix = 'html';
+my %indice = ();
+my $fragment_only = 0;
+
+#
+# Parse command line arguments.
+#
+my %options;
+getopts('p:s:h', \%options) or die $usage;
+die $usage if (@ARGV == 0);
+
+$out_prefix = $options{p} if (defined($options{p}));
+$out_suffix = $options{s} if (defined($options{s}));
+$fragment_only = 1 if (defined($options{h}) || @ARGV == 1);
+
+#
+# Read HTML files.
+#
+for (my $i = 0; $i < @ARGV; $i++) {
+    my $in_file_name = $ARGV[$i];
+    if (!open(IN_FILE, "< $in_file_name")) {
+	die "$0: failed to open the file, $!: $in_file_name\n";
+    }
+
+    while (<IN_FILE>) {
+	chomp;
+	if (m|^<!--[ \t]+\#file[ \t]+\"([^\"]+)\"[ \t]+-->[ \t]*$|) {
+	    $in_file_name = $1;
+	} elsif (m|<a name=\"([^\"]+)\">|) {
+	    my $name = $1;
+	    if ($name =~ m|^([a-z_][0-9a-z_]+):(.+)$|) {
+		my $type = $1;
+		my $value = $2;
+		if (!defined($indice{$type})) {
+		    $indice{$type} = {};
+		}
+		$indice{$type}->{$value} = $in_file_name;
+	    }
+	}
+    }
+
+    close(IN_FILE);
+}
+
+#
+# Generate index files.
+#
+foreach my $i (sort {uc($a) cmp uc($b)} keys(%indice)) {
+    my $out_file_name = sprintf("%s-%s.%s", $out_prefix, $i, $out_suffix);
+
+    if (!open(OUT_FILE, "> $out_file_name")) {
+	die "$0: failed to open the file, $!: $out_file_name\n";
+    }
+
+    print OUT_FILE "<dl>\n";
+    my $prev_head_char = '';
+
+    foreach my $j (sort(keys(%{$indice{$i}}))) {
+	my $cur_head_char = uc(substr($j, 0, 1));
+	if ($cur_head_char ne $prev_head_char) {
+	    print OUT_FILE '<dt>', $cur_head_char, "\n";
+	}
+
+	if ($fragment_only) {
+	    printf(OUT_FILE "<dd><a href=\"#%s:%s\">%s</a>\n",
+		   $i, $j, $j);
+	} else {
+	    printf(OUT_FILE "<dd><a href=\"%s\#%s:%s\">%s</a>\n",
+		   $indice{$i}->{$j}, $i, $j, $j);
+	}
+	$prev_head_char = $cur_head_char;
+    }
+
+    print OUT_FILE "</dl>\n";
+    close(OUT_FILE);
+}

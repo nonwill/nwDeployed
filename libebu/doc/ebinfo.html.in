@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-jp">
+<link rel="stylesheet" type="text/css" href="ebutils.css">
+<link rev="made" href="mailto:m-kasahr@sra.co.jp">
+<title>ebinfo コマンド</title>
+</head>
+
+<body>
+<h1><a name="toc">ebinfo コマンド</a></h1>
+<p>
+この文書は EB ライブラリバージョン
+<!-- #include "version.html" -->
+に対応しています。
+</p>
+
+<p>
+目次:
+</p>
+
+<!-- #include "ebinfo-toc.html" -->
+
+<p>
+Copyright (c) 1997-2006  Motoyuki Kasahara
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="introduction">はじめに</a></h2>
+
+<p>
+<code>ebinfo</code> コマンドは CD-ROM 書籍に関する様々な情報を出力します。
+<code>ebinfo</code> は EB ライブラリを使用しており、ライブラリと一緒に配布
+されています。
+</p>
+
+<!-- ================================================================ -->
+<h2><a name="invoke-ebinfo"><code>ebinfo</code> の実行</a></h2>
+
+<p>
+<code>ebinfo</code> の一般的な起動方法は次の通りです。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo <var>書籍へのパス</var>
+</pre>
+</blockquote>
+
+<p>
+<var>書籍へのパス</var> には、CD-ROM 書籍のトップディレクトリ、つまり 
+<code>catalog</code> または <code>catalogs</code> ファイルが存在する
+ディレクトリを指定します。
+パスは、ローカルなパス (例: <samp>/mnt/dict</samp>) でも遠隔アクセス識別子
+(例: <samp>ebnet://localhost/dict</samp>) でも構いません。
+複数のパスを書くことはできませんが、以下のように、パスの指定を省くことは
+できます。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo
+</pre>
+</blockquote>
+
+<p>
+この場合、<code>ebinfo</code> はカレントディレクトリ (<code>.</code>) が
+指定されたものと判断します。
+<code>ebinfo</code> は指定された書籍に関する情報を、次のような感じで出力
+します。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo /mnt/cdrom
+ディスクの形式: EB/EBG/EBXA/EBXA-C/S-EBXA
+文字コード: JIS X 0208
+副本の数: 2
+
+副本  1:
+  題名: 新英和辞典（第三版）
+  ディレクトリ: ejdict
+  検索方式: 前方一致 後方一致 条件 メニュー 
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 0xa121 -- 0xa24e
+  全角フォントの文字: 0xa321 -- 0xa27e
+
+副本  2:
+  題名: この書籍の使い方
+  ディレクトリ: howto
+  検索方式: 前方一致 後方一致 条件 メニュー 
+  フォントの大きさ: 16 24 30 48
+  半角フォントの文字: 
+  全角フォントの文字: 0xa321 -- 0xa27e
+</pre>
+</blockquote>
+
+<p>
+副本 (subbook) が複合検索 (multi-search) に対応している場合、
+<samp>--multi-search</samp> (または <samp>-m</samp>) オプションを指定すると、
+<code>ebinfo</code> は複合検索に関する詳細な情報も合わせて出力します。
+複合検索に関する情報は、次のような感じになります。
+</p>
+
+<blockquote>
+<pre>
+  複合検索 1:
+    ラベル 1: 国または地域
+    候補: 有
+    ラベル 2: 時期
+      候補: 無
+    ラベル 3: カテゴリ
+      候補: 有
+    ラベル 4: 出典
+      候補: 無
+  複合検索 2:
+    ラベル 1: 著者
+      候補: 無
+    ラベル 2: 題名
+      候補: 無
+    ラベル 3: 日付
+      候補: 無
+    ラベル 4: 出版社
+      候補: 無
+</pre>
+</blockquote>
+
+<!-- ================================================================ -->
+<h2><a name="details-about-information">出力される情報の詳細ついて</a></h2>
+
+<p>
+この節では、<code>ebinfo</code> が出力する情報の詳細について説明します。
+</p>
+
+<dl>
+<dt>disc type:</dt>
+<dd>
+その書籍の形式。EB/EBG/EBXA/EBXA-C/S-EBXA または EPWING です。
+
+<dt>character code:</dt>
+<dd>
+その書籍で使用されている文字コー。ISO 8859-1 または JIS X 0208 です。
+
+<dt>the number of subbooks:</dt>
+<dd>
+その書籍に収録されている副本 (subbbok) の数。
+</dl>
+
+<p>
+加えて、その書籍のそれぞれの副本について、以下の情報が出力されます。
+</p>
+
+<dl>
+<dt>title:</dt>
+<dd>
+副本の題名。
+書籍が JIS X 0208 に書かれているときは、題名は EUC (Extended UNIX Code) 
+で表示されます。
+
+<dt>directory:</dt>
+<dd>
+その副本に関連するファイルが置かれるディレクトリの名前。
+英小文字は大文字に変換されます。
+
+<dt>search methods:</dt>
+<dd>
+副本が対応している検索方法の一覧。
+この一覧は、以下に記した検索方法の一部、もしくは全部から構成されます。
+
+<dl>
+<dt>copyright</dt>
+<dd>
+著作権表示 (copyright notice)。
+厳密に言えば、これは検索方法ではないのですが、CD-ROM 書籍の内部形式の
+関係から、表示するようにしています。
+
+<dt>word</dt>
+<dd>
+前方一致検索 (Word search)。
+
+<dt>endword</dt>
+<dd>
+後方一致検索 (Endword search)。
+
+<dt>keyword</dt>
+<dd>
+条件検索 (Keyword search)。
+
+<dt>cross</dt>
+<dd>
+クロス検索 (Keyword search)。
+
+<dt>multi</dt>
+<dd>
+複合検索 (Multi search)。
+
+<dt>menu</dt>
+<dd>
+メニュー検索 (Menu search).
+
+<dt>graphic</dt>
+<dd>
+グラフィック検索 (Graphic search).
+
+</dl>
+
+<p>
+副本が持つ、フォントのサイズの一覧。
+この一覧には、16, 24, 30, 48 という 4 つのサイズの一部、もしくは全部から
+構成されます。
+</p>
+
+<p>
+副本が定義している半角文字の文字番号の範囲。
+</p>
+
+<p>
+副本が定義している全角文字の文字番号の範囲。
+</p>
+
+</dl>
+
+<!-- ================================================================ -->
+<h2><a name="book-list-on-ebnet-server">EBNET サーバの書籍一覧</a></h2>
+
+<p>
+通常の出力の代わりに、<code>ebinfo</code> は EBNET サーバが公開している
+書籍の一覧を出力することもできます。
+この場合のコマンド行の概要は、次のようになります。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo --book-list <var>遠隔サーバ識別子</var>
+</pre>
+</blockquote>
+
+<p>
+ここで、<var>遠隔サーバ識別子</var> は、書籍名を含まない遠隔アクセス識別子
+になります。
+たとえば、
+</p>
+
+<blockquote>
+<pre>
+% ebinfo --book-list ebnet://dict.example.com
+名前             題名
+encycl           ブラウンコンサイス百科事典
+encycl.app       ブラウンコンサイス百科事典 (appendix)
+crossword        クロスワードパズル辞典
+travel           ワールドトラベルガイド
+</pre>
+</blockquote>
+
+<p>
+「名前」の末尾に <samp>.app</samp> が付いているものは appendix (付録)、
+それ以外は書籍本体です。
+ただし、そのクライアントに対してアクセスを許可しない書籍や appendix は
+出力されません。
+</p>
+
+<p>
+続けて、この中の <samp>encycl</samp> という書籍の情報を見るには、次の
+ようにします。
+</p>
+
+<blockquote>
+<pre>
+% ebinfo ebnet://dict.example.com/cncyclopedia
+ディスクの形式: EB/EBG/EBXA/EBXA-C/S-EBXA
+文字コード: JIS X 0208
+副本の数: 1
+
+副本 1:
+  題名: ブラウンコンサイス百科事典
+  ディレクトリ: brown
+  検索方式: 前方一致 後方一致 条件 複合 メニュー
+  フォントの大きさ: 16 24
+  半角フォントの文字: 0xa121 -- 0xa452
+  全角フォントの文字: 0xa321 -- 0xa452
+</pre>
+</blockquote>
+
+<!-- ================================================================ -->
+<h2><a name="options-to-ebinfo"><code>ebinfo</code> のオプション</a></h2>
+
+<p>
+<code>ebinfo</code> コマンドは、伝統的な一文字オプション名と覚えやすい長い
+オプション名の両方を扱うことができます。
+長いオプション名を表すには、<samp>-</samp> ではなく <samp>--</samp> を
+用います。
+オプション名が一意に決まる範囲内で、名前の後方部分を省略することができます。
+</p>
+
+<dl>
+<dt><code>-h</code></dt>
+<dt><code>--help</code></dt>
+<dd>
+ヘルプメッセージを標準出力に出力して、終了します。
+
+<dt><code>-l</code></dt>
+<dt><code>--book-list</code></dt>
+<dd>
+通常の出力の代わりに、EBNET サーバが公開している書籍の一覧を出力します。
+コマンド行引数 <var>book-path</var> は遠隔アクセス識別子でなければなりません。
+
+<dt><code>-m</code></dt>
+<dt><code>--multi-search</code></dt>
+<dd>
+複合検索 (multi search) に関する情報も、合わせて出力します。
+
+<dt><code>-v</code></dt>
+<dt><code>--version</code></dt>
+<dd>
+バージョン番号を標準出力に出力して、終了します。
+</dl>
+
+</body>
+</html>

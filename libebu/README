@@ -1,0 +1,11 @@
+EB Library with UTF-8 support
+http://green.ribbon.to/~ikazuhiro/dic/ebu.html
+
+    Kazuhiro Ito <kzhr@d1.dion.ne.jp>
+
+JIS X 4081 UTF-8 extension に準拠した書籍に対応する、EB Library の
+改造版です。
+
+ドキュメント類は EB Library から更新していません。
+使用方法等は配布ページを参照してください。
+EB Library の README は README.org にあります。
