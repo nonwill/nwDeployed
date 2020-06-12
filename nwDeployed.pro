@@ -5,15 +5,15 @@ win32:SUBDIRS = \
     zlib \
     libbzip2 \
     xz \
-    zstd \
     libiconv \
     libxml2 \
     libxslt \
     sqlite3 \
+    speex \
+    libao 
 
 SUBDIRS += \
-    speex \
-    libao \
+    zstd \
     liblzo \
     OpenCC \
     ogg \
