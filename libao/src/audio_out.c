@@ -58,10 +58,14 @@ static int dlclose(void *handle) { return 0; }
 
 /* These should have been set by the Makefile */
 #ifndef AO_PLUGIN_PATH
-#define AO_PLUGIN_PATH "/usr/local/lib/ao"
+#define AO_PLUGIN_PATH "ao"
 #endif
 #ifndef SHARED_LIB_EXT
+#ifdef HAVE_AU_MACOSX
+#define SHARED_LIB_EXT ".dylib"
+#else
 #define SHARED_LIB_EXT ".so"
+#endif
 #endif
 
 /* --- Other constants --- */
@@ -78,29 +82,41 @@ typedef struct driver_list {
 
 extern ao_functions ao_null;
 #ifndef WIN32
+#ifdef HAVE_AO_WAV
 extern ao_functions ao_wav;
+#endif
+#ifdef HAVE_AO_RAW
 extern ao_functions ao_raw;
+#endif
+#ifdef HAVE_AU_MACOSX
 extern ao_functions ao_au;
+#endif
 #ifdef HAVE_SYS_AUDIO_H
 extern ao_functions ao_aixs;
 #endif
 #endif
-//#ifdef HAVE_WMM
+#ifdef HAVE_WMM
 extern ao_functions ao_wmm;
-//#endif
+#endif
 static ao_functions *static_drivers[] = {
 	&ao_null, /* Must have at least one static driver! */
 #ifndef WIN32
-	&ao_wav,
-	&ao_raw,
-	&ao_au,
+#ifdef HAVE_AO_WAV
+    &ao_wav,
+#endif
+#ifdef HAVE_AO_RAW
+    &ao_raw,
+#endif
+#ifdef HAVE_AU_MACOSX
+    &ao_au,
+#endif
 #ifdef HAVE_SYS_AUDIO_H
 	&ao_aixs,
 #endif
 #endif
-//#ifdef HAVE_WMM
+#ifdef HAVE_WMM
 	&ao_wmm,
-//#endif
+#endif
 
 	NULL /* End of list */
 };

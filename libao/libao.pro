@@ -9,7 +9,11 @@ QT       -= qt
 TARGET = ao
 TEMPLATE = lib
 
+CONFIG += static
+
 DEFINES += AO_BUILDING_LIBAO
+unix:DEFINES += HAVE_DLFCN_H HAVE_DLOPEN HAVE_AU_MACOSX
+win32:DEFINES += HAVE_WMM
 
 include($${PWD}/../nwDeployed.pri)
 
@@ -28,9 +32,11 @@ INCLUDEPATH += ./include ./include/ao
 SOURCES += \
         src/config.c \
         src/ao_null.c \
-        src/ao_wmm.c \
         src/audio_out.c \
-        src/dllmain.c
+
+win32:SOURCES += src/ao_wmm.c  src/dllmain.c
+unix:SOURCES += src/ao_au.c
+
 
 HEADERS += \
         ./include/ao/ao.h \

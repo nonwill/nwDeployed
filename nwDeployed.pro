@@ -10,9 +10,9 @@ win32:SUBDIRS = \
     libxslt \
     sqlite3 \
     speex \
-    libao 
 
 SUBDIRS += \
+    libao \
     zstd \
     liblzo \
     OpenCC \
@@ -29,3 +29,6 @@ SUBDIRS += \
     libleptonica \
 #    jbig2enc \
     tesseract4
+
+mac:SUBDIRS += \
+    libao/src/plugins/macosx
