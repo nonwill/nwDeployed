@@ -13,7 +13,6 @@ depcomp
 doc/Makefile.in
 include/Makefile.in
 include/ao/Makefile.in
-include/ao/os_types.h
 install-sh
 libtool
 ltmain.sh
