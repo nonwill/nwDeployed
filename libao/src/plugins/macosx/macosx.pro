@@ -11,7 +11,6 @@ TEMPLATE = lib
 
 DEFINES += AO_BUILDING_LIBAO
 unix:DEFINES += HAVE_DLFCN_H HAVE_DLOPEN
-win32:DEFINES += HAVE_WMM
 
 include($${PWD}/../../../../nwDeployed.pri)
 

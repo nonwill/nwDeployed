@@ -16,8 +16,17 @@ win32 {
   } else {
     BSDK_TYPE = mingw
   }
+} else {
+  linux {
+    BSDK_TYPE = linux
+  } else {
+    mac {
+      BSDK_TYPE = mac
+    } else {
+      BSDK_TYPE = unix
+    }
+  }
 }
-unix:mac:BSDK_TYPE = mac
 
 NWQT_PVER_FIX=$${QT_MAJOR_VERSION}_$${ARCHITECTURE}
 isEmpty(CUR_PRJ_DIR):CUR_PRJ_DIR = $$PWD

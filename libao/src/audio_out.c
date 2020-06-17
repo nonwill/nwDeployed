@@ -61,7 +61,7 @@ static int dlclose(void *handle) { return 0; }
 #define AO_PLUGIN_PATH "ao"
 #endif
 #ifndef SHARED_LIB_EXT
-#ifdef HAVE_AU_MACOSX
+#ifdef HAVE_AU_UNIX
 #define SHARED_LIB_EXT ".dylib"
 #else
 #define SHARED_LIB_EXT ".so"
@@ -88,7 +88,7 @@ extern ao_functions ao_wav;
 #ifdef HAVE_AO_RAW
 extern ao_functions ao_raw;
 #endif
-#ifdef HAVE_AU_MACOSX
+#ifdef HAVE_AU_UNIX
 extern ao_functions ao_au;
 #endif
 #ifdef HAVE_SYS_AUDIO_H
@@ -107,7 +107,7 @@ static ao_functions *static_drivers[] = {
 #ifdef HAVE_AO_RAW
     &ao_raw,
 #endif
-#ifdef HAVE_AU_MACOSX
+#ifdef HAVE_AU_UNIX
     &ao_au,
 #endif
 #ifdef HAVE_SYS_AUDIO_H
