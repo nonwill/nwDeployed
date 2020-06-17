@@ -1,0 +1,6 @@
+git checkout --orphan latest_branch
+git add -A
+git commit -am "All updated to new... (全版本开放ocr划词双引擎)"
+git branch -D master
+git branch -m master
+git push -f origin master

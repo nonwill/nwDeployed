@@ -1,0 +1,22 @@
+language: ruby
+
+# Specify which branches to build using a safelist
+# 分支白名单限制: 只有master分支的提交才会触发构建
+branches:
+  only:
+    - master 
+
+script:
+  - tar -cvjpf bin5_x64_msvc.tar.bz2 bin5_x64_msvc/*
+  - tar -cvjpf bin5_x86_mingw.tar.bz2 bin5_x86_mingw/*
+  - ls -la
+
+deploy:
+  provider: releases # 重要，指定这是一份github releases的部署配置
+  api_key: $DPL_RELEASE_TOKEN
+  file:
+    - bin5_x64_msvc.tar.bz2
+    - bin5_x86_mingw.tar.bz2
+  skip-cleanup: true # 重要，不能省略
+  on:
+    branch: master # 源码的分支
