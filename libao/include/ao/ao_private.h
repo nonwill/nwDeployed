@@ -50,6 +50,7 @@
 
 /* --- Constants --- */
 
+#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
 #ifndef AO_SYSTEM_CONFIG
 #define AO_SYSTEM_CONFIG "/etc/libao.conf"
 #endif
@@ -62,6 +63,7 @@
 typedef struct ao_config {
 	char *default_driver;
 } ao_config;
+#endif
 
 typedef enum {
   AO_OUTPUT_MATRIX_UNDEFINED=0,   /* matrix unset */
@@ -136,7 +138,9 @@ struct ao_functions {
 
 /* --- Functions --- */
 
+#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
 void ao_read_config_files (ao_config *config);
+#endif
 
 #define adebug(format, ...) /*{\
     if(!device || device->verbose==2){                                  \

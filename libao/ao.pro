@@ -9,13 +9,17 @@ QT       -= qt
 TARGET = ao
 TEMPLATE = lib
 
-mac:CONFIG += static
-
 DEFINES += AO_BUILDING_LIBAO
-unix:DEFINES += HAVE_DLFCN_H HAVE_DLOPEN HAVE_AU_UNIX
-linux:DEFINES += SHARED_LIB_EXT=\\\".so\\\"
-mac:DEFINES += SHARED_LIB_EXT=\\\".dylib\\\"
+
+unix:DEFINES += HAVE_DLFCN_H HAVE_DLOPEN #HAVE_AU_UNIX
+
 win32:DEFINES += HAVE_WMM
+
+linux:DEFINES += SHARED_LIB_EXT=\\\".so\\\" PACKAGE_BUGREPORT=\\\"\\\"
+linux:DEFINES += HAVE_ALSA
+#linux:DEFINES += HAVE_PULSE #failed
+
+mac:DEFINES += HAVE_MACOSX SHARED_LIB_EXT=\\\".dylib\\\"
 
 include($${PWD}/../nwDeployed.pri)
 
@@ -31,14 +35,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 INCLUDEPATH += ./include ./include/ao
 
+win32:SOURCES += src/ao_wmm.c
+
+linux:SOURCES += src/plugins/alsa/ao_alsa.c 
+#linux:SOURCES += src/plugins/pulse/ao_pulse.c
+
+linux:LIBS += -lasound  # for ao_alsa
+
+mac:SOURCES += src/plugins/macosx/ao_macosx.c
+mac:LIBS += -framework AudioUnit -framework CoreAudio -framework CoreServices
+
 SOURCES += \
-        src/config.c \
+#        src/config.c \
         src/ao_null.c \
         src/audio_out.c
 
-win32:SOURCES += src/ao_wmm.c  src/dllmain.c
-unix:SOURCES += src/ao_au.c
 
+#unix:SOURCES += src/ao_au.c
 
 HEADERS += \
         ./include/ao/ao.h \

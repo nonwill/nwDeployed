@@ -41,7 +41,9 @@
 #include <pthread.h>
 
 #include "ao/ao.h"
+#ifndef HAVE_MACOSX
 #include "ao/plugin.h"
+#endif
 
 #define DEFAULT_BUFFER_TIME (250);
 
@@ -749,3 +751,15 @@ void ao_plugin_device_clear(ao_device *device)
   device->internal=NULL;
 }
 
+#ifdef HAVE_MACOSX
+ao_functions ao_macosx = {
+    ao_plugin_test,
+    ao_plugin_driver_info,
+    ao_plugin_device_init,
+    ao_plugin_set_option,
+    ao_plugin_open,
+    ao_plugin_play,
+    ao_plugin_close,
+    ao_plugin_device_clear
+};
+#endif

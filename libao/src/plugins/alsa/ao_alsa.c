@@ -38,7 +38,9 @@
 
 #include <alsa/asoundlib.h>
 #include <ao/ao.h>
+#ifndef HAVE_ALSA
 #include <ao/plugin.h>
+#endif
 
 /* default 20 millisecond buffer */
 #define AO_ALSA_BUFFER_TIME 20000
@@ -904,3 +906,15 @@ void ao_plugin_device_clear(ao_device *device)
           awarn("ao_plugin_device_clear called with uninitialized ao_device\n");
 }
 
+#ifdef HAVE_ALSA
+ao_functions ao_alsa = {
+    ao_plugin_test,
+    ao_plugin_driver_info,
+    ao_plugin_device_init,
+    ao_plugin_set_option,
+    ao_plugin_open,
+    ao_plugin_play,
+    ao_plugin_close,
+    ao_plugin_device_clear
+};
+#endif

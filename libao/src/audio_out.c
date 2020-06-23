@@ -98,6 +98,15 @@ extern ao_functions ao_aixs;
 #ifdef HAVE_WMM
 extern ao_functions ao_wmm;
 #endif
+#ifdef HAVE_ALSA
+extern ao_functions ao_alsa;
+#endif
+#ifdef HAVE_PULSE
+extern ao_functions ao_pulse;
+#endif
+#ifdef HAVE_MACOSX
+extern ao_functions ao_macosx;
+#endif
 static ao_functions *static_drivers[] = {
 	&ao_null, /* Must have at least one static driver! */
 #ifndef WIN32
@@ -117,14 +126,24 @@ static ao_functions *static_drivers[] = {
 #ifdef HAVE_WMM
 	&ao_wmm,
 #endif
-
-	NULL /* End of list */
+#ifdef HAVE_ALSA
+    &ao_alsa,
+#endif
+#ifdef HAVE_PULSE
+    &ao_pulse,
+#endif
+#ifdef HAVE_MACOSX
+    &ao_macosx,
+#endif
+    NULL /* End of list */
 };
 
 static driver_list *driver_head = NULL;
+#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
 static ao_config config = {
 	NULL /* default_driver */
 };
+#endif
 
 static ao_info **info_table = NULL;
 static int driver_count = 0;
@@ -145,8 +164,10 @@ static void _clear_config()
         ao_free_options(ao_global_options);
         ao_global_options = NULL;
 
-	free(config.default_driver);
+#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+    free(config.default_driver);
 	config.default_driver = NULL;
+#endif
 }
 
 
@@ -236,7 +257,7 @@ static int _find_default_driver_id (const char *name)
 	int id;
 	ao_info *info;
 	driver_list *dl = driver_head;
-        ao_device *device = ao_global_dummy;
+    /*    ao_device *device = ao_global_dummy;*/
 
         adebug("Testing drivers to find playback default...\n");
 	if ( name == NULL || (def_id = ao_driver_id(name)) < 0 ) {
@@ -1271,13 +1292,15 @@ void ao_initialize(void)
         ao_global_dummy->funcs = &ao_dummy_funcs;
 
 	/* Read config files */
-	ao_read_config_files(&config);
+#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+    ao_read_config_files(&config);
         ao_global_load_options(ao_global_options);
+#endif
 
 	if (driver_head == NULL) {
 		driver_head = _load_static_drivers(&end);
 #ifndef WIN32
-		_append_dynamic_drivers(end);
+        _append_dynamic_drivers(end);
 #endif
 	}
 
@@ -1498,7 +1521,11 @@ int ao_default_driver_id (void)
 {
 	/* Find the default driver in the list of loaded drivers */
 
-	return _find_default_driver_id(config.default_driver);
+#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+    return _find_default_driver_id(config.default_driver);
+#else
+    return _find_default_driver_id(NULL);
+#endif
 }
 
 
