@@ -50,7 +50,7 @@
 
 /* --- Constants --- */
 
-#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+#ifndef BUILDING_PLUGIN_STATIC
 #ifndef AO_SYSTEM_CONFIG
 #define AO_SYSTEM_CONFIG "/etc/libao.conf"
 #endif
@@ -138,7 +138,7 @@ struct ao_functions {
 
 /* --- Functions --- */
 
-#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+#ifndef BUILDING_PLUGIN_STATIC
 void ao_read_config_files (ao_config *config);
 #endif
 

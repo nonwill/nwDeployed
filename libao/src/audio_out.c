@@ -34,6 +34,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#ifndef BUILDING_PLUGIN_STATIC
 #if defined HAVE_DLFCN_H && defined HAVE_DLOPEN
 # include <dlfcn.h>
 #else
@@ -43,6 +44,7 @@ static void *dlsym(void *handle, const char *symbol) { return 0; }
 static int dlclose(void *handle) { return 0; }
 #undef DLOPEN_FLAG
 #define DLOPEN_FLAG 0
+#endif
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -75,7 +77,9 @@ static int dlclose(void *handle) { return 0; }
 
 typedef struct driver_list {
 	ao_functions *functions;
-	void *handle;
+#ifndef BUILDING_PLUGIN_STATIC
+    void *handle;
+#endif
 	struct driver_list *next;
 } driver_list;
 
@@ -95,6 +99,7 @@ extern ao_functions ao_au;
 extern ao_functions ao_aixs;
 #endif
 #endif
+#ifdef BUILDING_PLUGIN_STATIC
 #ifdef HAVE_WMM
 extern ao_functions ao_wmm;
 #endif
@@ -106,6 +111,7 @@ extern ao_functions ao_pulse;
 #endif
 #ifdef HAVE_MACOSX
 extern ao_functions ao_macosx;
+#endif
 #endif
 static ao_functions *static_drivers[] = {
 	&ao_null, /* Must have at least one static driver! */
@@ -123,6 +129,7 @@ static ao_functions *static_drivers[] = {
 	&ao_aixs,
 #endif
 #endif
+#ifdef BUILDING_PLUGIN_STATIC
 #ifdef HAVE_WMM
 	&ao_wmm,
 #endif
@@ -135,11 +142,12 @@ static ao_functions *static_drivers[] = {
 #ifdef HAVE_MACOSX
     &ao_macosx,
 #endif
+#endif
     NULL /* End of list */
 };
 
 static driver_list *driver_head = NULL;
-#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+#ifndef BUILDING_PLUGIN_STATIC
 static ao_config config = {
 	NULL /* default_driver */
 };
@@ -164,7 +172,7 @@ static void _clear_config()
         ao_free_options(ao_global_options);
         ao_global_options = NULL;
 
-#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+#ifndef BUILDING_PLUGIN_STATIC
     free(config.default_driver);
 	config.default_driver = NULL;
 #endif
@@ -172,6 +180,7 @@ static void _clear_config()
 
 
 #ifndef WIN32
+#ifndef BUILDING_PLUGIN_STATIC
 /* Load a plugin from disk and put the function table into a driver_list
    struct. */
 static driver_list *_get_plugin(char *plugin_file)
@@ -248,6 +257,7 @@ static driver_list *_get_plugin(char *plugin_file)
 	return NULL;
 }
 #endif
+#endif
 
 /* If *name is a valid driver name, return its driver number.
    Otherwise, test all of available live drivers until one works. */
@@ -298,7 +308,9 @@ static driver_list* _load_static_drivers(driver_list **end)
 	head = driver = calloc(1,sizeof(driver_list));
 	if (driver != NULL) {
 		driver->functions = static_drivers[0];
-		driver->handle = NULL;
+#ifndef BUILDING_PLUGIN_STATIC
+        driver->handle = NULL;
+#endif
 		driver->next = NULL;
                 adebug("Loaded driver %s (built-in)\n",driver->functions->driver_info()->short_name);
 
@@ -309,7 +321,9 @@ static driver_list* _load_static_drivers(driver_list **end)
 				break;
 
 			driver->next->functions = static_drivers[i];
-			driver->next->handle = NULL;
+#ifndef BUILDING_PLUGIN_STATIC
+            driver->next->handle = NULL;
+#endif
 			driver->next->next = NULL;
 
 			driver = driver->next;
@@ -325,6 +339,7 @@ static driver_list* _load_static_drivers(driver_list **end)
 }
 
 #ifndef WIN32
+#ifndef BUILDING_PLUGIN_STATIC
 /* Load the dynamic drivers from disk and append them to end of the
    driver list.  end points the driver_list node to append to. */
 static void _append_dynamic_drivers(driver_list *end)
@@ -364,6 +379,7 @@ static void _append_dynamic_drivers(driver_list *end)
 	}
 #endif
 }
+#endif
 #endif
 
 /* Compare two drivers based on priority
@@ -1292,7 +1308,7 @@ void ao_initialize(void)
         ao_global_dummy->funcs = &ao_dummy_funcs;
 
 	/* Read config files */
-#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+#ifndef BUILDING_PLUGIN_STATIC
     ao_read_config_files(&config);
         ao_global_load_options(ao_global_options);
 #endif
@@ -1300,7 +1316,9 @@ void ao_initialize(void)
 	if (driver_head == NULL) {
 		driver_head = _load_static_drivers(&end);
 #ifndef WIN32
+#ifndef BUILDING_PLUGIN_STATIC
         _append_dynamic_drivers(end);
+#endif
 #endif
 	}
 
@@ -1320,11 +1338,13 @@ void ao_shutdown(void)
 
 	/* unload and free all the drivers */
 	while (driver) {
-		if (driver->handle) {
+#ifndef BUILDING_PLUGIN_STATIC
+        if (driver->handle) {
 
 		  dlclose(driver->handle);
 		  free(driver->functions); /* DON'T FREE STATIC FUNC TABLES */
 		}
+#endif
 		next_driver = driver->next;
 		free(driver);
 		driver = next_driver;
@@ -1521,7 +1541,7 @@ int ao_default_driver_id (void)
 {
 	/* Find the default driver in the list of loaded drivers */
 
-#if !defined(HAVE_ALSA) && !defined(HAVE_MACOSX) && !defined(HAVE_WMM)
+#ifndef BUILDING_PLUGIN_STATIC
     return _find_default_driver_id(config.default_driver);
 #else
     return _find_default_driver_id(NULL);

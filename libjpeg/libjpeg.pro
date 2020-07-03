@@ -4,7 +4,7 @@ TEMPLATE = lib
 
 TARGET = jpeg
 
-mac:CONFIG += static
+unix:CONFIG += static
 win32:DEF_FILE = jpeg8.def
 
 include($${PWD}/../nwDeployed.pri)

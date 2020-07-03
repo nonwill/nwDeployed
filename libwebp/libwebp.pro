@@ -4,7 +4,7 @@ TEMPLATE = lib
 
 TARGET = webp
 
-mac:CONFIG += static
+unix:CONFIG += static
 win32:msvc*:DEFINES += WEBP_EXTERN=__declspec\(dllexport\)
 
 DEFINES += WEBP_USE_THREAD

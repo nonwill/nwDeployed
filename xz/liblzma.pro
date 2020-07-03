@@ -9,7 +9,7 @@ QT       -= qt
 TARGET = lzma
 TEMPLATE = lib
 
-CONFIG +=
+unix:CONFIG += static
 
 DEFINES += HAVE_CONFIG_H DLL_EXPORT LIBLZMADLL_EXPORTS
 
@@ -172,8 +172,9 @@ HEADERS += ./src/common/mythread.h \
     ./src/liblzma/simple/simple_coder.h \
     ./src/liblzma/simple/simple_decoder.h \
     ./src/liblzma/simple/simple_encoder.h \
-    ./src/liblzma/simple/simple_private.h \
-    ./windows/vs2017/config.h
+    ./src/liblzma/simple/simple_private.h
+
+win32:HEADERS += ./windows/vs2017/config.h
 
 
 win32:LIBS += -lksuser -lwinmm

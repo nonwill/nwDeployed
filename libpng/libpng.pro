@@ -4,7 +4,7 @@ TEMPLATE = lib
 
 TARGET = png
 
-mac:CONFIG += static
+unix:CONFIG += static
 win32:DEF_FILE = symbols.def
 
 include($${PWD}/../nwDeployed.pri)

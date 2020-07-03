@@ -9,9 +9,9 @@ QT       -= qt
 TARGET = ao
 TEMPLATE = lib
 
-DEFINES += AO_BUILDING_LIBAO
+DEFINES += AO_BUILDING_LIBAO BUILDING_PLUGIN_STATIC
 
-unix:DEFINES += HAVE_DLFCN_H HAVE_DLOPEN #HAVE_AU_UNIX
+#unix:DEFINES += HAVE_DLFCN_H HAVE_DLOPEN #HAVE_AU_UNIX
 
 win32:DEFINES += HAVE_WMM
 
@@ -36,28 +36,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += ./include ./include/ao
 
 win32:SOURCES += src/ao_wmm.c
+win32:LIBS += -lksuser -lwinmm
 
 linux:SOURCES += src/plugins/alsa/ao_alsa.c 
-#linux:SOURCES += src/plugins/pulse/ao_pulse.c
-
 linux:LIBS += -lasound  # for ao_alsa
+#linux:SOURCES += src/plugins/pulse/ao_pulse.c
 
 mac:SOURCES += src/plugins/macosx/ao_macosx.c
 mac:LIBS += -framework AudioUnit -framework CoreAudio -framework CoreServices
 
 SOURCES += \
-#        src/config.c \
         src/ao_null.c \
-        src/audio_out.c
-
-
-#unix:SOURCES += src/ao_au.c
+        src/audio_out.c \
+#        src/config.c
 
 HEADERS += \
         ./include/ao/ao.h \
         ./include/ao/os_types.h \
         ./include/ao/ao_private.h
 
-win32:LIBS += -lksuser -lwinmm
-unix:LIBS += -ldl
+#unix:LIBS += -ldl
 

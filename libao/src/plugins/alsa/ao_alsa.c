@@ -38,7 +38,7 @@
 
 #include <alsa/asoundlib.h>
 #include <ao/ao.h>
-#ifndef HAVE_ALSA
+#ifndef BUILDING_PLUGIN_STATIC
 #include <ao/plugin.h>
 #endif
 
@@ -906,7 +906,7 @@ void ao_plugin_device_clear(ao_device *device)
           awarn("ao_plugin_device_clear called with uninitialized ao_device\n");
 }
 
-#ifdef HAVE_ALSA
+#ifdef BUILDING_PLUGIN_STATIC
 ao_functions ao_alsa = {
     ao_plugin_test,
     ao_plugin_driver_info,

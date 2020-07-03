@@ -41,7 +41,7 @@
 #include <pthread.h>
 
 #include "ao/ao.h"
-#ifndef HAVE_MACOSX
+#ifndef BUILDING_PLUGIN_STATIC
 #include "ao/plugin.h"
 #endif
 
@@ -751,7 +751,7 @@ void ao_plugin_device_clear(ao_device *device)
   device->internal=NULL;
 }
 
-#ifdef HAVE_MACOSX
+#ifdef BUILDING_PLUGIN_STATIC
 ao_functions ao_macosx = {
     ao_plugin_test,
     ao_plugin_driver_info,

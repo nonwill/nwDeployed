@@ -4,7 +4,7 @@ TEMPLATE = lib
 
 TARGET = tiff
 
-mac:CONFIG += static
+unix:CONFIG += static
 
 DEFINES += TIF_PLATFORM_CONSOLE
 win32:DEF_FILE = libtiff.def

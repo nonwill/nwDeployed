@@ -12,7 +12,7 @@ DEFINES += BUILDING_LIBHUNSPELL
 #DEFINES += HUNSPELL_STATIC
 
 TEMPLATE = lib
-mac:CONFIG += static
+unix:CONFIG += static
 CONFIG += precompile_header
 
 include($${PWD}/../nwDeployed.pri)

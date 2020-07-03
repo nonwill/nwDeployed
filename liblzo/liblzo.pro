@@ -4,7 +4,7 @@ TEMPLATE = lib
 
 TARGET = lzo2
 
-mac:CONFIG += static
+unix:CONFIG += static
 
 include($${PWD}/../nwDeployed.pri)
 

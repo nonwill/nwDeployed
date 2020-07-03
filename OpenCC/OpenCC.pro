@@ -13,7 +13,7 @@ TARGET = opencc.2
 TARGET = opencc
 }
 
-mac:CONFIG += static
+unix:CONFIG += static
 
 win32:DEFINES += OPENCC_EXPORT=__declspec\(dllexport\)
 

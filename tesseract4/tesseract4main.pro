@@ -32,5 +32,5 @@ INCLUDEPATH += \
 
 INCLUDEPATH += $${PWD}/../libleptonica/src \
 
-LIBS += -ltesseract4 -llept 
-mac:LIBS += -lpng -ljpeg -ltiff -lgiflib -lwebp -lopenjpeg -lz
+unix:LIBS += -lpng -ljpeg -ltiff -lgiflib -lwebp -lopenjpeg -lz
+LIBS += -ltesseract4 -llept
