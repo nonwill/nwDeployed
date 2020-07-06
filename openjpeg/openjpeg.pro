@@ -1,4 +1,5 @@
-CONFIG -= qt
+CONFIG -= qt warn_on
+CONFIG += exceptions_off rtti_off warn_off
 
 TEMPLATE = lib
 

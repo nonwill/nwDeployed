@@ -1,16 +1,15 @@
-CONFIG -= qt
+CONFIG -= qt warn_on
+CONFIG += exceptions_off rtti_off warn_off
 
 TEMPLATE = lib
 
 TARGET = zstd
 
-CONFIG += static
-
+unix:CONFIG += static
+win32:DEFINES += ZSTD_DLL_EXPORT=1 ZSTD_HEAPMODE=0
 DEFINES += ZSTD_MULTITHREAD=1 \
     ZSTD_LEGACY_SUPPORT=5 \
     XXH_PRIVATE_API
-win32:DEFINES += ZSTD_HEAPMODE=0
-#win32:DEFINES += ZSTD_DLL_EXPORT=1
 
 include($${PWD}/../nwDeployed.pri)
 
@@ -50,37 +49,37 @@ HEADERS +=  \
     ./lib/decompress/zstd_ddict.h
 
 SOURCES += \
-    ./lib/common/pool.c \
     ./lib/common/debug.c \
-    ./lib/common/threading.c \
     ./lib/common/entropy_common.c \
-    ./lib/compress/hist.c \
     ./lib/common/error_private.c \
+    ./lib/common/fse_decompress.c \
+    ./lib/common/pool.c \
+    ./lib/common/threading.c \
     ./lib/common/xxhash.c \
     ./lib/common/zstd_common.c \
-    ./lib/common/fse_decompress.c \
     ./lib/compress/fse_compress.c \
+    ./lib/compress/hist.c \
     ./lib/compress/huf_compress.c \
-    ./lib/compress/zstd_compress.c \
     ./lib/compress/zstd_compress_literals.c \
     ./lib/compress/zstd_compress_sequences.c \
     ./lib/compress/zstd_compress_superblock.c \
-    ./lib/compress/zstd_fast.c \
+    ./lib/compress/zstd_compress.c \
     ./lib/compress/zstd_double_fast.c \
+    ./lib/compress/zstd_fast.c \
     ./lib/compress/zstd_lazy.c \
-    ./lib/compress/zstd_opt.c \
     ./lib/compress/zstd_ldm.c \
     ./lib/compress/zstdmt_compress.c \
+    ./lib/compress/zstd_opt.c \
     ./lib/decompress/huf_decompress.c \
-    ./lib/decompress/zstd_decompress.c \
-    ./lib/decompress/zstd_decompress_block.c \
     ./lib/decompress/zstd_ddict.c \
+    ./lib/decompress/zstd_decompress_block.c \
+    ./lib/decompress/zstd_decompress.c \
     ./lib/deprecated/zbuff_common.c \
     ./lib/deprecated/zbuff_compress.c \
     ./lib/deprecated/zbuff_decompress.c \
     ./lib/dictBuilder/cover.c \
-    ./lib/dictBuilder/fastcover.c \
     ./lib/dictBuilder/divsufsort.c \
+    ./lib/dictBuilder/fastcover.c \
     ./lib/dictBuilder/zdict.c \
     ./lib/legacy/zstd_v01.c \
     ./lib/legacy/zstd_v02.c \

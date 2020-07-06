@@ -96,11 +96,14 @@
 #define CCITT_SUPPORT 1
 
 /* Support JPEG compression (requires IJG JPEG library) */
-/* #undef JPEG_SUPPORT */
+#if defined(HAS_LIBJPEG)
 #define JPEG_SUPPORT 1
+#endif
 
 /* Support JBIG compression (requires JBIG-KIT library) */
-/* #undef JBIG_SUPPORT */
+#if defined(HAS_JBIGKIT)
+#define JBIG_SUPPORT 1
+#endif
 
 /* Support LogLuv high dynamic range encoding */
 #define LOGLUV_SUPPORT 1
@@ -113,26 +116,25 @@
 
 /* Support Old JPEG compresson (read contrib/ojpeg/README first! Compilation
    fails with unpatched IJG JPEG library) */
-/* #undef OJPEG_SUPPORT */
+#if defined(HAS_LIBJPEG)
 #define OJPEG_SUPPORT 1
+#endif
 
 /* Support Macintosh PackBits algorithm */
 #define PACKBITS_SUPPORT 1
 
 /* Support Pixar log-format algorithm (requires Zlib) */
-/* #undef PIXARLOG_SUPPORT */
+#if defined(HAS_ZLIB)
 #define PIXARLOG_SUPPORT 1
+#endif
 
 /* Support ThunderScan 4-bit RLE algorithm */
 #define THUNDER_SUPPORT 1
 
 /* Support Deflate compression */
-/* #undef ZIP_SUPPORT */
+#if defined(HAS_ZLIB)
 #define ZIP_SUPPORT 1
-
-/* Support WEBP compression */
-/* #undef WEBP_SUPPORT */
-#define WEBP_SUPPORT 1
+#endif
 
 /* Support strip chopping (whether or not to convert single-strip uncompressed
    images to mutiple strips of ~8Kb to reduce memory usage) */

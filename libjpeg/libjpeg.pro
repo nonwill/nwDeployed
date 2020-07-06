@@ -1,4 +1,4 @@
-CONFIG -= qt
+CONFIG -= qt warn_on
 
 TEMPLATE = lib
 
@@ -6,6 +6,8 @@ TARGET = jpeg
 
 unix:CONFIG += static
 win32:DEF_FILE = jpeg8.def
+
+CONFIG += exceptions_off rtti_off warn_off
 
 include($${PWD}/../nwDeployed.pri)
 
@@ -64,11 +66,11 @@ SOURCES += \
      jidctflt.c \
      jidctfst.c \
      jidctint.c \
-     jmemmgr.c \
-     jmemnobs.c \
      jquant1.c \
      jquant2.c \
      jutils.c \
+     jmemmgr.c \
+     jmemnobs.c
 
 
 INCLUDEPATH +=

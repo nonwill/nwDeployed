@@ -1,6 +1,42 @@
-#define OPJ_HAVE_INTTYPES_H 1
+/* create opj_config_private.h for CMake */
+#if !defined (_WIN32) || !defined (_MSC_VER) || (_MSC_VER >= 1800)
+#define OPJ_HAVE_INTTYPES_H 	1
+#endif
+
+
 #define OPJ_PACKAGE_VERSION "2.3.1"
-#define OPJ_HAVE_FSEEKO		0
+
+/* Not used by openjp2*/
+/*#define HAVE_MEMORY_H 1*/
+/*#define HAVE_STDLIB_H 1*/
+/*#define HAVE_STRINGS_H 1*/
+/*#define HAVE_STRING_H 1*/
+/*#define HAVE_SYS_STAT_H 1*/
+/*#define HAVE_SYS_TYPES_H 1 */
+/*#define HAVE_UNISTD_H 1*/
+
+/* #undef _LARGEFILE_SOURCE */
+/* #undef _LARGE_FILES */
+/* #undef _FILE_OFFSET_BITS */
+/* #undef OPJ_HAVE_FSEEKO */
+
+/* find whether or not have <malloc.h> */
+/* #undef OPJ_HAVE_MALLOC_H */
+/* check if function `aligned_alloc` exists */
+/* #undef OPJ_HAVE_ALIGNED_ALLOC */
+/* check if function `_aligned_malloc` exists */
+/* #undef OPJ_HAVE__ALIGNED_MALLOC */
+/* check if function `memalign` exists */
+/* #undef OPJ_HAVE_MEMALIGN */
+/* check if function `posix_memalign` exists */
+/* #undef OPJ_HAVE_POSIX_MEMALIGN */
+
+#if !defined(_POSIX_C_SOURCE)
+#if defined(OPJ_HAVE_FSEEKO) || defined(OPJ_HAVE_POSIX_MEMALIGN)
+/* Get declarations of fseeko, ftello, posix_memalign. */
+#define _POSIX_C_SOURCE 200112L
+#endif
+#endif
 
 /* Byte order.  */
 /* All compilers that support Mac OS X define either __BIG_ENDIAN__ or

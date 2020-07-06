@@ -1,4 +1,5 @@
-CONFIG -= qt
+CONFIG -= qt warn_on
+CONFIG += exceptions_off rtti_off warn_off
 
 TEMPLATE = lib
 
@@ -6,25 +7,12 @@ TARGET = tiff
 
 unix:CONFIG += static
 
-DEFINES += TIF_PLATFORM_CONSOLE
+DEFINES += DISABLE_CHECK_TIFFSWABMACROS HAS_LIBWEBP HAS_LIBJPEG HAS_ZLIB HAS_ZSTD
+win32:DEFINES += TIF_PLATFORM_CONSOLE
+win32:msvc*:DEFINES += inline=__inline
 win32:DEF_FILE = libtiff.def
 
 include($${PWD}/../nwDeployed.pri)
-
-
-HEADERS +=  \
-    t4.h \
-    tiff.h \
-    tiffconf.h \
-    tiffio.h \
-    tiffio.hxx \
-    tiffiop.h \
-    tiffvers.h \
-    tif_config.h \
-    tif_dir.h \
-    tif_fax3.h \
-    tif_predict.h \
-    uvcode.h
 
 
 SOURCES += \
@@ -58,7 +46,6 @@ SOURCES += \
      tif_predict.c \
      tif_print.c \
      tif_read.c \
-     tif_stream.cxx \
      tif_strip.c \
      tif_swab.c \
      tif_thunder.c \
@@ -70,10 +57,34 @@ SOURCES += \
      tif_zip.c \
      tif_zstd.c
 
-win32:SOURCES += tif_win32.c
-unix:SOURCES +=  tif_unix.c
+win32 {
+    SOURCES += tif_win32.c
+} else {
+    SOURCES +=  tif_unix.c
+}
+
+win32:msvc* {
+    SOURCES += \
+        port/snprintf.c
+}
 
 
-INCLUDEPATH += $${PWD}/../libjpeg $${PWD}/../libwebp/src $${PWD}/../zlib/include
+HEADERS +=  \
+    t4.h \
+    tif_dir.h \
+    tif_fax3.h \
+    tiff.h \
+    tiffconf.h \
+    tiffio.h \
+    tiffiop.h \
+    tiffvers.h \
+    tif_config.h \
+    tif_predict.h \
+    uvcode.h
 
-LIBS += -ljpeg -lwebp -lz
+INCLUDEPATH += $${PWD}/../libjpeg \
+    $${PWD}/../libwebp/src \
+    $${PWD}/../zlib/include \
+    $${PWD}/../zstd/lib
+
+LIBS += -ljpeg -lwebp -lz -lzstd
