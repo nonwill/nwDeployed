@@ -17,7 +17,7 @@ win32:DEFINES += HAVE_WMM
 
 linux:DEFINES += SHARED_LIB_EXT=\\\".so\\\" PACKAGE_BUGREPORT=\\\"\\\"
 linux:DEFINES += HAVE_ALSA
-#linux:DEFINES += HAVE_PULSE #failed
+#linux:DEFINES += HAVE_PULSE # failed to play sound
 
 mac:DEFINES += HAVE_MACOSX SHARED_LIB_EXT=\\\".dylib\\\"
 
