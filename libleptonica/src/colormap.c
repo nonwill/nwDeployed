@@ -253,7 +253,7 @@ PIXCMAP  *cmapd;
 
     if (!cmaps)
         return (PIXCMAP *)ERROR_PTR("cmaps not defined", procName, NULL);
-    pixcmapIsValid(cmaps, &valid);
+    pixcmapIsValid(cmaps, NULL, &valid);
     if (!valid)
         return (PIXCMAP *)ERROR_PTR("invalid cmap", procName, NULL);
 
@@ -298,14 +298,26 @@ PIXCMAP  *cmap;
  * \brief   pixcmapIsValid()
  *
  * \param[in]    cmap
+ * \param[in]    pix        optional; can be NULL
  * \param[out]   pvalid     return 1 if valid; 0 if not
  * \return  0 if OK, 1 on error or if cmap is not valid
+ *
+ * <pre>
+ * Notes:
+ *      (1) If %pix is input, this will veify that pixel values cannot
+ *          overflow the colormap.  This is a relatively expensive operation
+ *          that may need to check all the pixel values.
+ *      (2) If %pix is input, there must be at least one color in the
+ *          colormap if it is to be valid with any pix, even if the
+ *          pixels are all 0.
+ * </pre>
  */
 l_ok
 pixcmapIsValid(const PIXCMAP  *cmap,
+               PIX            *pix,
                l_int32        *pvalid)
 {
-l_int32  d;
+l_int32  d, nalloc, maxindex;
 
     PROCNAME("pixcmapIsValid");
 
@@ -317,19 +329,46 @@ l_int32  d;
     if (!cmap->array)
         return ERROR_INT("cmap array not defined", procName, 1);
     d = cmap->depth;
-    if (d !=1 && d != 2 && d != 4 && d != 8) {
+    if (d != 1 && d != 2 && d != 4 && d != 8) {
         L_ERROR("invalid cmap depth: %d\n", procName, d);
         return 1;
     }
-    if (cmap->nalloc < 2 || cmap->nalloc > 256) {
-        L_ERROR("invalid cmap nalloc: %d\n", procName, cmap->nalloc);
+    nalloc = cmap->nalloc;
+    if (nalloc != (1 << d)) {
+        L_ERROR("invalid cmap nalloc = %d; d = %d\n", procName, nalloc, d);
         return 1;
     }
-    if (cmap->n < 0 || cmap->n > 256 || cmap->n > cmap->nalloc) {
-        L_ERROR("invalid cmap n: %d (nalloc = %d)\n", procName,
-                cmap->n, cmap->nalloc);
+    if (cmap->n < 0 || cmap->n > nalloc) {
+        L_ERROR("invalid cmap n: %d; nalloc = %d\n", procName, cmap->n, nalloc);
         return 1;
     }
+
+        /* To prevent indexing overflow into the cmap, the pix depth
+         * must not exceed the cmap depth.  Do not require depth equality,
+         * because some functions such as median cut quantizers do not. */
+    if (pix && (pixGetDepth(pix) > d)) {
+        L_ERROR("(pix depth = %d) > (cmap depth = %d)\n", procName,
+                pixGetDepth(pix), d);
+        return 1;
+    }
+    if (pix && cmap->n < 1) {
+        L_ERROR("cmap array is empty; invalid with any pix\n", procName);
+        return 1;
+    }
+
+        /* Where the colormap or the pix may have been corrupted, and
+         * in particular when reading or writing image files, it should
+         * be verified that the image pixel values do not exceed the
+         * max indexing into the colormap array. */
+    if (pix) {
+        pixGetMaxColorIndex(pix, &maxindex);
+        if (maxindex >= cmap->n) {
+            L_ERROR("(max index = %d) >= (num colors = %d)\n", procName,
+                    maxindex, cmap->n);
+            return 1;
+        }
+    }
+
     *pvalid = 1;
     return 0;
 }
@@ -1748,7 +1787,8 @@ PIXCMAP  *cmap;
     ignore = fscanf(fp, "Color    R-val    G-val    B-val   Alpha\n");
     ignore = fscanf(fp, "----------------------------------------\n");
 
-    cmap = pixcmapCreate(depth);
+    if ((cmap = pixcmapCreate(depth)) == NULL)
+        return (PIXCMAP *)ERROR_PTR("cmap not made", procName, NULL);
     for (i = 0; i < ncolors; i++) {
         if (fscanf(fp, "%3d       %3d      %3d      %3d      %3d\n",
                         &index, &rval, &gval, &bval, &aval) != 5) {
@@ -2068,7 +2108,7 @@ l_uint8  *data;
  *
  * \param[in]    data      binary string, 3 or 4 bytes per color
  * \param[in]    cpc       components/color: 3 for rgb, 4 for rgba
- * \param[in]    ncolors
+ * \param[in]    ncolors   > 0
  * \return  cmap, or NULL on error
  */
 PIXCMAP *
@@ -2085,7 +2125,7 @@ PIXCMAP  *cmap;
         return (PIXCMAP *)ERROR_PTR("data not defined", procName, NULL);
     if (cpc != 3 && cpc != 4)
         return (PIXCMAP *)ERROR_PTR("cpc not 3 or 4", procName, NULL);
-    if (ncolors == 0)
+    if (ncolors <= 0)
         return (PIXCMAP *)ERROR_PTR("no entries", procName, NULL);
     if (ncolors > 256)
         return (PIXCMAP *)ERROR_PTR("ncolors > 256", procName, NULL);

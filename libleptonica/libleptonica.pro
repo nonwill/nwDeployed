@@ -17,7 +17,7 @@ win32::msvc*:QMAKE_CFLAGS += /TP # Compile C as CPlusPlus, this is important.
 include($${PWD}/../nwDeployed.pri)
 
 HEADERS +=  \
-    endianness.h \
+#    endianness.h \
     config_auto.h \
     src/allheaders.h \
     src/alltypes.h \
@@ -29,7 +29,7 @@ HEADERS +=  \
     src/bmfdata.h \
     src/bmp.h \
     src/ccbord.h \
-    src/colorinfo.h \
+    src/colorfill.h \
     src/dewarp.h \
     src/endianness.h \
     src/environ.h \
@@ -86,7 +86,7 @@ SOURCES += \
     src/checkerboard.c \
     src/classapp.c \
     src/colorcontent.c \
-    src/colorinfo.c \
+    src/colorfill.c \
     src/coloring.c \
     src/colormap.c \
     src/colormorph.c \

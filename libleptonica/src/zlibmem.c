@@ -59,7 +59,7 @@
 
 #include "zlib.h"
 
-#define L_BUF_SIZE  32768
+static const l_int32  L_BUF_SIZE = 32768;
 static const l_int32  ZLIB_COMPRESSION_LEVEL = 6;
 
 #ifndef  NO_CONSOLE_IO

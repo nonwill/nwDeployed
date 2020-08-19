@@ -5,5 +5,6 @@
 #define  HAVE_LIBGIF      1
 #define  HAVE_LIBUNGIF    0
 #define  HAVE_LIBWEBP     1
+#define  HAVE_LIBWEBP_ANIM     1
 #define  HAVE_LIBJP2K     1
-#define  LIBJP2K_HEADER   <openjpeg.h>
+#define  LIBJP2K_HEADER   "openjpeg.h"
