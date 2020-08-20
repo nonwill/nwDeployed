@@ -1,0 +1,34 @@
+﻿Konstantin Isakov <ikm\goldendict.org>: Principal author of the program
+Jennie Petoumenou <epetoumenou\gmail.com>: Greek transliteration and Greek translation
+Mindaugas Baranauskas <embar\super.lt>: Lithuanian translation
+Vit Pelcak <vit\pelcak.org>: Czech translation
+Hero Phương <herophuong93\gmail.com> , Trần Đình Anh Tuấn <tuantda.vn\gmail.com>: Vietnamese translation
+Daniele Di Pisa <daniele\systems.it>: Italian translation
+Daniel Kaneider: German translation
+Zhang Jinsong <zhangsong023\gmail.com>: Simplified Chinese translation
+Usama Akkad <uahello\gmail.com>, Linux Arab Community Team <linuxac.org>: Arabic translation
+Korostil Daniel <ted.korostiled\gmail.com>: Ukrainian translation
+Grzegorz Karpowicz <greg.karpowicz\gmail.com>: Polish translation
+Nardog <alphisation\gmail.com>: Japanese translation
+Maha 吳寶原, Ray Chou 周邦信, Marcus Bingenheimer, 黃文龍 <wlhunag\gmail.com>: Traditional Chinese translation
+Besmir Godole <bgodole\gmail.com>: Albanian translation
+Leonardo Montenegro <thesolidone\gmail.com>, MCHAL <MCHAL@anomail.de>, Alexandro Casanova <shorterfire\gmail.com>: Brazilian Portuguese translation
+Julian Depetris Chauvin <jdepetris\gmail.com>: Interface enhancements
+Yanina Weingast <yjweingast\gmail.com>: Argentinian Spanish translation
+Tvangeste <i.4m.l33t\yandex.ru>: Interface enhancements
+Zdenko Podobný <zdenop\gmail.com>: Slovak translation
+Şükrü Yekta Karabulut <sukruyekta\gmail.com>: Turkish translation
+Amos Batto <amosbatto\yahoo.com>: Quechua, Aymara and Bolivian Spanish translations
+Carlos A. Cortijo Bon <carlos_cortijo\yahoo.com>: Spanish from Spain translation
+Victor Ibragimov <victor.ibragimov\gmail.com>: Tajik translation
+Maksim Tamkovič <quendimax\gmail.com>: Belarusian translation and transliteration
+VirtualTam <virtualtam\myopera.com>: French translation
+Panho Ku <maranamho\gmail.com>: Korean translation
+Тим Перце <kreativnooko\gmail.com>: Serbian translation
+Cris van Minnen: Dutch translation
+Timon Wong <timon86.wang\gmail.com>: MDict (*.mdx/*.mdd) dictionary format
+PICTT Turkmenistan: Turkmen translation
+Nasrollah Noori <nanopqr@gmail.com>: Persian translation
+Vladimir Gerovski: Macedonian Translation
+Nikolay Korotkiy <sikmir\gmail.com>: Finnish translation
+Xiaoqin Liu <nonwill@hotmail.com>: OCR and Stability/Efficiency improvements
