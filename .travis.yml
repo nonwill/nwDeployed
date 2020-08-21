@@ -7,16 +7,16 @@ branches:
     - master 
 
 script:
-  - tar -cvjpf bin5_x64_msvc.tar.bz2 bin5_x64_msvc/*
-  - tar -cvjpf bin5_x86_mingw.tar.bz2 bin5_x86_mingw/*
+  - tar -cvjpf qt5_x64_msvc.tar.bz2 bin5_x64_msvc/*
+  - tar -cvjpf qt5_x86_mingw.tar.bz2 bin5_x86_mingw/*
   - ls -la
 
 deploy:
   provider: releases # 重要，指定这是一份github releases的部署配置
   api_key: $DPL_RELEASE_TOKEN
   file:
-    - bin5_x64_msvc.tar.bz2
-    - bin5_x86_mingw.tar.bz2
+    - qt5_x64_msvc.tar.bz2
+    - qt5_x86_mingw.tar.bz2
   skip-cleanup: true # 重要，不能省略
   on:
     branch: master # 源码的分支
