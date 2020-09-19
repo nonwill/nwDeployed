@@ -10,6 +10,7 @@ win32:SUBDIRS = \
     libxslt \
     sqlite3 \
     speex \
+    dictzip-win32
 
 SUBDIRS += \
     libao \
