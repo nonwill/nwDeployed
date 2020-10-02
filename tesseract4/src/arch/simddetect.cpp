@@ -22,14 +22,14 @@
 #include "params.h"   // for STRING_VAR
 #include "tprintf.h"  // for tprintf
 
-#if defined(AVX) || defined(AVX2) || defined(FMA) || defined(SSE4_1)
+#if defined(__AVX__) || defined(__AVX2__) || defined(__FMA__) || defined(__SSE4_1__)
 # define HAS_CPUID
 #endif
 
 #if defined(HAS_CPUID)
 #if defined(__GNUC__)
 # include <cpuid.h>
-#elif defined(_WIN32)
+#elif defined(WIN32)
 # include <intrin.h>
 #endif
 #endif
@@ -95,13 +95,13 @@ SIMDDetect::SIMDDetect() {
   if (__get_cpuid(1, &eax, &ebx, &ecx, &edx) != 0) {
     // Note that these tests all use hex because the older compilers don't have
     // the newer flags.
-#if defined(SSE4_1)
+#if defined(__SSE4_1__)
     sse_available_ = (ecx & 0x00080000) != 0;
 #endif
-#if defined(FMA)
+#if defined(__FMA__)
     fma_available_ = (ecx & 0x00001000) != 0;
 #endif
-#if defined(AVX)
+#if defined(__AVX__)
     avx_available_ = (ecx & 0x10000000) != 0;
     if (avx_available_) {
       // There is supposed to be a __get_cpuid_count function, but this is all
@@ -121,19 +121,19 @@ SIMDDetect::SIMDDetect() {
   max_function_id = cpuInfo[0];
   if (max_function_id >= 1) {
     __cpuid(cpuInfo, 1);
-#if defined(SSE4_1)
+#if defined(__SSE4_1__)
     sse_available_ = (cpuInfo[2] & 0x00080000) != 0;
 #endif
-#if defined(AVX) || defined(AVX2) || defined(FMA)
+#if defined(__AVX__) || defined(__AVX2__) || defined(__FMA__)
     if ((cpuInfo[2] & 0x08000000) && ((_xgetbv(0) & 6) == 6)) {
       // OSXSAVE bit is set, XMM state and YMM state are fine.
-#if defined(FMA)
+#if defined(__FMA__)
       fma_available_ = (cpuInfo[2] & 0x00001000) != 0;
 #endif
-#if defined(AVX)
+#if defined(__AVX__)
       avx_available_ = (cpuInfo[2] & 0x10000000) != 0;
 #endif
-#if defined(AVX2)
+#if defined(__AVX2__)
       if (max_function_id >= 7) {
         __cpuid(cpuInfo, 7);
         avx2_available_ = (cpuInfo[1] & 0x00000020) != 0;
@@ -152,17 +152,17 @@ SIMDDetect::SIMDDetect() {
   // Select code for calculation of dot product based on autodetection.
   if (false) {
     // This is a dummy to support conditional compilation.
-#if defined(AVX2)
+#if defined(__AVX2__)
   } else if (avx2_available_) {
     // AVX2 detected.
     SetDotProduct(DotProductAVX, &IntSimdMatrix::intSimdMatrixAVX2);
 #endif
-#if defined(AVX)
+#if defined(__AVX__)
   } else if (avx_available_) {
     // AVX detected.
     SetDotProduct(DotProductAVX, &IntSimdMatrix::intSimdMatrixSSE);
 #endif
-#if defined(SSE4_1)
+#if defined(__SSE4_1__)
   } else if (sse_available_) {
     // SSE detected.
     SetDotProduct(DotProductSSE, &IntSimdMatrix::intSimdMatrixSSE);
@@ -184,25 +184,25 @@ void SIMDDetect::Update() {
     // Native optimized code selected by config variable.
     SetDotProduct(DotProductNative);
     dotproduct_method = "native";
-#if defined(AVX2)
+#if defined(__AVX2__)
   } else if (!strcmp(dotproduct.string(), "avx2")) {
     // AVX2 selected by config variable.
     SetDotProduct(DotProductAVX, &IntSimdMatrix::intSimdMatrixAVX2);
     dotproduct_method = "avx2";
 #endif
-#if defined(AVX)
+#if defined(__AVX__)
   } else if (!strcmp(dotproduct.string(), "avx")) {
     // AVX selected by config variable.
     SetDotProduct(DotProductAVX, &IntSimdMatrix::intSimdMatrixSSE);
     dotproduct_method = "avx";
 #endif
-#if defined(FMA)
+#if defined(__FMA__)
   } else if (!strcmp(dotproduct.string(), "fma")) {
     // FMA selected by config variable.
     SetDotProduct(DotProductFMA, IntSimdMatrix::intSimdMatrix);
     dotproduct_method = "fma";
 #endif
-#if defined(SSE4_1)
+#if defined(__SSE4_1__)
   } else if (!strcmp(dotproduct.string(), "sse")) {
     // SSE selected by config variable.
     SetDotProduct(DotProductSSE, &IntSimdMatrix::intSimdMatrixSSE);
@@ -217,10 +217,10 @@ void SIMDDetect::Update() {
     tprintf("Warning, ignoring unsupported config variable value: dotproduct=%s\n",
             dotproduct.string());
     tprintf("Support values for dotproduct: auto generic native"
-#if defined(AVX)
+#if defined(__AVX__)
             " avx"
 #endif
-#if defined(SSE4_1)
+#if defined(__SSE4_1__)
             " sse"
 #endif
             " std::inner_product.\n");

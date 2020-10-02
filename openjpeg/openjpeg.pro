@@ -8,7 +8,7 @@ TARGET = openjpeg
 CONFIG += static
 
 DEFINES +=  OPJ_STATIC
-win32:msvc*:DEFINES += __SSE__ __SSE2__ __AVX__ __AVX2__ __FMA__ __SSE4_1__
+win32:msvc*:DEFINES += __SSE__ __SSE2__ __SSSE3__ __SSE4_1__ __AVX2__
 
 include($${PWD}/../nwDeployed.pri)
 

@@ -6,6 +6,8 @@ TEMPLATE = lib
 TARGET = png
 
 unix:CONFIG += static
+
+DEFINES +=  PNG_ARM_NEON_OPT=0 PNG_POWERPC_VSX_OPT=0
 win32:DEF_FILE = symbols.def
 
 include($${PWD}/../nwDeployed.pri)

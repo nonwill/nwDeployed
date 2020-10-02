@@ -43,10 +43,7 @@ SOURCES += \
     src/api/wordstrboxrenderer.cpp
 
 
-win32:msvc*:CONFIG +=  AVX_OPT
-win32:msvc*:CONFIG +=  AVX2_OPT
-win32:msvc*:CONFIG +=  FMA_OPT
-win32:msvc*:CONFIG +=  SSE41_OPT
+win32:msvc*:CONFIG += AVX2_OPT AVX_OPT FMA_OPT SSE41_OPT
 
 contains(CONFIG,AVX_OPT) {
 # APPEND arch_files_opt
@@ -66,7 +63,8 @@ SOURCES += src/arch/dotproductfma.cpp
 contains(CONFIG,SSE41_OPT) {
 # APPEND arch_files_opt
 DEFINES += __SSE4_1__
-SOURCES += src/arch/dotproductsse.cpp
+SOURCES += src/arch/dotproductsse.cpp \
+    src/arch/intsimdmatrixsse.cpp
 }
 
 # GLOB tesseract_src

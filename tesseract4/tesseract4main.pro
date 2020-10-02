@@ -30,7 +30,7 @@ INCLUDEPATH += \
     src/viewer \
     src/wordrec
 
-INCLUDEPATH += $${PWD}/../libleptonica/src \
+INCLUDEPATH += $${PWD}/../libleptonica/src
 
 unix:LIBS += -lpng -ljpeg -ltiff -lgiflib -lwebp -lopenjpeg -lz
 LIBS += -ltesseract4 -llept
