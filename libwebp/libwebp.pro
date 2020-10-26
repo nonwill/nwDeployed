@@ -6,7 +6,7 @@ TEMPLATE = lib
 TARGET = webp
 
 unix:CONFIG += static
-win32:msvc*:DEFINES += WEBP_EXTERN=__declspec\(dllexport\)
+win32:DEFINES += WEBP_EXTERN=__declspec\(dllexport\)
 
 DEFINES += WEBP_USE_THREAD
 win32:msvc*:DEFINES += __SSE2__ __SSE4_1__

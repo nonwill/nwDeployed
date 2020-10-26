@@ -8,7 +8,7 @@ unix:CONFIG += static
 
 include($${PWD}/../nwDeployed.pri)
 
-win32:msvc*:DEFINES += __LZO_EXTERN_C=__declspec\(dllexport\)
+win32:DEFINES += __LZO_EXTERN_C=__declspec\(dllexport\)
 
 INCLUDEPATH += ./include ./include/lzo
 
