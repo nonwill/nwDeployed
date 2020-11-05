@@ -13,6 +13,8 @@ CONFIG += static
 
 DEFINES += LIBOGG_EXPORTS
 
+linux:system(./configure)
+
 include($${PWD}/../nwDeployed.pri)
 
 # The following define makes your compiler emit warnings if you use

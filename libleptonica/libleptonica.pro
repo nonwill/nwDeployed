@@ -4,7 +4,7 @@ TEMPLATE = lib
 
 TARGET = lept
 
-unix:CONFIG += static
+#unix:CONFIG += static
 
 
 win32::msvc*:DEFINES += COMPILER_MSVC
@@ -246,7 +246,7 @@ INCLUDEPATH += . $${PWD}/src \
 win32:LIBS += -lGdi32 -lUser32
 
 LIBS += -lgiflib -lpng -ljpeg \
-    -ltiff -lwebp -lopenjpeg -lz
+    -ltiff -lwebp -lopenjpeg -lz -lzstd
 
 
 INCLUDEPATH += ../zlib/include

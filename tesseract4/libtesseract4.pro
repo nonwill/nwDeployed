@@ -3,7 +3,7 @@ CONFIG -= qt
 TEMPLATE = lib
 
 TARGET = tesseract4
-unix:CONFIG += static
+#unix:CONFIG += static
 
 DEFINES += TESS_EXPORTS
 
