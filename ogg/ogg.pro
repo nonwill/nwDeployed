@@ -13,7 +13,7 @@ CONFIG += static
 
 DEFINES += LIBOGG_EXPORTS
 
-linux:system(./configure)
+unix:system(./configure)
 
 include($${PWD}/../nwDeployed.pri)
 
