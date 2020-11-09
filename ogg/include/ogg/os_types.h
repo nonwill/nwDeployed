@@ -68,8 +68,8 @@
 #    endif
 #  endif
 
-/*#elif (defined(__APPLE__) && defined(__MACH__)) /* MacOS X Framework build */
-
+/*#elif (defined(__APPLE__) && defined(__MACH__)) *//* MacOS X Framework build */
+/*
 #  include <sys/types.h>
    typedef int16_t ogg_int16_t;
    typedef uint16_t ogg_uint16_t;

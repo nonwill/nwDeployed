@@ -12,6 +12,7 @@ TEMPLATE = lib
 CONFIG += static
 
 DEFINES += LIBOGG_EXPORTS
+win32:DEFINES += _WIN32
 
 unix:system(./configure)
 
