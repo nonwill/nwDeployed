@@ -6,7 +6,8 @@ TARGET = mimetex
 
 CONFIG += console
 
-win32:DEFINES += WINDOWS AA
+win32:DEFINES += WINDOWS
+DEFINES += AA
 
 include($${PWD}/../nwDeployed.pri)
 

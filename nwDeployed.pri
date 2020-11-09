@@ -34,6 +34,9 @@ isEmpty(CUR_PRJ_DIR):CUR_PRJ_DIR = $$PWD
 NWDEP_LIB = $${CUR_PRJ_DIR}/lib$${NWQT_PVER_FIX}_$${BSDK_TYPE}
 NWDEP_BIN = $${CUR_PRJ_DIR}/bin$${NWQT_PVER_FIX}_$${BSDK_TYPE}
 contains(TEMPLATE,lib) {
+    unix:!contains(CONFIG,static) {
+        CONFIG += plugin
+    }
     DESTDIR = $${NWDEP_LIB}
     DLLDESTDIR = $${NWDEP_BIN}
 } else {

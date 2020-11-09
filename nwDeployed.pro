@@ -1,17 +1,20 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-win32:SUBDIRS = \
+SUBDIRS = \
     zlib \
     libbzip2 \
     xz \
+    speex \
+    mimetex
+
+win32:SUBDIRS += \
     libiconv \
     libxml2 \
     libxslt \
     sqlite3 \
-    speex \
     dictzip-win32 \
-    mimetex
+
 
 SUBDIRS += \
     libao \
@@ -32,5 +35,3 @@ SUBDIRS += \
 #    jbig2enc \
     tesseract4
 
-mac:SUBDIRS += \
-    libao/src/plugins/macosx

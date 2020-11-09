@@ -4,7 +4,7 @@ TEMPLATE = lib
 
 TARGET = lept
 
-#unix:CONFIG += static
+mac:CONFIG += static
 
 
 win32::msvc*:DEFINES += COMPILER_MSVC
