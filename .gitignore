@@ -13,3 +13,6 @@ debug.log
 *.pro.user.*
 /lib*_x*_*/gdp*
 /lib*_x*_*/*.dll
+*.obj
+Makefile.*Release
+Makefile.*Debug
