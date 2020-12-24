@@ -5,10 +5,10 @@ SUBDIRS = \
     zlib \
     libbzip2 \
     xz \
-    speex \
     mimetex
 
 win32:SUBDIRS += \
+    speex \
     libiconv \
     libxml2 \
     libxslt \
