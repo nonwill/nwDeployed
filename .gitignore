@@ -108,3 +108,4 @@ Makefile.*Debug
 /lib5_x64_msvc/tesseract4.lib
 /lib5_x64_msvc/GDCore.lib
 /lib5_x64_msvc/ocrscreen.lib
+/lib5_x64_msvc/GdHotkeys.lib
