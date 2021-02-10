@@ -1,4 +1,4 @@
-CONFIG -= qt
+CONFIG -= qt app_bundle
 
 TEMPLATE = app
 
