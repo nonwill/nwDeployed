@@ -16,8 +16,8 @@ DEFINES += AO_BUILDING_LIBAO BUILDING_PLUGIN_STATIC
 
 win32:DEFINES += HAVE_WMM
 
-linux:DEFINES += SHARED_LIB_EXT=\\\".so\\\" PACKAGE_BUGREPORT=\\\"\\\"
-linux:DEFINES += HAVE_ALSA
+unix:!mac:DEFINES += SHARED_LIB_EXT=\\\".so\\\" PACKAGE_BUGREPORT=\\\"\\\"
+unix:!mac:DEFINES += HAVE_ALSA
 #linux:DEFINES += HAVE_PULSE # failed to play sound
 
 mac:DEFINES += HAVE_MACOSX SHARED_LIB_EXT=\\\".dylib\\\"
@@ -39,8 +39,8 @@ INCLUDEPATH += ./include ./include/ao
 win32:SOURCES += src/ao_wmm.c
 win32:LIBS += -lksuser -lwinmm
 
-linux:SOURCES += src/plugins/alsa/ao_alsa.c 
-linux:LIBS += -lasound  # for ao_alsa
+unix:!mac:SOURCES += src/plugins/alsa/ao_alsa.c
+unix:!mac:LIBS += -lasound  # for ao_alsa
 #linux:SOURCES += src/plugins/pulse/ao_pulse.c
 
 mac:SOURCES += src/plugins/macosx/ao_macosx.c
