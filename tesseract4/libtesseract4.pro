@@ -3,7 +3,7 @@ CONFIG -= qt
 TEMPLATE = lib
 
 TARGET = tesseract4
-mac:CONFIG += static
+unix:CONFIG += static
 
 DEFINES += TESS_EXPORTS
 
@@ -339,5 +339,5 @@ RC_FILE += src/vs2010/tesseract/libtesseract.rc
 INCLUDEPATH += $${PWD}/../libleptonica/src \
 
 win32:LIBS += -lws2_32
-LIBS += -llept
 unix:LIBS += -lpng -ljpeg -ltiff -lgiflib -lwebp -lopenjpeg -lz
+LIBS += -llept
