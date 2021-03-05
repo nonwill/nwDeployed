@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020, Przemyslaw Skibinski, Yann Collet, Facebook, Inc.
+ * Copyright (c) 2016-2021, Przemyslaw Skibinski, Yann Collet, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under both the BSD-style license (found in the
@@ -100,6 +100,12 @@ extern "C" {
 #      define PLATFORM_POSIX_VERSION _POSIX_VERSION
 #    else
 #      define PLATFORM_POSIX_VERSION 1
+#    endif
+
+#    ifdef __UCLIBC__
+#     ifndef __USE_MISC
+#      define __USE_MISC /* enable st_mtim on uclibc */
+#     endif
 #    endif
 
 #  else  /* non-unix target platform (like Windows) */

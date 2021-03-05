@@ -24,7 +24,7 @@ HEADERS +=  \
     ./lib/common/fse.h \
     ./lib/common/huf.h \
     ./lib/common/xxhash.h \
-    ./lib/deprecated/zbuff.h \
+#    ./lib/deprecated/zbuff.h \
     ./lib/legacy/zstd_legacy.h \
     ./lib/legacy/zstd_v01.h \
     ./lib/legacy/zstd_v02.h \
