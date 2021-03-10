@@ -43,3 +43,11 @@ SOURCES += \
 
 INCLUDEPATH += ./include
 
+
+win32{
+LIBFROM = $${DESTDIR}/z.lib
+LIBTO = $${DESTDIR}/zdll.lib
+LIBFROM = $$replace(LIBFROM, /, \\)
+LIBTO = $$replace(LIBTO, /, \\)
+QMAKE_POST_LINK += copy /Y $$LIBFROM $$LIBTO
+}

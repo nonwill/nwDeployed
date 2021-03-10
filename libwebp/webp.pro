@@ -208,3 +208,13 @@ android:!android-embedded {
 INCLUDEPATH += .
 
 LIBS +=
+
+win32{
+LIBFROM = $${DESTDIR}/webp.lib
+LIBTO1 = $${DESTDIR}/libwebp.lib
+LIBTO2 = $${DESTDIR}/webpdemux.lib
+LIBFROM = $$replace(LIBFROM, /, \\)
+LIBTO1 = $$replace(LIBTO1, /, \\)
+LIBTO2 = $$replace(LIBTO2, /, \\)
+QMAKE_POST_LINK += copy /Y $$LIBFROM $$LIBTO1 & copy /Y $$LIBFROM $$LIBTO2
+}

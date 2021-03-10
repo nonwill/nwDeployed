@@ -76,3 +76,12 @@ SOURCES += \
 INCLUDEPATH +=
 
 LIBS +=
+
+
+win32{
+LIBFROM = $${DESTDIR}/jpeg.lib
+LIBTO = $${DESTDIR}/libjpeg.lib
+LIBFROM = $$replace(LIBFROM, /, \\)
+LIBTO = $$replace(LIBTO, /, \\)
+QMAKE_POST_LINK += copy /Y $$LIBFROM $$LIBTO
+}

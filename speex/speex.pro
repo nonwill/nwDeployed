@@ -83,3 +83,11 @@ SOURCES += ./libspeex/bits.c \
 
 win32:msvc*:QMAKE_CFLAGS_RELEASE += -MT
 win32:msvc*:QMAKE_CXXFLAGS_RELEASE += -MT
+
+win32{
+LIBFROM = $${DESTDIR}/speex.lib
+LIBTO = $${DESTDIR}/libspeex.lib
+LIBFROM = $$replace(LIBFROM, /, \\)
+LIBTO = $$replace(LIBTO, /, \\)
+QMAKE_POST_LINK += copy /Y $$LIBFROM $$LIBTO
+}
