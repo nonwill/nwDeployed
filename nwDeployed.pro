@@ -35,3 +35,7 @@ SUBDIRS += \
 #    jbig2enc \
     tesseract4
 
+!greaterThan(QT_MAJOR_VERSION, 4) {
+  win32:SUBDIRS += qt4-imageformats-wbmp/wbmp.pro \
+    qt4-imageformats-webp/webp.pro
+}

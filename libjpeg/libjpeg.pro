@@ -78,9 +78,10 @@ INCLUDEPATH +=
 LIBS +=
 
 
+
 win32{
-LIBFROM = $${DESTDIR}/jpeg.lib
-LIBTO = $${DESTDIR}/libjpeg.lib
+LIBFROM = $${DESTDIR}/$${TARGET}.lib
+LIBTO = $${DESTDIR}/lib$${TARGET}.lib
 LIBFROM = $$replace(LIBFROM, /, \\)
 LIBTO = $$replace(LIBTO, /, \\)
 QMAKE_POST_LINK += copy /Y $$LIBFROM $$LIBTO

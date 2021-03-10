@@ -32,3 +32,12 @@ SOURCES += \
 win32:RC_FILE += windows/libiconv.rc
 
 LIBS +=
+
+
+win32{
+LIBFROM = $${DESTDIR}/$${TARGET}.lib
+LIBTO = $${DESTDIR}/lib$${TARGET}.lib
+LIBFROM = $$replace(LIBFROM, /, \\)
+LIBTO = $$replace(LIBTO, /, \\)
+QMAKE_POST_LINK += copy /Y $$LIBFROM $$LIBTO
+}

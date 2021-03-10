@@ -91,9 +91,10 @@ LIBS += -ljpeg -lwebp -lz -lzstd
 
 
 win32{
-LIBFROM = $${DESTDIR}/tiff.lib
-LIBTO = $${DESTDIR}/libtiff.lib
+LIBFROM = $${DESTDIR}/$${TARGET}.lib
+LIBTO = $${DESTDIR}/lib$${TARGET}.lib
 LIBFROM = $$replace(LIBFROM, /, \\)
 LIBTO = $$replace(LIBTO, /, \\)
 QMAKE_POST_LINK += copy /Y $$LIBFROM $$LIBTO
 }
+
