@@ -2,8 +2,9 @@
 greaterThan(QT_MAJOR_VERSION, 4) {
     TARGET_ARCH=$${QT_ARCH}
 } else {
-    TARGET_ARCH=$${QMAKE_HOST.arch}
+    TARGET_ARCH=$${QMAKE_TARGET.arch}
 }
+
 contains(TARGET_ARCH, x86_64) {
     ARCHITECTURE = x64
 } else {
