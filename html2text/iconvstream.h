@@ -24,8 +24,8 @@ using std::string;
 
 #ifdef HTML2TEXT_EXE
 
-#ifdef WIN32
-#else
+#include <fstream>
+#ifndef WIN32
 #include <unistd.h>
 #endif
 #include <iconv.h>

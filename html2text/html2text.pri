@@ -23,6 +23,7 @@ HEADERS += $${PWD}/HTMLParser.tab.hh \
     $${PWD}/cmp_nocase.h \
     $${PWD}/format.h \
     $${PWD}/html.h \
+    $${PWD}/html2text.h \
     $${PWD}/HTMLControl.h \
     $${PWD}/HTMLDriver.h \
     $${PWD}/Properties.h \

@@ -275,7 +275,7 @@ main(int argc, char **argv)
 #else
 bool html_to_text(h2t_iostream &h2tio, int width)
 {
-    Area::use_backspaces = false;
+    //Area::use_backspaces = false;
     int mode = HTMLDriver::PRINT_AS_ASCII;
     HTMLControl control(h2tio, mode, false);
     HTMLDriver driver(control, h2tio, false,

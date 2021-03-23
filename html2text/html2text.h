@@ -1,17 +1,14 @@
 #ifndef HTML_TO_TEXT_EXP_H
 #define HTML_TO_TEXT_EXP_H
 
-#include <fstream>
 #include <string>
 
-#ifndef HTML2TEXT_EXE
-#ifdef WIN32
+#if !defined(HTML2TEXT_EXE) && defined(WIN32)
 #   if defined(HTML2TEXT_LIBS)
 #       define HTML2TEXT_API __declspec(dllexport)
 #   else
 #       define HTML2TEXT_API __declspec(dllimport)
 #   endif
-#endif
 #else
 #   define HTML2TEXT_API
 #endif
