@@ -71,10 +71,10 @@ HTMLControl::htmlparser_yyerror(const char *p)
 		return;
 
 	std::cerr
-		<< "File \""
-		<< file_name
+        << "File \""
+        << (file_name ? file_name : "memory")
 		<< "\", line "
-		<< current_line
+        << current_line
 		<< ", column "
 		<< current_column
 		<< ": "

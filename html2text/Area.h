@@ -237,7 +237,7 @@ class Area {
 		size_type height_;
 		Cell      **cells_;
 
-		friend iconvstream &operator<<(iconvstream&, const Area &);
+        friend h2t_iostream &operator<<(h2t_iostream&, const Area &);
 };
 
 /* ------------------------------------------------------------------------- */

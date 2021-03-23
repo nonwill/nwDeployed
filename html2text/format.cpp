@@ -68,7 +68,7 @@ static void format(
 	Area::size_type indent_left,
 	Area::size_type w,
 	int halign,
-	iconvstream &os
+	h2t_iostream &os
 	);
 
 /* ------------------------------------------------------------------------- */
@@ -147,7 +147,7 @@ Document::format(
 	Area::size_type indent_left,
 	Area::size_type w,
 	int             halign,
-	iconvstream     &os
+	h2t_iostream     &os
 	) const
 {
 	static BlockFormat bf("DOCUMENT");
@@ -191,7 +191,7 @@ Body::format(
 	Area::size_type indent_left,
 	Area::size_type w,
 	int halign,
-	iconvstream &os
+	h2t_iostream &os
 	) const
 {
 	static BlockFormat bf("BODY");
@@ -1461,7 +1461,7 @@ format(
 	Area::size_type indent_left,
 	Area::size_type w,
 	int halign,
-	iconvstream &os
+	h2t_iostream &os
 	)
 {
 	if (!elements)

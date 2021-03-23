@@ -15,17 +15,18 @@
 #define HTML_DRIVER_H 1
 
 #include "HTMLParser.tab.hh"
-#include "HTMLControl.h"
-#include "iconvstream.h"
+
+class HTMLControl;
+class h2t_iostream;
 
 class HTMLDriver {
 	public:
-		HTMLDriver(HTMLControl &c,
-				iconvstream& os_,
-				bool& enable_links_,
-				int& width_,
-				int& mode_,
-				bool& debug_parser);
+        HTMLDriver(HTMLControl &c,
+                h2t_iostream& os_,
+                bool enable_links_,
+                int width_,
+                int mode_,
+                bool debug_parser);
 
 		int parse();
 		int lex(html2text::HTMLParser::semantic_type * const lval);
@@ -45,7 +46,7 @@ class HTMLDriver {
 		bool trace_parsing;
 		int width;
 		int mode;
-		iconvstream& os;
+		h2t_iostream& os;
 
 		html2text::HTMLParser::semantic_type *yylval = nullptr;
 };

@@ -529,8 +529,8 @@ Area::add_attribute(
 
 static char backspace = '\b';
 
-iconvstream &
-operator<<(iconvstream& os, const Area &a)
+h2t_iostream &
+operator<<(h2t_iostream& os, const Area &a)
 {
 	for (Area::size_type y = 0; y < a.height(); y++) {
 		const Cell *cell = a.cells_[y];

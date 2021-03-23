@@ -34,7 +34,6 @@
 
 /***************************************************************************/
 
-
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
@@ -44,6 +43,8 @@
 #include "HTMLDriver.h"
 #include "iconvstream.h"
 #include "format.h"
+
+#ifdef HTML2TEXT_EXE
 
 #define stringify(x) stringify2(x)
 #define stringify2(x) #x
@@ -228,7 +229,7 @@ main(int argc, char **argv)
 	 */
 	Area::use_backspaces = use_backspaces;
 
-	iconvstream is;
+    iconvstream is;
 
 	is.open_os(output_file_name, to_encoding);
 	if (!is.os_open()) {
@@ -270,5 +271,18 @@ main(int argc, char **argv)
 
 	return 0;
 }
+
+#else
+bool html_to_text(h2t_iostream &h2tio, int width)
+{
+    Area::use_backspaces = false;
+    int mode = HTMLDriver::PRINT_AS_ASCII;
+    HTMLControl control(h2tio, mode, false);
+    HTMLDriver driver(control, h2tio, false,
+            width, mode, false);
+
+    return (driver.parse() == 0);
+}
+#endif
 
 /* ------------------------------------------------------------------------- */

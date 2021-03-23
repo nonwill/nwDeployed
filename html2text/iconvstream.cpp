@@ -32,6 +32,7 @@
 #include <iostream>
 #include "iconvstream.h"
 
+#ifdef HTML2TEXT_EXE
 void
 iconvstream::open_is(const char *file_name, const char *encoding)
 {
@@ -246,19 +247,21 @@ iconvstream::write(const char *inp, size_t len)
 	return ret;
 }
 
-iconvstream &iconvstream::operator<<(const char *inp)
+#endif
+
+h2t_iostream &h2t_iostream::operator<<(const char *inp)
 {
 	(void)write(inp, strlen(inp));
 	return *this;
 }
 
-iconvstream &iconvstream::operator<<(const string &inp)
+h2t_iostream &h2t_iostream::operator<<(const string &inp)
 {
 	(void)write(inp.c_str(), inp.length());
 	return *this;
 }
 
-iconvstream &iconvstream::operator<<(char inp)
+h2t_iostream &h2t_iostream::operator<<(char inp)
 {
 	(void)write(&inp, inp == '\0' ? 0 : 1);
 	return *this;

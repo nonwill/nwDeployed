@@ -17,11 +17,11 @@
 #include "iconvstream.h"
 
 HTMLDriver::HTMLDriver(HTMLControl& c,
-		iconvstream& os_,
-		bool& enable_links_,
-		int& width_,
-		int& mode_,
-		bool& debug_parser) :
+		h2t_iostream& os_,
+        bool enable_links_,
+        int width_,
+        int mode_,
+        bool debug_parser) :
 	control(c),
 	os(os_),
 	enable_links(enable_links_),

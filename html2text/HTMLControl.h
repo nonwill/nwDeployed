@@ -37,21 +37,21 @@
 
 /* ------------------------------------------------------------------------- */
 
-#include "iconvstream.h"
 #include <istream>
 
 #include "HTMLParser.tab.hh"
 
 using std::istream;
+class h2t_iostream;
 
 /* ------------------------------------------------------------------------- */
 
 class HTMLControl {
 	public:
-		HTMLControl(iconvstream& is_,
+		HTMLControl(h2t_iostream& is_,
 				int& mode_,
 				bool debug_scanner_,
-				const char *file_name_) :
+                const char *file_name_ = nullptr) :
 			current_line(1),
 			current_column(0),
 			literal_mode(false),
@@ -71,7 +71,7 @@ class HTMLControl {
 		int mode;
 		int current_line;
 		int current_column;
-		const char *file_name;
+        const char *file_name;
 
 	private:
 
@@ -89,7 +89,7 @@ class HTMLControl {
 
 		bool debug_scanner;
 
-		iconvstream &is;
+		h2t_iostream &is;
 		int ungotten_chars[5];
 		int number_of_ungotten_chars;
 };
