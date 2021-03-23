@@ -1,0 +1,35 @@
+# kept for historical reasons, not updated, see git history instead
+
+## CREDITS - Thanks to...                         Sun Nov 23 12:12:18 CET 2003
+## ===========================================================================
+#
+# Since september 2000, these people have contributed to the development of
+# this program:
+
+Johannes Geiger <geiger@informatik.tu-muenchen.de>
+	+ SCRIPT/STYLE error patch
+	+ new IMG handling
+
+Randolph Chung <tausq@debian.org>
+	+ ported to g++-3.0
+
+Arno Unkrig <arno@unkrig.de>
+	+ almost all bugfixes in 1.3.1. Thanks!
+
+Bela Lubkin <belal@caldera.com>
+	+ Plain-ASCII output patch
+
+Kirby Zhou <kirbyzhou@263.net>
+        + patch for SCRIPT/STYLE elements within table cells
+
+Nicolas Boullis <nboullis@debian.org>
+	+ ported to g++-3.3 (this change is not backward-compatible)
+
+Alexander Solovey <alsol@sumdu.edu.ua>
+	+ bugfix for urlistream.h
+	+ better rendering of XHTML
+
+
+## ---------------------------------------------------------------------------
+
+Martin Bayer <mbayer@zedat.fu-berlin.de>

@@ -1,0 +1,226 @@
+.\" manpage for html2text
+.\"
+.TH html2text 1 2020\-04\-15
+.SH NAME
+html2text \- an advanced HTML\-to\-text converter
+.SH SYNOPSIS
+.B html2text -help
+.br
+.B html2text -version
+.br
+.B html2text
+[
+.B \-unparse
+|
+.B \-check
+] [
+.B \-debug\-scanner
+] [
+.B \-debug\-parser
+] [
+.B \-rcfile
+.I path
+] [
+.B \-width
+.I width
+] [
+.B \-o
+.I output-file
+] [
+.B \-nobs
+] [
+.B \-from_encoding
+.I encoding
+] [
+.B \-to_encoding
+.I encoding
+] [
+.B \-ascii
+] [
+.IR input-file " ..."
+]
+.SH DESCRIPTION
+.B html2text
+reads HTML documents from the
+.IR input-file s,
+formats each of them into a stream of UTF-8 encoded characters,
+and writes the result to standard output (or into
+.IR output-file ,
+if the
+.B -o
+command line option is used).
+.P
+If no
+.IR input-file s
+are specified on the command line,
+.B html2text
+reads from standard input. A dash as the
+.I input-file
+is an alternate way to specify standard input.
+.P
+.B html2text
+understands all HTML 3.2 constructs, but can render only part of them due to
+the limitations of the text output format. However, the program attempts to
+provide good substitutes for the elements it cannot render.
+.B html2text
+parses HTML 4 input, too, but not always as successful as other HTML
+processors. It also accepts syntactically incorrect input, and attempts to
+interpret it "reasonably".
+.P
+The way
+.B html2text
+formats the HTML documents is controlled by formatting properties read
+from an RC file.
+.B html2text
+attempts to read
+.I $HOME/.html2textrc
+(or the file specified by the
+.B -rcfile
+command line option); if that file cannot be read,
+.B html2text
+attempts to read
+.IR /etc/html2textrc .
+If no RC file can be read (or if the RC file does not override all
+formatting properties), then "reasonable" defaults are assumed. The
+RC file format is described in the
+.BR html2textrc (5)
+manual page.
+.SH OPTIONS
+.TP
+.B \-ascii
+By default,
+.B html2text
+uses
+.B UTF-8
+for its output. Specifying this option, plain
+.B ASCII
+is used instead. Non\-ASCII characters are rendered via iconv's
+transliteration feature.  As such this option is an alias for
+.B -to_encoding
+.IR ASCII//TRANSLIT .
+.TP
+.BI "\-from_encoding " encoding
+Sets the encoding of the input file or stream to the given encoding.  By
+default,
+.B html2text
+uses ISO-8859-1 encoding for reading.  You probably always want to
+override this default using this option.  See 
+.B iconv -l
+for a list of supported encodings.
+.TP
+.BI "\-to_encoding " encoding
+Use the given encoding while writing output, instead of UTF-8.  The same
+set of encodings as for the
+.B \-from_encoding
+option can be used.
+.TP
+.B \-check
+This option is for diagnostic purposes: The HTML document is only parsed and
+not processed otherwise. In this mode of operation,
+.B html2text
+will report on parse errors and scan errors, which it does not in other modes
+of operation. Note that parse and scan errors are not fatal for
+.BR html2text ,
+but may cause mis-interpretation of the HTML code and/or portions of the
+document being swallowed.
+.TP
+.B \-debug\-parser
+Let
+.B html2text
+report on the tokens being shifted, rules being applied, etc., while scanning
+the HTML document. This option is for diagnostic purposes.
+.TP
+.B \-debug\-scanner
+Let
+.B html2text
+report on each lexical token scanned, while scanning the HTML document. This
+option is for diagnostic purposes.
+.TP
+.B \-help
+Print command line summary and exit.
+.TP
+.B \-nobs
+By default,
+.B html2text
+renders underlined letters with sequences like "underscore-backspace-character"
+and boldface letters like "character-backspace-character", which works fine
+when the output is piped into
+.BR more (1),
+.BR less (1),
+or similar. For other applications, or when redirecting the output into a file,
+it may be desirable not to render character attributes with such backspace
+sequences, which can be accomplished with this command line option.
+.TP
+.BI \-o " output\-file"
+Write the output to
+.I output\-file
+instead of standard output. A dash as the
+.I output\-file
+is an alternate way to specify the standard output.
+.TP
+.BI \-rcfile " path"
+Attempt to read the file specified in
+.I path
+as RC file.
+.TP
+.B \-links
+Tags all external links with a number between brackets
+.RI "([" num "]),"
+and produces a numbered list at the end of the document with all link
+targets.
+.TP
+.B \-unparse
+This option is for diagnostic purposes: Instead of formatting the parsed document,
+generate HTML code, that is guaranteed to be syntactically correct. If
+.B html2text
+has problems parsing a syntactically incorrect HTML document, this option
+may help you to understand what
+.B html2text
+thinks that the original HTML code means.
+.TP
+.B \-version
+Print program version and exit.
+.TP
+.BI \-width " width"
+By default,
+.B html2text
+formats the HTML documents for a screen width of 79 characters. If redirecting
+the output into a file, or if your terminal has a width other than 80
+characters, or if you just want to get an idea how
+.B html2text
+deals with large tables and different terminal widths, you may want to specify
+a different
+.IR width .
+.SH FILES
+.TP
+.I /etc/html2textrc
+System wide parser configuration file.
+.TP
+.I $HOME/.html2textrc
+Personal parser configuration file, overrides the system wide values.
+.SH "CONFORMING TO"
+.B "HTML 3.2"
+(HTML 3.2 Reference Specification \- http://www.w3.org/TR/REC-html32).
+.SH RESTRICTIONS
+.B html2text
+was written to convert HTML 3.2 documents. When using it with HTML 4 or
+even XHTML 1 documents, some constructs present only in these HTML versions
+might not be rendered.
+.SH AUTHOR
+.B html2text
+was written up to version 1.2.2 by Arno Unkrig <arno@unkrig.de>
+for GMRS Software GmbH, Unterschleissheim.
+.P
+Up to version 1.3.2a, the maintainer was
+Martin Bayer <mbayer@zedat.fu-berlin.de>.
+.br
+.P
+This version of
+.B html2text
+comes from
+https://github.com/grobian/html2text.  Please use the GitHub page to
+file issues and improvements.
+.SH SEE ALSO
+.BR html2textrc (5),
+.BR less (1),
+.BR more (1)

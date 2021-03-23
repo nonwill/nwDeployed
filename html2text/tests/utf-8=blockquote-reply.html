@@ -1,0 +1,61 @@
+<html dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body style="text-align:left; direction:ltr;">
+<div>Ah, good. That might explain some of the weirdness I have seen :)</div>
+<div><br>
+</div>
+<div>On Sat, 2019-11-09 at 11:29 &#43;0100, grobian wrote:</div>
+<blockquote type="cite" style="margin:0 0 0 .8ex; border-left:2px #729fcf solid;padding-left:1ex">
+Setting SLOT to &quot;&quot; isn't correct, I think.&nbsp; The code checks where it<br>
+uses it that SLOT != NULL, so the correct fix is to not try to<br>
+strdup(NULL).&nbsp; I've pushed this as ff773ed.<br>
+<br>
+You're right that qmerge should probably only look at the vdb at the<br>
+point you're seeing this crash.<br>
+<br>
+Thanks,<br>
+Fabian<br>
+<br>
+On 05-11-2019 08:46:32 &#43;0000, J T wrote:<br>
+<font color="#737373">&gt; #2&nbsp; 0x10023024 in tree_get_atom (pkg_ctx=pkg_ctx@entry=0x10226660, complete=complete@entry=true) at tree.c:1017</font><br>
+<font color="#737373">&gt; 1017&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pkg_ctx-&gt;slot = xstrdup(meta-&gt;SLOT);</font><br>
+<font color="#737373">&gt; (gdb) list</font><br>
+<font color="#737373">&gt; 1012&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else { /* metadata or ebuild */</font><br>
+<font color="#737373">&gt; 1013&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (pkg_ctx-&gt;atom-&gt;SLOT == NULL) {</font><br>
+<font color="#737373">&gt; 1014&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (pkg_ctx-&gt;slot == NULL) {</font><br>
+<font color="#737373">&gt; 1015&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tree_pkg_meta *meta = tree_pkg_read(pkg_ctx);</font><br>
+<font color="#737373">&gt; 1016&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (meta != NULL) {</font><br>
+<font color="#737373">&gt; 1017&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pkg_ctx-&gt;slot = xstrdup(meta-&gt;SLOT); XXXX meta-&gt;SLOT NULL here XXXX</font><br>
+<font color="#737373">&gt; 1018&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pkg_ctx-&gt;slot_len = strlen(pkg_ctx-&gt;slot);</font><br>
+<font color="#737373">&gt; 1019&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tree_close_meta(meta);</font><br>
+<font color="#737373">&gt; 1020&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</font><br>
+<font color="#737373">&gt; 1021&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</font><br>
+<font color="#737373">&gt; </font><br>
+<font color="#737373">&gt; meta-&gt;SLOT is null here when trying to qmerge -Oq sys-devel/binutils-2.32-r1:2.32</font><br>
+<font color="#737373">&gt; There reason is:</font><br>
+<font color="#737373">&gt; (gdb) print&nbsp; pkg_ctx-&gt;cat_ctx-&gt;ctx-&gt;cachetype</font><br>
+<font color="#737373">&gt; $24 = CACHE_EBUILD</font><br>
+<font color="#737373">&gt; and the ebuild for one of the searched pkg's(gcc) does not have SLOT define in its ebuild(appears to inherited)</font><br>
+<font color="#737373">&gt; so SLOT becomes NULL.</font><br>
+<font color="#737373">&gt; </font><br>
+<font color="#737373">&gt; One should protect from this, possibly by:</font><br>
+<font color="#737373">&gt; if (!meta-&gt;SLOT)</font><br>
+<font color="#737373">&gt;&nbsp;&nbsp; pkg_ctx-&gt;slot = xstrdup(&quot;&quot;);</font><br>
+<font color="#737373">&gt;&nbsp;&nbsp; </font><br>
+<font color="#737373">&gt; else</font><br>
+<font color="#737373">&gt;&nbsp;&nbsp; pkg_ctx-&gt;slot = xstrdup(meta-&gt;SLOT)</font><br>
+<font color="#737373">&gt; ...</font><br>
+<font color="#737373">&gt; which will avoid SEGV but lie about the true SLOT</font><br>
+<font color="#737373">&gt; </font><br>
+<font color="#737373">&gt; The bigger question is why CACHE_EBUILD here in qmerge?</font><br>
+<font color="#737373">&gt; Is not CACHE_VDB a better choice here?</font><br>
+<font color="#737373">&gt; </font><br>
+<font color="#737373">&gt;&nbsp; J </font><br>
+<br>
+</blockquote>
+<div><br>
+</div>
+</body>
+</html>

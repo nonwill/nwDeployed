@@ -1,0 +1,186 @@
+## INSTALL - How to compile and install          Sat Aug 31 12:04:42 CEST 2002
+## ===========================================================================
+#
+# For the impatient:
+
+'cd' into the html2text distribution directory
+
+./configure	(in some shells 'sh ./configure')
+make		(or in some cases 'gmake')
+
+'mv' the html2text executable to its installation directory (e.g. /usr/local/bin)
+
+
+## ---------------------------------------------------------------------------
+#
+# html2text can be compiled on many UNIX-like platforms, in particular those
+# that provide a GNU compiler (g++).
+
+1. Untar the distribution package:
+
+	$ gunzip html2text-1.3.X.tar.gz
+	$ tar xf html2text-1.3.X.tar
+
+
+2. Change into the html2text distribution directory:
+
+	$ cd html2text-1.3.X
+
+
+3. To generate the make files, issue:
+
+	$ ./configure
+
+If you're using a csh on an old version of System V, you might need to type
+'sh ./configure' to prevent the csh from trying to execute 'configure'
+itself.
+
+While the script is running, it prints some messages telling which features
+it is checking for, alike (the exact output depends on your platform):
+
+| Checking C++ compiler... use "g++"
+| Checking <sys/poll.h>... OK
+| Checking for socket libraries... no extra libraries required
+| Checking "bool"... built-in
+| Checking "explicit"... built-in
+| Checking Standard C++ library... works; no need to make "./libstd"
+| Checking "auto_ptr"... not defined or not working, use
+|  "./libstd/include/auto_ptr.h"
+| Checking "makedepend" includes... use "-I/usr/include -I/usr/include/bits
+|  -I/usr/include/g++ -I/usr/include/gnu -I/usr/include/sys
+|  -I/usr/lib/gcc-lib/i486-suse-linux/2.95.3/include "
+| Creating "./Makefile" from "./Makefile.in"... done
+|
+| Preparing completed. You may now run "make" (or "gmake").
+
+
+4. Then compile html2text with:
+
+	$ make
+
+On non-GNU systems and/or if 'make' fails, you might need to use
+'gmake' instead of 'make', in order to force a compilation by g++.
+
+Compiling 'html2text' takes awhile. While 'make' is running, it will print
+some messages (and, hopefully, no errors), alike:
+
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g html2text.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g html.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g HTMLControl.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g HTMLParser.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g Area.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g format.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g sgml.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g table.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g urlistream.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g Properties.C
+| g++ -c  -DVERSION=1.3.1    -DAUTO_PTR_BROKEN -O2 -g cmp_nocase.C
+| g++ -O2 -g html2text.o html.o HTMLControl.o HTMLParser.o Area.o format.o
+|  sgml.o table.o urlistream.o Properties.o cmp_nocase.o    -o html2text
+|
+| Compilation completed. You may now move "html2text", "html2text.1.gz"
+| and "html2textrc.5.gz" to their installation directories (e.g.
+| "/usr/local/bin", "/usr/local/man/man1" and "/usr/local/man/man5").
+
+
+5. No automatic installation is provided by now.
+
+Be root. Then move the html2text executable and the manual pages to their
+respective installation directories (e.g. /usr/local/bin, /usr/local/man/man1
+and /usr/local/man/man5). Be sure you set the execution rights accordingly
+and the files are owned by root or whoever owns binaries on your system. E.g.:
+
+	# install -s -m 755 html2text /usr/local/bin
+	# install -m 644 html2text.1.gz /usr/local/man/man1
+	# install -m 644 html2textrc.5.gz /usr/local/man/man5
+
+After this, create a directory for the documentation files at an appropriate
+place (e.g. /usr/doc/html2text or /usr/share/doc/html2text), and move all
+documentation files into that folder. E.g.:
+
+	# install -d -m 755 /usr/share/doc/html2text
+	# install -b -p -m 644 *[ABD-Z] /usr/share/doc/html2text
+
+Be sure you read the README file!
+
+
+## ---------------------------------------------------------------------------
+#
+# If you prefer to install the program as an RPM package:
+
+Place the orginal source tarball to rpm's build directory, e.g.
+/usr/src/packages/SOURCES
+
+Then, download the spec file from the program's homepage and start the build
+with the command
+rpm -bb html2text.spec
+
+After successfull compilation, rpm will print a message like
+| Wrote: /usr/src/packages/RPMS/i386/html2text-1.3.1-1.i386.rpm
+
+This package can now be installed with rpm, e.g.
+rpm -Uhv /usr/src/packages/RPMS/i386/html2text-1.3.1-1.i386.rpm
+
+
+## ===========================================================================
+#
+# Hints for porting html2text to other platforms and for solving other problems:
+
+On g++ version 3, the 'istream.h' header file from the compiler's 'backward'
+directory is used. You might need to point to that directory in the Makefile's
+line beginning with 'LIBSTDCXX_INCLUDES', e.g.
+LIBSTDCXX_INCLUDES = -I/usr/local/include/g++-v3/backward
+
+Some compilers have weird built-in rules which collide with the rules in the
+make files. If 'make' fails, then try to disable the built-in rules. For most
+'make' utilities, this can be achieved by specifying the '-r' command line
+option, i.e. 'make -r'.
+
+From version 1.02, html2text requires the "socket()" function and its
+friends, which live in different libraries for the different systems.
+"configure" tries several sets of "-l" linker options to find the right
+libraries.
+
+Some C++ compilers lack a built-in "bool" data type. "configure" attempts to
+find a suitable definition which it passes to the compiler with
+"-DBOOL_DEFINITION=...".
+
+html2text requires a standard C++ library. Since some old C++ compilers do
+not come with a standard C++ library, I have implemented parts of the library
+in the 'libstd' subdirectory; the exported header files are in
+'libstd/include'. For platforms which come with a (working) standard C++
+library, the "home-grown" library in 'libstd' is not compiled and linked.
+However, on some platforms, these librarys did not work. I don't know if this
+because the compiler or our 'libstd' library is broken, or because we have
+some syntax errors in the source code files.
+
+Some old GNU Standard C++ Library versions falsely re-names "list::erase()"
+as "list::remove()". I fixed this with a "-DSTRING_ERASE=remove" on the "g++"
+command line.
+
+Some compilers do come with a Standard C++ Library, but the definition of the
+"auto_ptr" template is missing from "<memory>", or is not standard-compliant.
+This condition is checked by "configure" and "./libstd/include/auto_ptr.h" is
+included if necessary (preprocessor symbol "HAS_WORKING_AUTO_PTR").
+
+"make depend" attempts to run the MAKEDEPEND utility (not included in this
+package). Unfortunately, most C++ compilers implicitly use some "secret"
+include directories, which MAKEDEPEND doesn't know of; as a result,
+MAKEDEPEND may issue some "could not find..." errors, which shouldn't worry
+you. The "configure" script attempts to guess the "secret include directory"
+and passes it with "-I" to MAKEDEPEND.
+
+To generate 'HTMLParser.C' and 'HTMLParser.h' from 'HTMLParser.y' and
+'HTMLParker.k' (which can be archived with the 'make bison-local' directive),
+you need bison++ version 2.2, written by Alain Coetmeur. Unfortunately, this
+version is completely outdated and thus not longer being maintained or
+supported in any way. As you will need it if you want to hack into the program,
+you can find the program's sources on html2text's homepage.
+However, the already generated 'HTMLParser.C' and 'HTMLParser.h' files are
+included into html2text's source code package, enableing anybody to compile
+html2text without having to install bison++-2.2 before.
+
+
+## ===========================================================================
+
+Martin Bayer <mbayer@zedat.fu-berlin.de>

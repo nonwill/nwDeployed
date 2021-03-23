@@ -1,0 +1,310 @@
+#! /bin/sh
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License in the file COPYING for more details.
+
+# Changes to version 1.2.2 were made by Martin Bayer <mbayer@zedat.fu-berlin.de>
+# Dates and reasons of modifications:
+# Son Mar 18 21:55:24 CET 2001
+# Fre Jun  8 18:46:58 CEST 2001
+# Thu Oct  4 21:54:50 CEST 2001
+# Sun Apr  7 12:04:48 CEST 2002
+# Tue Nov 11 21:30:26 CET 2003
+
+# mimick autoconf behaviour of accepting variable overrides on command
+# line
+for arg in "$@" ; do
+	case "${arg}" in
+		*=*)  eval "${arg}"  ;;
+	esac
+done
+
+echo=echo
+
+rm -rf configure-tmp || exit 1;
+mkdir configure-tmp || exit 1;
+tmp_file="configure-tmp/xxx";
+makedirs=".";
+
+#
+# $CXX
+#
+
+$echo 'Checking C++ compiler... \c';
+cat <<EOF >$tmp_file.C;
+#include <iostream>
+int main(int, char **) {
+  std::cout << "hello" << std::endl;
+  return 0;
+}
+EOF
+CXX=${CXX-unknown}
+for i in "$CXX" "CC" "g++" "cc"; do
+  if $i -c $tmp_file.C 2>/dev/null; then
+    CXX="$i";
+    break;
+  fi;
+done;
+if test "$CXX" = unknown; then
+  $echo "Error: Could not find a working C++ compiler.";
+  exit 1;
+fi;
+$echo "use \"$CXX\"";
+
+#
+# $SOCKET_LIBRARIES
+#
+
+$echo 'Checking for socket libraries... \c';
+SOCKET_LIBRARIES=unknown;
+cat >$tmp_file.C <<EOF;
+extern "C" int socket();
+extern "C" void gethostbyname();
+int main() {
+  socket();
+  gethostbyname();
+  return 0;
+}
+EOF
+for i in "" "-lbsocket" "-lbsocket -lnsl" "-lsocket" "-lsocket -lnsl"; do
+  if $CXX $tmp_file.C $i -o $tmp_file 2>/dev/null; then
+    SOCKET_LIBRARIES="$i";
+    break;
+  fi;
+done;
+if test "$SOCKET_LIBRARIES" = unknown; then
+  $echo "Error: Could not determine the library for the socket API.";
+  exit 1;
+fi;
+if test "$SOCKET_LIBRARIES" = ""; then
+  $echo "no extra libraries required";
+else
+  $echo "use \"$SOCKET_LIBRARIES\"";
+fi;
+
+#
+# $ICONV_LIBRARIES
+#
+
+$echo 'Checking for iconv libraries... \c';
+ICONV_LIBRARIES=unknown;
+cat >$tmp_file.C <<EOF;
+#include <iconv.h>
+int main() {
+  iconv_open("", "");
+  return 0;
+}
+EOF
+for i in "" "-liconv"; do
+  if $CXX $tmp_file.C $i -o $tmp_file 2>/dev/null; then
+    ICONV_LIBRARIES="$i";
+    break;
+  fi;
+done;
+if test "$ICONV_LIBRARIES" = unknown; then
+  $echo "Error: Could not determine the library for the iconv API.";
+  exit 1;
+fi;
+if test "$ICONV_LIBRARIES" = ""; then
+  $echo "no extra libraries required";
+else
+  $echo "use \"$ICONV_LIBRARIES\"";
+fi;
+
+#
+# $BOOL_DEFINITION
+#
+
+$echo 'Checking "bool"... \c';
+BOOL_DEFINITION=unknown;
+cat <<EOF >$tmp_file.C;
+#ifdef BOOL_DEFINITION
+BOOL_DEFINITION
+#endif
+int main(int argc, char **) {
+  bool x = argc == 3;
+  x = !x;
+  if (x && argc == 7) x = false;
+  return 0;
+}
+EOF
+for i in \
+  '' \
+  '-DBOOL_DEFINITION="typedef unsigned char bool;const bool false=0,true=1;"' \
+  '-DBOOL_DEFINITION="enum bool{false,true};"'; \
+do
+  if eval "$CXX $tmp_file.C $i -o $tmp_file 2>/dev/null"; then
+    BOOL_DEFINITION="$i";
+    break;
+  fi;
+done;
+case "$BOOL_DEFINITION" in
+unknown)
+  $echo 'Error: Could not a suitable definition for "bool".';
+  exit 1;;
+"")
+  $echo "built-in";;
+*)
+  $echo "use '$BOOL_DEFINITION'";;
+esac;
+
+#
+# $EXPLICIT
+#
+
+$echo 'Checking "explicit"... \c';
+EXPLICIT=unknown;
+cat <<EOF >$tmp_file.C;
+struct C {
+  explicit C(int) {}
+};
+int main(int, char **) { C x(7); return 0; }
+EOF
+for i in \
+  '' \
+  '-Dexplicit='; \
+do
+  if eval "$CXX $tmp_file.C $i -o $tmp_file 2>/dev/null"; then
+    EXPLICIT="$i";
+    break;
+  fi;
+done;
+case "$EXPLICIT" in
+unknown)
+  $echo 'Error: Could not a suitable definition for "explicit".';
+  exit 1;;
+"")
+  $echo "built-in";;
+*)
+  $echo "use '$EXPLICIT'";;
+esac;
+
+#
+# $LIBSTDCXX_INCLUDES, $LIBSTDCXX_LIBS
+#
+
+$echo 'Checking Standard C++ library... \c';
+cat <<EOF >$tmp_file.C;
+#include <string>
+#include <list>
+#include <memory>
+#include <utility>
+#include <map>
+#include <set>
+#include <new>
+#include <vector>
+using namespace std;
+void func() { map<string, string> x; }
+EOF
+if $CXX -c $tmp_file.C 2>/dev/null; then
+  LIBSTDCXX_INCLUDES="";
+  LIBSTDCXX_LIBS="";
+  $echo 'works';
+else
+  $echo 'Error: could not compile C++ program';
+  exit 1;
+fi;
+
+#
+# $AUTO_PTR_BROKEN
+#
+AUTO_PTR_BROKEN="";
+$echo 'Checking "auto_ptr"... \c';
+cat <<EOF >$tmp_file.C;
+#include <memory>
+#include <string>
+#include <list>
+using namespace std;
+int main(int, char**) {
+  auto_ptr<string> x(new string("hello"));
+  *x = "world";
+  (void) x.get();
+  (void) x.release();
+  x.reset(0);   // egcs-2.91.66 lacks "reset()"!
+
+  // G++ 2.95.1 on AIX 4.2 cannot compile this:
+  auto_ptr<int> api;
+  list<auto_ptr<int> > lapi;
+  lapi.push_back(api);
+
+  return 0;
+}  
+EOF
+if eval "$CXX -c $LIBSTDCXX_INCLUDES $EXPLICIT $BOOL_DEFINITION $tmp_file.C" 2>/dev/null; then
+  $echo 'defined in <memory>, good';
+else
+  $echo 'not defined or not working, use "auto_ptr.h"';
+  AUTO_PTR_BROKEN="-DAUTO_PTR_BROKEN";
+fi;
+
+#
+# $MAKEDEPEND_INCLUDES
+#
+MAKEDEPEND_INCLUDES="";
+$echo 'Checking "makedepend" includes... \c';
+echo "#include <iostream>" >$tmp_file.C;
+MAKEDEPEND_INCLUDES=`$CXX -E $tmp_file.C 2>/dev/null |
+sed -n \
+  -e 's/^#line .*"\(\/.*\)\/.*".*/-I\1/p' \
+  -e 's/^# [1-9][0-9]* "\(\/.*\)\/.*".*/-I\1/p' |
+sort -u |
+tr '\n' ' '`;
+
+if test "$MAKEDEPEND_INCLUDES" = ""; then
+  $echo none;
+else
+  $echo "use \"$MAKEDEPEND_INCLUDES\"";
+fi;
+
+#
+# Create "Makefile" from "Makefile.in".
+#
+
+rm -f Makefile libstd/Makefile;
+cmd=sed;
+for i in \
+  SOCKET_LIBRARIES \
+  ICONV_LIBRARIES \
+  CXX \
+  BOOL_DEFINITION \
+  EXPLICIT \
+  LIBSTDCXX_INCLUDES \
+  LIBSTDCXX_LIBS \
+  AUTO_PTR_BROKEN \
+  MAKEDEPEND_INCLUDES; \
+do cmd="$cmd -e \"s|@$i@|\$$i|g\""; done;
+for dir in $makedirs; do
+  $echo "Creating \"$dir/Makefile\" from \"$dir/Makefile.in\"... \\c";
+  cat <<EOF >$dir/Makefile;
+
+#
+# This make file was generated from "Makefile.in" by "./configure" on
+# `date` -- all your changes will be lost if you
+# run "./configure" again!
+#
+
+EOF
+  eval "$cmd" <$dir/Makefile.in >>$dir/Makefile;
+  $echo 'done';
+  if test -f $dir/Dependencies; then true; else >$dir/Dependencies; fi;
+done;
+
+#
+# Clean up.
+#
+
+rm -rf configure-tmp;
+rm -f xxx.o;
+
+cat <<EOF;
+
+Preparing completed. You may now run "make" (or "gmake").
+
+EOF

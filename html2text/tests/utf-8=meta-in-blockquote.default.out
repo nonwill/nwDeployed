@@ -1,0 +1,8 @@
+On 4/5/20 5:54 AM, J N wrote:
+> # Not maintained in Gentoo, doesn't build for 2 years, has only
+> # deprecated version present in Gentoo. Has a huge number of open
+> # bugs. Removal in 30 days. #642952
+> www-misc/zoneminder
+This appears to be an active project.  There is a plugin for zzoonneemmiinnddeerr and
+zzmmsseerrvveerr in mmyytthhttvvpplluuggiinnss.  When I finish the mmyytthhttvv version 31.0 bump I will
+start maintaining this package.

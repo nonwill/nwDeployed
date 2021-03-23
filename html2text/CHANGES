@@ -1,0 +1,591 @@
+### this file is kept for historical reasons only, it is no longer updated ###
+### use git log instead                                                    ###
+
+## CHANGES - What has changed ?                   Wed Jan 14 14:47:26 CET 2004
+## ===========================================================================
+
+
+                         #############################
+                         #                           #
+                         #Changes in Version 1.3.2(a)#
+                         #                           #
+                         #   (released 2004-01-15)   #
+                         #############################
+
+Bugfixes and new features
+****************************************
+Version 1.3.2A only: ported to gcc 3.3+
+
+------------------------------
+Ported to g++ v. 3.3. Since this change is not compatible to g++ versions
+prior to 3.0, it is included in version 1.3.2A only. THIS IS THE ONLY
+DIFFERENCE BETWEEN VERSIONS 1.2.3 AND 1.2.3A. (Area.C, Area.h, HTMLControl.C,
+HTMLControl.h, Properties.C, Properties.h, format.C, format.h, html.C, html.h,
+html2text.C, urlistream.h)
+------------------------------
+Added command line option '-ascii' for straight ascii output (instead of
+ISO-8859-1, which is the default). (html2text.C, sgml.C)
+------------------------------
+Implemented rendering of most SGML entities introduced in HTML-4. As a
+limitation, those entities not present in HTML-3.2/ISO-8859-1 will be
+recognized only if represented as "named entities" and not with thier numeric
+values, e.g. "&trade;" will be rendered, "&#8482;" won't. (html2text.C,
+sgml.C)
+------------------------------
+Element closing as done in XHTML (e.g. "<br />") is now tolerated.
+(HTMLControl.C)
+------------------------------
+The program now ignores the content of <SCRIPT> or <STYLE> elemts within
+TABLEs, even if it is not commented out. (HTMLParser.y)
+------------------------------
+Fixed urlistream.h (fd_ might be uninitialized). (urlistream.h)
+------------------------------
+
+
+                         #############################
+                         #                           #
+                         # Changes in Version 1.3.1  #
+                         #                           #
+                         #   (released 2002-09-02)   #
+                         #############################
+
+Bugfix release
+****************************************
+
+------------------------------
+Multiple-line DOCTYPE declarations are now accepted (HTMLControl.C:352).
+------------------------------
+Bad initialisation of "fd_" in "urlistream" fixed (urlistream.h), so that an
+error message is printed if a remote document could not be retrieved.
+------------------------------
+A missing node now is interpreted as node '/' (urlistream.C).
+------------------------------
+Closing DIV, FORM and BLOCKQUOTE tags as well as the closing UL, OL and PRE
+tags are now optional (HTMLParser.y), so that the program won't die any longer
+if one of them is omited in the document.
+------------------------------
+Some dificulties with non-ASCII chars fixed (HTMLControl.C).
+------------------------------
+Colons in elements and attributes now are tolerated and elements are not any
+longer implecitly closed at a newline (HTMLControl.C), in order to handly
+MS-Word's HTML better.
+------------------------------
+We do not use '/dev/stdin' as file descriptor any longer (html2text.C and
+urlistream.C), in order to make reading from STDIN finaly work.
+------------------------------
+Block elements are not enclosed in -implecit- Paragraphs any longer
+(HTMLParser.y), in order to avoid superfluous newlines in the output.
+------------------------------
+Fixed segmentation fault on tables with "border" attribute: we now assume that
+any TABLE has at least one row and one column (table.C).
+------------------------------
+Fixed format.C to avoid excessive runtime increment on parsing much nested
+block elements.
+------------------------------
+Some changes in configure, Makefile.in and the documentation.
+------------------------------
+
+
+                         #############################
+                         #                           #
+                         # Changes in Version 1.3.0  #
+                         #                           #
+                         #   (released 2001-10-08)   #
+                         #############################
+
+Ported to g++-3.0 and GPL
+****************************************
+
+------------------------------
+Ported to g++ version 3.0.
+This uses the 'istream.h' header file from the g++3's 'backward' directory.
+------------------------------
+Bugfix: '-' did not work as synonym for STDIN.
+------------------------------
+Added support for the EURO-sign (well, almost).
+------------------------------
+Finaly the GNU GPL as new copyright terms for all parts of the program, after
+GMRS agreed to change the program's license terms to it.
+------------------------------
+
+
+                         #############################
+                         #                           #
+                         # Changes in Version 1.2.4  #
+                         #                           #
+                         #   (released 2001-06-11)   #
+                         #############################
+
+Bugfix and New Features
+****************************************
+
+------------------------------
+Fixed coredump when parsing empty <SCRIPT> or <STYLE> elements (HTMLControl.C).
+------------------------------
+New image handling: <IMG alt=""> does no longer return the value of the SRC
+attribute nor "[]". Added new ~/.html2textrc options: IMG.replace.{all noalt}
+and IMG.alt.{prefix suffix} with new defaults in pretty-style mode. Added
+method for checking whether an attribut was set, even to a zero-value.
+------------------------------
+(New) Copyright terms for all changes we made since version 1.2.2.
+------------------------------
+Some minor changes in configure and html2text.C.
+------------------------------
+Updated the documentation.
+------------------------------
+
+
+                         #############################
+                         #                           #
+                         # Changes in Version 1.2.3  #
+                         #                           #
+                         #   (released 2001-03-19)   #
+                         #############################
+
+Bugfix Release
+****************************************
+
+------------------------------
+Fixed segmention fault when parsing <H5> tags (typo in format.C).
+------------------------------
+
+
+                         #############################
+                         #                           #
+                         # Changes in Version 1.2.2a #
+                         #                           #
+			 #   (released 2000-09-15)   #
+                         #############################
+
+New Location
+****************************************
+
+------------------------------
+No changes were made. We call it now Version 1.2.2A only in order to make it
+perfectly clear to anybody that this is no longer the package deriving
+straight from GMRS, since they do not maintain this program any longer.
+------------------------------
+
+
+                         ##############################
+                         #                            #
+                         #  Changes in Version 1.2.2  #
+                         #                            #
+                         ##############################
+
+----------------------------
+let "make clean" remove BISON++-generated file only when BISON++ is installed.
+----------------------------
+Fixed a nasty one-line bug...
+----------------------------
+
+
+                         ##############################
+                         #                            #
+                         #  Changes in Version 1.2.1  #
+                         #                            #
+                         ##############################
+
+----------------------------
+Closing comment with triple dash did not work ("Ilya Kheifets"
+<ihf@agava.com>).
+----------------------------
+Fixed up "depend" / "clean" / "clobber" rule.
+----------------------------
+Improved the "MAKEDEPEND_INCLUDES" and "SOCKET_LIBRARIES" algorithm
+(raichle@informatik.uni-stuttgart.de).
+----------------------------
+Fixed up "-help". Fixed "getenv("HOME")" core dump (bubeck@think-at-work.de).
+----------------------------
+Solaris needs "#include <sys/types.h>" (raichle@informatik.uni-stuttgart.de).
+----------------------------
+Fixed up URLs with "?" (bubeck@think-at-work.de).
+----------------------------
+
+
+                         ############################
+                         #                          #
+                         #  Changes in Version 1.2  #
+                         #                          #
+                         ############################
+
+----------------------------
+Added "$Id: ChangeLog,v 1.10 2000/02/28 18:42:47 arno Exp $" to files wher it was missing.
+----------------------------
+Added "Formatting::setProperty()".
+----------------------------
+Added "DL.vspace{before between after}".
+----------------------------
+Added "Formatting::setProperty()".
+----------------------------
+Added the "-style pretty" command line option.
+----------------------------
+Documented the "-style pretty" command line option.
+----------------------------
+Added missing implementation of "rb_tree:swap()".
+----------------------------
+
+
+                         ##############################
+                         #                            #
+                         #  Changes in Version 1.1.1  #
+                         #                            #
+                         ##############################
+
+----------------------------
+Removed the "STRING_ERASE" crap -- don't use G++ 2.7.2.1 Standard C++ Library
+any more!
+----------------------------
+Renamed "HAS_SYS_POLL" to "SYS_POLL_MISSING" and "HAS_AUTO_PTR" to
+"AUTO_PTR_BROKEN".
+----------------------------
+Added HAS_SYS_POLL, because Linux 2.0.35 does not provide <sys/poll.h>.
+----------------------------
+Removed the "tar-file" target and added a "make-tar-file" shell script.
+----------------------------
+CONFIGURE now uses $CXX instead of "cc" to check <sys/poll.h> and the socket
+libraries. The TMP dir is no longer "/tmp", but "./configure-tmp".
+----------------------------
+Replaced "echo -n" with "echo xxx\c". G++ 2.95.1 has problems with auto_ptrs
+and lists (see "configure").
+----------------------------
+Bug: Narrow table cells were not formatted properly.
+----------------------------
+Default format for <MENU> is now NO_BULLET / indent 2. Corrected indentation
+for <DT> / <DD>.
+----------------------------
+Added VSPACEs/INDENTs for <DT> and <DD>.
+----------------------------
+Fixed a formatting bug concerning <PRE> (ROlf Niepraschk, Nov 8 1999, 12:51).
+----------------------------
+Performance optimization: Do temporary table cell formatting always left
+aligned.
+----------------------------
+G++ 2.7.2.1 fails to compile "multimap::equal_range()" for some unknown
+reason -- commented out.
+----------------------------
+Need a dummy "value_type" typedef for "vector" -- else G++ 2.7.2.1 fails to
+compile.
+----------------------------
+
+
+                         ############################
+                         #                          #
+                         #  Changes in Version 1.1  #
+                         #                          #
+                         ############################
+
+----------------------------
+The formatting of HTML2TEXT is now largely customizable through the
+"$HOME/.html2textrc" file.
+----------------------------
+Inlined "Area::append()".
+----------------------------
+Optimized "Area::operator>>=()".
+----------------------------
+Formatting is now (partly) customizable, as proposed by Rolf Niepraschk.
+Added some missing copyright notices.
+----------------------------
+The default <UL> / <DIR> / <MENU> bullet style now depends on the list nesting l
+evel.
+----------------------------
+"Properties" now handles escape sequences.
+----------------------------
+Added "cmp_nocase()".
+----------------------------
+Added multiple-inclusion protection code. Added "cmp_nocase()".
+----------------------------
+Added new formatting properties.
+----------------------------
+Empty "HR.marker" now maps to a blank marker. Do not break lines at ",.;:".
+Break lines at "([{".
+----------------------------
+Added three custom bullet types.
+----------------------------
+niepraschk@ptb.de: HTML2TEXT hangs when it encounters a "<TD COLSPAN=99>",
+because for HTML2TEXT table columns are separated by blanks, and 99 blanks
+are wider than 79 characters.
+----------------------------
+"urlistream" now strips "#anchor" suffixes from URLs.
+----------------------------
+niepraschk@ptb.de: egcs-2.91.66 complains that "list::reverse_iterator" must
+not modify private "list::iterator::node".
+----------------------------
+Added man page for "html2textrc".
+----------------------------
+
+
+                         #############################
+                         #                           #
+                         #  Changes in Version 1.04  #
+                         #                           #
+                         #############################
+
+Ported to EGCS 2.91.66 and SINIX CDS++ 2.00A00.
+**************************************
+
+----------------------------
+Improved generation of $MAKEDEPEND_INCLUDES: Now we use "$(CXX) -E" and
+look at the "#line" directives to find out where the C++ compiler found
+"#include <iostream.h>".
+----------------------------
+Removed a useless CONST qualifier in "libstd/include/string".
+----------------------------
+Cleaned up the make file.
+----------------------------
+"libstd/Makefile" is now only created when "./libstd" is actually needed.
+----------------------------
+Port to CDS++ 2.0: "string::operator[]()" is a bit picky... fixed.
+----------------------------
+Replaced "$(HAS_AUTO_PTR)" with "$(HAS_WORKING_AUTO_PTR)" -- "EGCS 2.91.66"'s
+implementation of "auto_ptr" is buggy!
+----------------------------
+
+
+                         #############################
+                         #                           #
+                         #  Changes in Version 1.03  #
+                         #                           #
+                         #############################
+
+Version 1.03 provides fixes for two bugs reported by Volker Kuhlmann ("<MAP>"
+causes a CORE dump; "<A NAME=xxx>" causes the whole document being
+underlined), and also other fixes, as denoted below.
+
+Also, attributes with textual values (like "ALIGN=RIGHT") were not processed
+case-insensitively.
+**************************************
+
+----------------------------
+Allow paragraph content in heading.
+----------------------------
+Removed "auto_aptr::operator const void *()" and "operator!()".
+----------------------------
+"Body::unparse()" and "Body::format()" were not virtual, so THs were
+unparsed and formatted as TDs.
+----------------------------
+Removed "auto_ptr<T>::operator=(T *)" for ANSI C++ compatibility.
+Non-inlined "HTMLParser::~HTMLParser()" to work around an EGCS bug.
+----------------------------
+Added "$EXPLICIT".
+----------------------------
+Removed "auto_ptr<T>::operator=(T *)" for ANSI C++ compatibility.
+Non-inlined "Element::~Element()" to work around an EGCS bug.
+----------------------------
+"Option.pcdata" is now an "auto_ptr" (memory leak).
+----------------------------
+Removed "auto_ptr<T>::operator=(T *)" for ANSI C++ compatibility.
+----------------------------
+Added "/usr/include/g++-2" to the MAKEDEPEND include path.
+----------------------------
+Added "cmp_nocase()". Swallow empty list items. Do not underline anchors
+that have no HREF.
+----------------------------
+The "get_attribute()" variants that compare attribute values against strings
+now compare case-insensitively. Added "cmp_nocase()".
+----------------------------
+Added multiple-inclusion protection code. Added "cmp_nocase()".
+----------------------------
+"Area::add_attribute()": Do not add attribute to left and right free areas.
+----------------------------
+Typo: "ALIGN" attribute of "<TR>" and "<TD>" was misspelled "HALIGN".
+----------------------------
+
+
+                         #############################
+                         #                           #
+                         #  Changes in Version 1.02  #
+                         #                           #
+                         #############################
+
+Version 1.02 greatly improves the package's portability by adding a
+"configure" shell script.
+
+**************************************
+date: Monday, June 21, 1999 @ 14:36
+
+Modified Files:
+        Makefile.Linux Makefile.SINIX html2text.1 html2text.C
+Added Files:
+        urlistream.C urlistream.h 
+Log Message:
+Source documents can now be retrieved over HTTP, not only from local files.
+
+**************************************
+date: Thursday, June 24, 1999 @ 17:06
+
+Added Files:
+        Makefile.in configure
+Removed Files:
+        Makefile.Linux Makefile.SINIX 
+Log Message:
+Replaced "Makefile.SINIX" and "Makefile.Linux" with "Makefile.in" and "configure
+" -- improves portability!
+
+Modified Files:
+        format.C 
+Log Message:
+Changed the unchecked checkbox symbol from "O" to "&ordm;"
+
+Modified Files:
+        html2text.C
+Log Message:
+Corrected the "-help" output (input URLs instead of input files).
+
+Modified Files:
+        sgml.C 
+Log Message:
+Eliminated the assumption that "string::operator[](x)" returns "eos" if "x==len"
+.
+
+Modified Files:
+        urlistream.C urlistream.h
+Log Message:
+Added the "timeout" parameter to "urlistream::open()".
+Added "urlistream::open_error()".
+Added a workaround for a SINIX OS bug.
+
+**************************************
+date: Friday, July 2, 1999 @ 9:23
+
+Modified Files:
+        Area.h ChangeLog HTMLControl.C HTMLControl.h HTMLParser.y 
+        INSTALL Makefile.in configure format.C html.C sgml.C sgml.h 
+        table.C
+Modified Files:
+        auto_ptr.h list string 
+Removed Files:
+        bool.h
+Log Message:
+Added the "BOOL_DEFINITION" macro.
+Added the "STRING_ERASE" macro.
+Now allowing "-->" as the terminator of a multi-line comment.
+Removed "auto_ptr::operator void *()" and "auto_ptr::operator\!()" (portability)
+.
+Updated the "INSTALL" file (usage of "sh configure" explained).
+Removed "libstd/include/bool.h" (was superseeded with "BOOL_DEFINITION").
+Added some more MAKEDEPEND include directories.
+Added some temporary const reference variables to eliminate an incompatibility b
+etween "iterator" and "const_iterator" in some Standard C++ libraries.
+Cleaned up the SGML entity substitution code.
+Added "string::at()".
+
+
+                         #############################
+                         #                           #
+                         #  Changes in Version 1.01  #
+                         #                           #
+                         #############################
+
+Version 1.01 fixes a few bugs and improves the syntax error tolerance.
+
+**************************************
+date: Thursday, June 17, 1999 @ 10:43
+
+Modified Files:
+        HTMLParser.y 
+Log Message:
+"</CENTER>" is now optional.
+Improved the syntax error tolerance (more "error" tokens).
+
+Modified Files:
+        Makefile.SINIX
+Added Files:
+        auto_aptr.h 
+Log Message:
+Added the "auto_aptr" template -- "auto_ptr"s for array pointers!
+
+Modified Files:
+        format.C 
+Log Message:
+"<INPUT>"'s "TYPE" field is now case-insensitive.
+Fixed a bug in the "<BR>" treatment of "make_up()".
+
+Modified Files:
+        table.C
+Log Message:
+Bug: "column_widths" and "row_heights" were "static" -- problems with nested
+tables!
+(Now they are "auto_aptr"s.)
+
+Modified Files:
+        string
+Log Message:
+Added non-const "string::operator[]()".
+
+**************************************
+date: Thursday, June 17, 1999 @ 14:46
+
+Modified Files:
+        HTMLControl.C 
+Log Message:
+Moved the SGML entity replacement from "HTMLControl.C" to "sgml.C".
+Accept empty tag attribute values.
+
+Modified Files:
+        Makefile.SINIX Makefile.Linux html2text.C 
+Log Message:
+Version string is now compiled into "html2text -help" via "-DVERSION=...".
+
+Modified Files:
+        format.C 
+Log Message:
+The "ALT" tag attribute is now SGML-entity-expanded before it is displayed.
+"INPUT TYPE=TEXT" now displays the "NAME" tag attribute value if the "VALUE"
+tag attribute value is empty.
+
+Modified Files:
+        string.C
+Log Message:
+Added one more "string::replace()" function.
+Added "string::traits_type" and its "eos()".
+
+Modified Files:
+        string 
+Log Message:
+Added one more "string::replace()" function.
+Added "string::traits_type" and its "eos()".
+
+Added Files:
+        sgml.C sgml.h
+Log Message:
+Moved the SGML entity replacement from "HTMLControl.C" to "sgml.C".
+
+**************************************
+date: Friday, June 18, 1999 @ 9:54
+
+Modified Files:
+        HTMLControl.C 
+Log Message:
+Allow underscores in tag names and tag attribute names.
+
+Modified Files:
+        HTMLParser.y 
+Log Message:
+Extension: Allow a preamble in a DL.
+DL more syntax error tolerant.
+
+Modified Files:
+        Makefile.SINIX
+Log Message:
+Removed duplicate definition of "$(VERSION)".
+Target "tar-file" now checks if the version string in the man page is
+identical with $(VERSION).
+
+Modified Files:
+        format.C html.h 
+Log Message:
+Extension: Allow a preamble in a DL.
+DL term name is now indented by two characters.
+
+Modified Files:
+        Makefile.Linux Makefile.SINIX html2text.1 html2text.C 
+Log Message:
+Advanced from 1.0 to 1.01.
+Added "ChangeLog" to the distribution.
+Updated the manual page.
+Added the "-version" command line option.
+
+
+**************************************
+

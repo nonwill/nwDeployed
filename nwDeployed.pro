@@ -17,6 +17,7 @@ win32:SUBDIRS += \
 
 
 SUBDIRS += \
+    html2text \
     libao \
     zstd \
     liblzo \

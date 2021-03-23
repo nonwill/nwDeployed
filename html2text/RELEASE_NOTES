@@ -1,0 +1,26 @@
+## Release Notes
+
+Version 2.0.0 and above are now on GitHub:
+  https://github.com/grobian/html2text
+
+
+## RELEASE_NOTES - Important note on this version Wed Jan 14 14:44:49 CET 2004
+## ===========================================================================
+
+Version 1.3.2 is distributed in two "flavours":
+
+1.3.2A contains changes needed for g++ 3.3 and later, which are not
+backwards-compatible. Besides this, versions 1.3.2 and 1.3.2a are IDENTICAL.
+
+Be sure to pick the right version: If you use an older compiler, please use
+version 1.3.2 (without 'a'), if you have g++ 3.3 (and up), or an other modern
+compiler installed, please use version 1.3.2A.
+
+However, in order to save your bandwidth in case you got the wrong version,
+cross-patches (from 1.3.2 to 1.3.2a and viceversa) are included into the
+source code packages of either "flavours".
+
+
+# ----------------------------------------------------------------------------
+
+Martin Bayer <mbayer@zedat.fu-berlin.de>

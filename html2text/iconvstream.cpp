@@ -1,0 +1,265 @@
+/*
+ * Copyright 2020 Fabian Groffen
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License in the file COPYING for more details.
+ */
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#ifdef WIN32
+#include <io.h>
+#define dup _dup
+#else
+#include <unistd.h>
+#endif
+#include <ctype.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <iconv.h>
+
+#include <iostream>
+#include "iconvstream.h"
+
+void
+iconvstream::open_is(const char *file_name, const char *encoding)
+{
+	close_is();
+
+	/* we always encode to UTF-8 for internal processing */
+	iconv_handle_is = iconv_open("UTF-8", encoding);
+	if (iconv_handle_is == iconv_t(-1)) {
+		open_err = "invalid from_encoding";
+		return;
+	}
+
+	fd_is =
+		strcmp(file_name, "-") == 0 ? ::dup(0) : ::open(file_name, O_RDONLY);
+	if (fd_is == -1)
+		open_err = strerror(errno);
+
+	readbufsze = 1024;
+	rutf8bufsze = readbufsze * 4;
+	readbuflen = 0;
+	rutf8buflen = 0;
+	readbufpos = 0;
+	rutf8bufpos = 0;
+	readbuf = new unsigned char[readbufsze];
+	rutf8buf = new unsigned char[rutf8bufsze];
+}
+
+void
+iconvstream::open_is(const string &url, const char *encoding)
+{
+	open_is(url.c_str(), encoding);
+}
+
+void
+iconvstream::close_is(void)
+{
+	if (is_open()) {
+		::close(fd_is);
+		delete readbuf;
+		delete rutf8buf;
+	}
+}
+
+void
+iconvstream::open_os(const char *file_name, const char *encoding)
+{
+	close_os();
+
+	/* internal processing uses UTF-8 */
+	iconv_handle_os = iconv_open(encoding, "UTF-8");
+	if (iconv_handle_os == iconv_t(-1)) {
+		open_err = "invalid to_encoding";
+		return;
+	}
+
+	fd_os =
+		strcmp(file_name, "-") == 0 ? ::dup(1) : ::open(file_name, O_WRONLY);
+	if (fd_os == -1)
+		open_err = strerror(errno);
+
+	writebufsze = 1024;
+	wutf8bufsze = writebufsze * 4;  /* worst case scenario UTF-32 */
+	writebuflen = 0;
+	wutf8buflen = 0;
+	writebufpos = 0;
+	wutf8bufpos = 0;
+	writebuf = new unsigned char[writebufsze];
+	wutf8buf = new unsigned char[wutf8bufsze];
+}
+
+void
+iconvstream::open_os(const string &url, const char *encoding)
+{
+	open_os(url.c_str(), encoding);
+}
+
+void
+iconvstream::close_os(void)
+{
+	if (os_open()) {
+		*this << flush;
+		::close(fd_os);
+		delete writebuf;
+		delete wutf8buf;
+	}
+}
+
+const char *
+iconvstream::open_error_msg() const
+{
+	return open_err ? open_err : "No error";
+}
+
+int
+iconvstream::get()
+{
+	if (rutf8bufpos == rutf8buflen) {
+		char *procinp = (char *)readbuf;
+		char *procout = (char *)rutf8buf;
+		size_t iconvret;
+
+		readbuflen = read(fd_is, readbuf + readbufpos, readbufsze - readbufpos);
+		if (readbuflen <= 0)
+			return EOF;
+
+		readbuflen += readbufpos;
+		readbufpos = 0;
+		rutf8buflen = rutf8bufsze;
+		/* iconv updates readbuflen and utf8buflen */
+		do {
+			iconvret = iconv(iconv_handle_is, &procinp, &readbuflen,
+					&procout, &rutf8buflen);
+			if (iconvret == (size_t)-1) {
+				switch (errno) {
+					case EILSEQ:
+						/* byte is invalid, try to step over it */
+						*procout++ = '?';
+						procinp++;
+						readbuflen--;
+						rutf8buflen--;
+						break;
+					case EINVAL:
+						/* this typically means we stopped reading halfway,
+						 * e.g. this is fine, resume next time */
+						memmove(readbuf, procinp, readbuflen);
+						readbufpos = readbuflen;
+						iconvret = 0;
+						break;
+					case E2BIG:
+						/* output buffer is not large enough, this is
+						 * impossible since we allocate 4x */
+					default:
+						return EOF;
+				}
+			}
+		} while (iconvret == (size_t)-1);
+		rutf8bufpos = 0;
+		rutf8buflen = procout - (char *)rutf8buf;
+	}
+
+	return rutf8bufpos < rutf8buflen ? rutf8buf[rutf8bufpos++] : EOF;
+}
+
+int
+iconvstream::write(const char *inp, size_t len)
+{
+	size_t outlen = len;
+	size_t copylen;
+	size_t copypos = 0;
+	int ret = -1;
+
+	do {
+		copylen = writebufsze - writebufpos;
+		if (copylen > outlen)
+			copylen = outlen;
+		memcpy(writebuf + writebufpos, inp + copypos, copylen);
+		outlen -= copylen;
+		copypos += copylen;
+		writebufpos += copylen;
+
+		/* flush if the buffer is full, or when explicitly requested */
+		if (writebufpos == writebufsze || len == 0) {
+			size_t iconvret;
+			size_t inplen = writebufpos;
+			char *procinp = (char *)writebuf;
+			char *procout = (char *)wutf8buf;
+			writebufpos = 0;
+
+			wutf8buflen = wutf8bufsze;
+			do {
+				/* iconv updates len and writebuflen */
+				iconvret = iconv(iconv_handle_os, &procinp, &inplen,
+						&procout, &wutf8buflen);
+
+				if (iconvret == (size_t)-1) {
+					switch (errno) {
+						case EILSEQ:
+							/* byte is invalid, try to step over it,
+							 * this shouldn't happen for the input is
+							 * generated by iconv itself during input */
+							*procout++ = '?';
+							procinp++;
+							inplen--;
+							wutf8buflen--;
+							break;
+						case EINVAL:
+							/* the only valid problem should be the end
+							 * of the input being truncated */
+							if (inplen < 4 && len != 0) {
+								/* shift this so a next attempt can
+								 * retry the completion */
+								memmove(writebuf, procinp, inplen);
+								writebufpos = inplen;
+								iconvret = 0;
+								break;
+							}
+						case E2BIG:
+							/* output buffer is not large enough, this is
+							 * impossible since we allocate 4x */
+						default:
+							return EOF;
+					}
+				}
+			} while (iconvret == (size_t)-1);
+
+			ret = ::write(fd_os, wutf8buf, procout - (char *)wutf8buf);
+		} else {
+			ret = len;
+		}
+	} while (outlen > 0);
+
+	return ret;
+}
+
+iconvstream &iconvstream::operator<<(const char *inp)
+{
+	(void)write(inp, strlen(inp));
+	return *this;
+}
+
+iconvstream &iconvstream::operator<<(const string &inp)
+{
+	(void)write(inp.c_str(), inp.length());
+	return *this;
+}
+
+iconvstream &iconvstream::operator<<(char inp)
+{
+	(void)write(&inp, inp == '\0' ? 0 : 1);
+	return *this;
+}

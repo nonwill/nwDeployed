@@ -1,0 +1,47 @@
+deal with auto_ptr
+
+# ----------------------------------------------------------------------------
+
+[Debian Bug report logs #98325]
+
+To: 98325@bugs.debian.org
+Subject: use of std::auto_ptr
+From: Philip Martin <philip_martin@ntlworld.com>
+Date: 16 Jul 2001 01:01:49 +0100
+Message-ID: <877kx9lp1u.fsf@debian2.lan>
+
+
+Hi
+
+The std::auto_ptr class template does not meet the requirements for
+objects that can be stored in standard library containers. In
+particular 23.1 [lib.container.requirements] para 3 requires objects
+in containers to be CopyConstructible and Assignable, std::auto_ptr is
+not.
+
+See http://gcc.gnu.org/onlinedocs/libstdc++/20_util/howto.html#2
+and http://cpptips.hyperformix.com/cpptips/autoptr_contain
+
+Standard library algorithms and container methods are allowed to copy
+container elements, and then treat the copies as identical. This won't
+work it the elements are auto_ptrs. *Whether* any particular
+algorithm/method makes copies in this way is a property of the library
+implementation and is beyond the scope of the standard.
+
+html2text's configure test for list<auto_ptr<T>> is always going to
+fail with g++ 3.0. By using a local version of auto_ptr to get round
+this, html2text is relying on a particular implementation of the
+standard library. Looking at the auto_ptr implementation in
+html2text-1.2.4/libstd/include/auto_ptr.h the dodgy bits of code are
+the copy constructor and the assignment operator (no surprise there)
+which both take a const reference argument and then cast away const to
+modify the argument. Lying to the compiler in this way may work, but
+the standard does not require it to work.
+
+Enough bad news. If it were my job to fix this code I would consider
+replacing the auto_ptr with a different smart pointer, probably the
+shared_ptr in the boost collection.
+
+See http://www.boost.org/libs/smart_ptr/shared_ptr.htm
+
+Philip

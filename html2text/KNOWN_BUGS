@@ -1,0 +1,22 @@
+## KNOWN_BUGS - Problems with html2text          Sat Jul  5 12:40:24 CEST 2003
+## ===========================================================================
+
+# ( 1 )=======================================================================
+# Bugs of minor severity
+#
+# The package fails to perform correctly on some conditions, or in some
+# systems, or fails to comply current policy documents.
+
+# ( 1.1 )---------------------------------------------------------------------
+# When parsing much nested TABLEs, html2text will run out of control.
+
+This problem occurs on very complex tables with more than about 25 nested
+TABLE elements, because the runtime increases exponentially with each nested
+table.
+
+Sorry, no fix for this within sight.
+
+
+# ============================================================================
+
+Martin Bayer <mbayer@zedat.fu-berlin.de>

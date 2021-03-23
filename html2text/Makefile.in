@@ -1,0 +1,166 @@
+
+# -----------------------------------------------------------------------------
+#
+# Portions Copyright (c) 1999 GMRS Software GmbH
+# Carl-von-Linde-Str. 38, D-85716 Unterschleissheim, http://www.gmrs.de
+# All rights reserved.
+#
+# Author: Arno Unkrig <arno@unkrig.de>
+#
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License in the file
+# COPYING for more details.
+#
+# -----------------------------------------------------------------------------
+#
+# Changes to version 1.2.2 were made by Martin Bayer <mbayer@zedat.fu-berlin.de>
+#
+# Version 2.0.0 is the first version after fork
+#               github.com/grobian/html2text
+#
+# -----------------------------------------------------------------------------
+
+VERSION=2.0.1_pre
+
+BISON  = bison
+YFLAGS =
+
+INSTALLER = install
+PREFIX    = /usr/local
+BINDIR    = $(PREFIX)/bin
+MANDIR    = $(PREFIX)/man
+DOCDIR    = $(PREFIX)/share/doc/html2text
+
+CXX                 = @CXX@
+BOOL_DEFINITION     = @BOOL_DEFINITION@
+EXPLICIT            = @EXPLICIT@
+SOCKET_LIBRARIES    = @SOCKET_LIBRARIES@
+ICONV_LIBRARIES     = @ICONV_LIBRARIES@
+LIBSTDCXX_INCLUDES  = @LIBSTDCXX_INCLUDES@
+LIBSTDCXX_LIBS      = @LIBSTDCXX_LIBS@
+AUTO_PTR_BROKEN     = @AUTO_PTR_BROKEN@
+MAKEDEPEND_INCLUDES = @MAKEDEPEND_INCLUDES@
+CXXFLAGS            = -g -O2   # automake like
+
+INCLUDES    = $(LIBSTDCXX_INCLUDES)
+DEFINES     = -DVERSION=$(VERSION) \
+			  $(BOOL_DEFINITION) \
+			  $(EXPLICIT) \
+			  $(AUTO_PTR_BROKEN) \
+			  $(NULL)
+
+MYCPPFLAGS  = $(CPPFLAGS) $(INCLUDES) $(DEFINES)
+MYCXXFLAGS  = $(CXXFLAGS)
+MYLIBS      = $(LIBSTDCXX_LIBS) $(SOCKET_LIBRARIES) $(ICONV_LIBRARIES)
+
+.SUFFIXES: .cpp .o
+.PHONY: default all bison-local check install clean clobber depend
+
+default: all
+
+.cpp.o:
+	$(CXX) -c $(MYCPPFLAGS) $(MYCXXFLAGS) $*.cpp
+
+HTMLParser.o: HTMLParser.tab.cc HTMLParser.tab.hh
+	$(CXX) -c  $(MYCPPFLAGS) $(MYCXXFLAGS) -o HTMLParser.o HTMLParser.tab.cc
+
+# -----------------------------------------------------------------------------
+
+all: html2text
+	@echo ;
+	@echo 'Compilation completed. You may now move "html2text", "html2text.1"';
+	@echo 'and "html2textrc.5" to their installation directories (e.g.';
+	@echo '"/usr/local/bin", "/usr/local/man/man1" and "/usr/local/man/man5").';
+	@echo
+
+OBJS = \
+	   Area.o \
+	   cmp_nocase.o \
+	   format.o \
+	   html.o \
+	   html2text.o \
+	   HTMLControl.o \
+	   HTMLDriver.o \
+	   HTMLParser.o \
+	   Properties.o \
+	   sgml.o \
+	   table.o \
+	   iconvstream.o \
+	   $(NULL)
+
+html2text: $(OBJS) $(LIBSTDCXX_LIBS)
+	$(CXX) $(LDFLAGS) $(OBJS) $(MYLIBS) -o $@
+
+# -----------------------------------------------------------------------------
+
+# Since bison isn't always installed, HTMLParser.tab.hh and
+# HTMLParser.tab.cc are only built when 'make bison-local' is issued.
+
+bison-local:
+	$(BISON) $(YFLAGS) -d HTMLParser.yy
+
+# -----------------------------------------------------------------------------
+
+TESTS= \
+	   ascii=ordered-list \
+	   ascii=unterminated-table \
+	   iso-8859-1=dot-in-tag-name \
+	   iso-8859-1=hex-entities \
+	   iso-8859-1=large-table-gt-no-html-end-tag \
+	   utf-8=blockquote-reply \
+	   utf-8=bold-utf-8-chars-and-zwnj \
+	   utf-8=linked-links-and-email-addresses \
+	   utf-8=meta-in-blockquote \
+	   utf-8=table-with-border \
+	   utf-8=tag-with-colon-attribute \
+	   utf-8=unicode-hex-references \
+	   utf-8=cid-image-link \
+	   utf-8=ifendif \
+	   $(NULL)
+
+check:
+	@cd tests && ./runtest.sh $(TESTS)
+
+# -----------------------------------------------------------------------------
+
+# This is mostly thought for RPM builts and users that don't read the documentation.
+
+install:
+	$(INSTALLER) -d -m 755 $(DESTDIR)$(BINDIR);
+	$(INSTALLER) -m 755 html2text $(DESTDIR)$(BINDIR);
+	$(INSTALLER) -d -m 755 $(DESTDIR)$(MANDIR)/man1;
+	$(INSTALLER) -d -m 755 $(DESTDIR)$(MANDIR)/man5;
+	$(INSTALLER) -m 644 html2text.1 $(DESTDIR)$(MANDIR)/man1;
+	$(INSTALLER) -m 644 html2textrc.5 $(DESTDIR)$(MANDIR)/man5;
+	$(INSTALLER) -d -m 755 $(DESTDIR)$(DOCDIR);
+	$(INSTALLER) -p -m 644 \
+		CHANGES COPYING CREDITS KNOWN_BUGS \
+		README.md README-1.3.2a RELEASE_NOTES TODO \
+		$(DESTDIR)$(DOCDIR)
+
+# -----------------------------------------------------------------------------
+
+clean: local-clean
+local-clean:
+	rm -f *.o *~ core html2text Dependencies Makefile;
+
+clobber: local-clobber
+local-clobber: local-clean
+	rm -f html2text
+
+depend: local-depend
+local-depend: HTMLParser.tab.hh
+	@>Dependencies
+	makedepend -f Dependencies $(CPPFLAGS) $(MAKEDEPEND_INCLUDES) *.cpp
+	@rm -f Dependencies.bak
+
+# -----------------------------------------------------------------------------
+
+include Dependencies
+

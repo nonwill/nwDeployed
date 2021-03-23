@@ -1,0 +1,28 @@
+A.attributes.external_link = UNDERLINE
+A.attributes.internal_link = NONE
+
+BLOCKQUOTE.prefix = > 
+BLOCKQUOTE.indent.left = 0
+BLOCKQUOTE.indent.right = 0
+
+H1.vspace.before = 2
+H2.vspace.before = 2
+H3.vspace.before = 2
+H4.vspace.before = 2
+H5.vspace.before = 2
+H6.vspace.before = 2
+
+H1.prefix = # 
+H2.prefix = ## 
+H3.prefix = ### 
+H4.prefix = #### 
+H5.prefix = ##### 
+H6.prefix = ###### 
+
+H1.suffix = \ # 
+H2.suffix = \ ## 
+H3.suffix = \ ### 
+H4.suffix = \ #### 
+H5.suffix = \ ##### 
+H6.suffix = \ ######
+

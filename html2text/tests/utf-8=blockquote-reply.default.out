@@ -1,0 +1,57 @@
+Ah, good. That might explain some of the weirdness I have seen :)
+
+On Sat, 2019-11-09 at 11:29 +0100, grobian wrote:
+> Setting SLOT to "" isn't correct, I think.  The code checks where it
+> uses it that SLOT != NULL, so the correct fix is to not try to
+> strdup(NULL).  I've pushed this as ff773ed.
+>
+> You're right that qmerge should probably only look at the vdb at the
+> point you're seeing this crash.
+>
+> Thanks,
+> Fabian
+>
+> On 05-11-2019 08:46:32 +0000, J T wrote:
+> > #2  0x10023024 in tree_get_atom (pkg_ctx=pkg_ctx@entry=0x10226660,
+> complete=complete@entry=true) at tree.c:1017
+> > 1017                                                  pkg_ctx->slot = xstrdup
+> (meta->SLOT);
+> > (gdb) list
+> > 1012                  } else { /* metadata or ebuild */
+> > 1013                          if (pkg_ctx->atom->SLOT == NULL) {
+> > 1014                                  if (pkg_ctx->slot == NULL) {
+> > 1015                                          tree_pkg_meta *meta =
+> tree_pkg_read(pkg_ctx);
+> > 1016                                          if (meta != NULL) {
+> > 1017                                                  pkg_ctx->slot = xstrdup
+> (meta->SLOT); XXXX meta->SLOT NULL here XXXX
+> > 1018                                                  pkg_ctx->slot_len =
+> strlen(pkg_ctx->slot);
+> > 1019                                                  tree_close_meta(meta);
+> > 1020                                          }
+> > 1021                                  }
+> >
+> > meta->SLOT is null here when trying to qmerge -Oq sys-devel/binutils-2.32-r1:
+> 2.32
+> > There reason is:
+> > (gdb) print  pkg_ctx->cat_ctx->ctx->cachetype
+> > $24 = CACHE_EBUILD
+> > and the ebuild for one of the searched pkg's(gcc) does not have SLOT define
+> in its ebuild(appears to inherited)
+> > so SLOT becomes NULL.
+> >
+> > One should protect from this, possibly by:
+> > if (!meta->SLOT)
+> >   pkg_ctx->slot = xstrdup("");
+> >  
+> > else
+> >   pkg_ctx->slot = xstrdup(meta->SLOT)
+> > ...
+> > which will avoid SEGV but lie about the true SLOT
+> >
+> > The bigger question is why CACHE_EBUILD here in qmerge?
+> > Is not CACHE_VDB a better choice here?
+> >
+> >  J
+>
+

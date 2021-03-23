@@ -1,0 +1,195 @@
+## This is the README file for html2text          Wed Jan 14 14:35:57 CET 2004
+## ===========================================================================
+
+html2text is a command line utility, written in C++, that converts HTML
+documents into plain text. It was written up to version 1.2.2 for and is
+copyrighted by GMRS Software GmbH, Unterschleißheim.
+
+html2text reads HTML documents from standard input or a (local or remote)
+URI, and formats them into a stream of plain text characters that is written
+to standard output or into an output-file, preserving the original positions
+of table fields.
+
+ISO 8859-1 is used for output by default, plain-ASCII output can be chosen by
+setting the "-ascii" command line option. Type "html2text -help" for an
+overview of all command line options.
+
+Examples:
+html2text <file> | less
+html2text -o outfile.txt -ascii -nobs <file>
+
+The rendering is largely customisable through the "html2textrc" file and the
+"-style" command line option, that may be used to change quickly some
+formatting defaults. See the html2textrc(5) manual page for details.
+
+Although html2text was written for the conversion of HTML 3.2 documents, most
+constructs of HTML 4 are renderred as well, including most SGML entities,
+provided that they are written as "named entities" and not as a numeric value.
+The program tries to parse even XHTML documents and the HTML produced by word
+processors, but this not always as successful as other HTML parsers, because
+html2text is, as already said, for all that an HTML 3.2 converter.
+
+The program accepts also syntactically incorrect input, attempting to
+interpret it "reasonably". If the output is however not satisfactory, of if
+rendering fails completely, and you have the possibility to correct the HTML
+source code, you may want to use the "-unparse" or "-check" options to find
+out what exactly html2text's problem is.
+
+This program was written because GMRS was looking for a good, free
+HTML-to-text converter for UNIX, and they couldn't find one on the net. The
+best they could find was lynx, i.e. "lynx -dump", but lynx could not cope with
+tables.
+
+
+# ----------------------------------------------------------------------------
+# For information on compiling and installing the package on your system,
+# please refer to the file INSTALL.
+
+html2text was developed and is tested under Linux. However, it uses no
+O/S-specific features and should be easily portable to other platforms (at
+least to other UNIX-ish platforms). It is reported to compile and work on the
+following platforms:
+
+	+ AIX 4.3/g++ 2.95.1
+	+ AIX 4.3.2.0/g++ 2.95.2.1
+	+ CYGWIN_NT-5.0 1.5.4/gcc 3.2
+	+ FreeBSD 5.1/gcc 3.2.1
+	+ IRIX64 6.5/MIPS 7.41
+	+ Linux 2.2.18/g++ 2.95.2
+	+ Linux 2.4.16/g++ 2.95.3
+	+ Linux 2.4.22/gcc 3.3.2
+	+ NetBSD 1.6.1/gcc 2.95
+	+ SINIX/CDS++ 2.0A00
+
+You will find some hints for porting it to other platforms at the end of the
+file "INSTALL".
+
+Note for version 1.3.2(a): Version 1.3.2 is distributed in two "flavours":
+1.3.2A contains changes needed for g++ 3.3 and later, which are not
+backwards-compatible. Thus, if you use an older (or other) compiler, please
+use version 1.3.2 (without 'a'), if you have g++ 3.3 (and up) installed,
+please use version 1.3.2A. Cross-patches (from 1.3.2 to 1.3.2a and viceversa)
+are included into the source code packages of either flavours.
+
+
+# ----------------------------------------------------------------------------
+# Published under the terms of the GNU General Public License.
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+# ----------------------------------------------------------------------------
+# GMRS agreed to change the program's license terms to GPL.
+
+Message-ID: <01c401c10f72$d11c3660$12c8a8c0@jag>
+Reply-To: "David Geffen" <geffen@one4net.com>
+From: "David Geffen" <david@one4net.com>
+To: <mbayer@zedat.fu-berlin.de>
+Date: Wed, 18 Jul 2001 12:17:14 +0200
+Organization: GMRS Software GmbH
+
+Hallo Herr Bayer,
+
+html2text darf unter die GPL veroeffentlicht werden, solange one4net keinerlei
+Nachteile oder Verpflichtungen dadurch entstehen.
+
+Mit freundlichen Gruessen
+David Geffen
+
+
+----- Original Message -----
+From: "Martin Bayer" <mbayer@zedat.fu-berlin.de>
+To: <geffen@one4net.com>
+Sent: Thursday, July 12, 2001 5:39 PM
+Subject: Re: Lizenzbedingungen von 'html2text'
+
+
+> Guten Tag!
+>
+> On Mon, Jun 25, 2001 at 03:23:31PM +0200, David Geffen wrote:
+> > > Aus diesem Grunde möchte ich Sie herzlich bitten, zu überlegen, ob es
+> > > für GMRS nicht möglich wäre, 'html2text' nachträglich unter die GPL zu
+> > > stellen.
+> >
+> > ich bin erst heute zurueck aus dem Urlaub gekommen.
+> >
+> > Ich werde mich in den naechsten paar Tage dazu melden.
+>
+> Darf ich Sie fragen, ob Sie in dieser Angelegenheit bereits zu einem
+> Entschluss gekommen sind? Es ist mittlerweile gelungen, das Programm nach
+> g++3 zu portieren, und da wäre es schön, wenn bereits diese neue Version
+> unter GPL veröffentlicht werden könne.
+>
+> Mit den besten Grüßen
+> --
+> Martin Bayer
+>                                                 c.ne Ostiense, 212/E/15
+> E-Mail: mail@mbayer.de                          I-00154 Roma
+> WWW: http://www.mbayer.de                       GSM: +39 3476605285
+
+
+# ----------------------------------------------------------------------------
+# This program is not provided nor supported by GMRS any longer.
+
+Since GMRS decided not to develop nor to support this program any longer,
+they also did not provide its source code any more. With this, I realised,
+the source code of this program was hardly to obtain, as most archives
+included at best a precompiled version. Because I liked the features, I
+offered a webspace where this program now is living at,
+
+	http://userpage.fu-berlin.de/~mbayer/tools/html2text.html
+
+I'm afraid in this way I've become the maintainer of this package, even if I
+actually don't have time free to spend on working on the program by myself.
+Please keep this in mind if you are going to write me. :-)
+
+The source code can also be obtained from the Ibiblio network at
+
+	[ftp|http]://ftp.ibiblio.org/pub/linux/apps/www/converters/
+
+If you are going to retrieve the source code from within automated scripts,
+e.g. by a software packaging manager, please prefer downloading it from the
+Ibiblio server or one of its mirrors.
+
+
+# ----------------------------------------------------------------------------
+# »We accept patches.«
+
+Please include in all your messages information on
+	· the version of html2text you are referring to (`html2text -version`),
+          if you obtained the program in binary form, the version number as
+	  supplied by your package manager (e.g. `rpm -q html2text`);
+	· name and version of your operating system (`uname -a`);
+	· name and version of your compiler (`cc -v`).
+
+If you think you found a possible security impact, please let _me_ know
+_first_.
+
+If you think you found a bug, please try first to find out its possible
+reason by yourself, using the "-unparse", "-check", "-debug-scanner", and
+"-debug-parser" command line options, in order to save other people's time. I
+will not consider any "bug report" that just claims "your program is
+buggy!!!!!1", nor will I answer to any mail asking me O/S-specific questions.
+
+I will include into the TODO list any sensible feature request.
+
+And, last but not least, patches are always very welcome. :-)
+
+
+Martin Bayer <mbayer@zedat.fu-berlin.de>
+
+	For all e-mails, use of PGP (GPG) is encouraged. You will find my
+	public key (ID: 0xCB537B60) on my homepage and on keyservers. The key's
+	fingerprint is: "46A1 B556 41CD C77A 0261  D22F 41A6 EB90 CB53 7B60".

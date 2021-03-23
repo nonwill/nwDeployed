@@ -1,0 +1,251 @@
+.\" This documentation was last modified by
+.\" Martin Bayer <mbayer@zedat.fu-berlin.de>
+.\" on Mon Jun 11 10:08:10 CEST 2001
+.\"
+.\" Comments and suggestions are welcome.
+.\"
+.TH html2textrc 5 2020\-04\-05
+.SH NAME
+html2textrc \- formatting properties file for html2text(1)
+.SH SYNOPSIS
+.I Key
+[
+.B =
+|
+.B :
+]
+.I Value
+.SH DESCRIPTION
+The
+.BR html2textrc (5)
+file defines a set of formatting properties used by the
+.BR html2text (1)
+utility, that overrides the program's built-in formatting defaults.
+Each line of the
+.BR html2textrc (5)
+file is either a formatting property or a comment.
+.P
+Lines with a leading "#" or "!" (i.e. the first non-space character is a "#" or a "!")
+and blank lines (i.e. a line consisting only of white-space characters), are
+considered comments and ignored.
+Everything else is literary interpreted by the parser as a formatting property,
+where a string-type property value may also be empty (unsets default value).
+Both, the property key and the property value, may contain C-style escape
+sequences to mask meta characters.
+.P
+.B "A property definition line consists of:"
+.TP
+(1)
+Optional leading space,
+.TP
+(2)
+the property key (a sequence of non-space characters except "=" and ":")
+as described below,
+.TP
+(3)
+an optional space,
+.TP
+(4)
+an optional "=" or ":",
+.TP
+(5)
+optional space,
+.TP
+(6)
+the property value as described below.
+.br
+Everything up to the next newline is interpreted
+.I literary
+as the value of the specified element. Literary meant leading white-space
+must be quoted with backslashes (i.e. "\e "). Be aware not to include
+unwanted trailing white-space characters.
+.SH OPTIONS
+The following is the list of valid formatting properties, together with their
+default values. If the
+.B -style
+command line option of
+.BR html2text (1)
+is used, different default values apply.
+.P
+Curly braces indicate alternatives, e.g.
+.B {A\ B}C
+stands for
+.B AC
+or
+.BR BC .
+.TP
+.B DOCUMENT.{vspace.{before after} indent.{left right}} = 0
+Specifies how many blank lines are inserted before and after, and how many
+blank columns are inserted to the left and to the right of the formatted
+document.
+(Numeric.)
+.TP
+.B BODY.{vspace.{before after} indent.{left right}} = 0
+Same for the document body. (Since the document body is currently the only
+document part that is rendered, it is virtually the same whether you specifiy
+.B DOCUMENT
+or
+.BR BODY ).
+(Numeric.)
+.TP
+.B {OL UL DIR MENU DL}.vspace.{before between after} = 0
+Specifies how many blank lines are inserted before a list, between the
+individual list items, and after the list.
+(Numeric.)
+.TP
+.B {OL UL DIR MENU}.indents = 6
+Specifies by how deep list items are indented. If an
+item bullet would not fit into the space created by the indentation, then
+the indentation is automatically increased such that the bullet fits in
+(relevant for relatively wide bullets, e.g. roman numbers).
+.BR
+If 
+.I N
+blank-separated integers are specified instead of one, then the first 
+.I N-1
+integers specify indentation for the first
+.I N-1
+list nesting levels, while
+the last integer specifies the indentation for nesting levels
+.I N
+and higher.
+(Numeric.)
+.TP
+.B {UL DIR}.default_types = DISC CIRCLE SQUARE
+Specifies the default list type (i.e. the bullet style), if the HTML list
+tag does not specify an explicit type. Legal values are
+.BR NO_BULLET ,
+.BR DISC ,
+.BR SQUARE ,
+.BR CIRCLE ,
+.BR CUSTOM1 ,
+.B CUSTOM2
+and
+.BR CUSTOM3 .
+If more than one value is specified, then the values apply for the
+respective list nesting levels (see
+.BR indents ).
+(Option.)
+.TP
+.B MENU.default_types = NO_BULLET
+Same for <MENU>, but here the default is
+.BR NO_BULLET .
+(Option.)
+.TP
+.B LI.{disc square circle custom1 custom2 custom3}_bullet = {* # o + - ~}
+Specifies the strings used as list item bullets.
+(String.)
+.TP
+.B {DT DD}.{vspace.{before after} indent.{left right}} = 0
+Specifies how many blank lines are inserted before and after, and how many
+blank columns are inserted to the left and to the right of each <DT> or <DD>
+element.
+(Numeric.)
+.TP
+.B HR.marker = =
+Specifies the character to use for horizontal rules.
+(String.)
+.TP
+.B HR.{vspace.{before after} indent.{left right}} = 0
+Specifies how many blank lines are inserted before and after, and how many
+blank columns are inserted to the left and to the right of the horizontal rule.
+(Numeric.)
+.TP
+.B {H1 H2 H3 H4 H5 H6}.prefix = {****** ***** **** *** ** *}
+Specifies how headings are decorated with a prefix. (The default values
+have a trailing blank, e.g. "******\ ".)
+(String.)
+.TP
+.B {H1 H2 H3 H4 H5 H6}.suffix = {****** ***** **** *** ** *}
+Specifies how headings are decorated with a suffix. (The default values
+have a leading blank, e.g. "\e\ ******".)
+(String.)
+.TP
+.B {H1 H2 H3 H4 H5 H6}.vspace.{before after} = 0
+Specifies how many blank lines are inserted before and after headings.
+(Numeric.)
+.TP
+.B {PRE P}.{vspace.{before after} indent.{left right}} = 0
+Specifies how many blank lines are inserted before and after, and how many
+blank columns are inserted to the left and to the right of these items.
+(Numeric.)
+.TP
+.B {BLOCKQUOTE ADDRESS}.{vspace.{before after} indent.{left right}} = {0 0 5 5}
+Specifies how many blank lines are inserted before and after, and how many
+blank columns are inserted to the left and to the right of these items.
+(Numeric.)
+.TP
+.B BLOCKQUOTE.prefix = ""
+Specifies a prefix to use for each nested level of BLOCKQUOTEs.  This
+can be used as e.g. "\> " to emulate email replies.  Works best with
+indent.left set to 0.
+.TP
+.B TABLE.vspace.{before after} = 0
+Specifies how many blank lines are inserted before and after tables.
+(Numeric.)
+.TP
+.B {H1 H2 H3 H4 H5 H6}.attributes = BOLD
+Specifies the cell attributes for headings. The value is a sequence of
+.BR NONE ,
+.BR BOLD ,
+.B UNDERLINE
+and
+.BR STRIKETHROUGH .
+(Option.)
+.TP
+.B {TT I BIG SMALL SUB SUP DFN CODE SAMP KBD CITE}.attributes = NONE
+Specifies the cell attributes for these text items.
+Legal values are:
+.BR NONE ,
+.BR BOLD ,
+.B UNDERLINE
+or
+.BR STRIKETHROUGH .
+(Option.)
+.TP
+.B U.attributes = UNDERLINE
+Same for <U> elements,
+but with a different default value.
+(Option.)
+.TP
+.B {B EM STRONG}.attributes = BOLD
+Same for these elements,
+but with a different default value.
+(Option.)
+.TP
+.B STRIKE.attributes = STRIKETHROUGH
+Same for <STRIKE> elements,
+but with a different default value.
+(Option.)
+.TP
+.B A.attributes.{internal_link external_link} = UNDERLINE
+Specifies the cell attributes for links. A link is an <A>
+element that has an "HREF"
+attribute. An internal link is a link whose
+"HREF" attribute starts with a hash character (e.g.
+"<A href="#42">").
+Legal values are again
+.BR NONE ,
+.BR BOLD ,
+.B UNDERLINE
+and
+.BR STRIKETHROUGH .
+(Option.)
+.TP
+.BI "IMG.replace.{all noalt} = "unset
+Specifies the string used to replace all <IMG>
+elements, or those without an "ALT" attribute set.
+(String.)
+.TP
+.B IMG.alt.{prefix suffix} = {[ ]}
+Specifies how the values (if any) of IMG
+elements' "ALT" attributes are marked.
+(String.)
+.SH AUTHOR
+Current primary download location for
+.B html2text
+is:
+.br
+https://github.com/grobian/html2text.
+.SH "SEE ALSO"
+.BR html2text (1)
