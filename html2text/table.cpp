@@ -389,10 +389,10 @@ narrow_table(
 //  << old_column_width
 //  << " to "
 //  << new_column_width
-//  << endl;
-//cerr << "table_width=" << *table_width_in_out << endl;
+//  << endl_char;
+//cerr << "table_width=" << *table_width_in_out << endl_char;
 //for (int z = 0; z < number_of_columns; ++z) {
-//  cerr << "column_widths[" << z << "]=" << column_widths_in_out[z] << endl;
+//  cerr << "column_widths[" << z << "]=" << column_widths_in_out[z] << endl_char;
 //}
 
 	return true;
@@ -428,10 +428,10 @@ compute_row_heights(
 		lc.area.reset(lc.cell->format(w, lc.halign));
 		if (!lc.area.get())
 			continue;
-//    cerr << "lc.halign=" << lc.halign << ", w=" << w << endl;
+//    cerr << "lc.halign=" << lc.halign << ", w=" << w << endl_char;
 //    cerr
-//      << "***" << *lc.area << "***" << endl <<
-//      lc.area->width() << "x" << lc.area->height() << endl;
+//      << "***" << *lc.area << "***" << endl_char <<
+//      lc.area->width() << "x" << lc.area->height() << endl_char;
 		Area::size_type h = (lc.h - 1) * row_spacing;
 		{
 			for (int y = lc.y; y < lc.y + lc.h; ++y)

@@ -120,15 +120,15 @@ Head::unparse(h2t_iostream& os, ostream_manipulator separator) const
 		os << "</TITLE>" << separator;
 	}
 	if (isindex_attributes.get()) {
-		os << "<ISINDEX" << isindex_attributes << ">" << endl;
+        os << "<ISINDEX" << isindex_attributes << ">" << endl_char;
 	}
 	if (base_attributes.get())
-		os << "<BASE" << base_attributes << ">" << endl;
+        os << "<BASE" << base_attributes << ">" << endl_char;
 	foreach(scripts, os, separator);
 	foreach(styles, os, separator);
 	foreach(metas, os, separator);
 	if (link_attributes.get())
-		os << "<LINK" << link_attributes << ">" << endl;
+        os << "<LINK" << link_attributes << ">" << endl_char;
 	os << "</HEAD>" << separator;
 }
 
@@ -305,7 +305,7 @@ Option::unparse(h2t_iostream& os, ostream_manipulator separator) const
 	os << "<OPTION" << attributes << ">" << separator;
 	if (pcdata.get())
 		pcdata->unparse(os, separator);
-	os << "</OPTION>" << endl;
+    os << "</OPTION>" << endl_char;
 }
 
 void
@@ -314,7 +314,7 @@ Select::unparse(h2t_iostream& os, ostream_manipulator separator) const
 	os << "<SELECT" << attributes << ">" << separator;
 	if (content.get())
 		foreach(*content, os, separator);
-	os << "</SELECT>" << endl;
+    os << "</SELECT>" << endl_char;
 }
 
 void
@@ -323,7 +323,7 @@ TextArea::unparse(h2t_iostream& os, ostream_manipulator separator) const
 	os << "<TEXTAREA" << attributes << ">" << separator;
 	if (pcdata.get())
 		pcdata->unparse(os, separator);
-	os << "</TEXTAREA>" << endl;
+    os << "</TEXTAREA>" << endl_char;
 }
 
 /* ------------------------------------------------------------------------- */

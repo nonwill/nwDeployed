@@ -17,8 +17,8 @@
 #define ICONVSTREAM_H 1
 #include "html2text.h"
 
-const char endl = '\n';
-const char flush = '\0';
+const char endl_char = '\n';
+const char flush_char = '\0';
 
 using std::string;
 
@@ -32,7 +32,8 @@ using std::string;
 
 class iconvstream : public h2t_iostream {
     public:
-        iconvstream():
+        iconvstream( bool use_backspaces = true ) :
+            using_backspaces(use_backspaces),
             open_err(0),
             fd_is(-1),
             fd_os(-1)
@@ -60,10 +61,12 @@ class iconvstream : public h2t_iostream {
         }
         const char *open_error_msg() const;
 
+        bool useBackspaces() { return using_backspaces; }
         int get();
-        int write(const char *inp, size_t len);
+        size_t write(const char *inp, size_t len);
 
     private:
+        const bool using_backspaces;
         const char *open_err;
 
         int fd_is;

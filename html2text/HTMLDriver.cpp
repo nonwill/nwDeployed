@@ -66,7 +66,7 @@ void HTMLDriver::process(const Document& document)
 		break;
 
 	case UNPARSE:
-		document.unparse(os, endl);
+        document.unparse(os, endl_char);
 		break;
 
 	case SYNTAX_CHECK:

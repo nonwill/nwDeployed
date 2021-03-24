@@ -142,7 +142,7 @@ int HTMLControl::htmlparser_yylex(
 			{
 				istr &s(*value_return->strinG);
 				string::size_type x = s.length();
-				while (x > 0 && isspace(s[x - 1]))
+                while (x > 0 && isspace_char(s[x - 1]))
 					--x;
 				s.erase(x, string::npos);
 			}
@@ -151,9 +151,9 @@ int HTMLControl::htmlparser_yylex(
 			if (!literal_mode) {
 				istr &s(*value_return->strinG);
 				for (string::size_type x = 0; x < s.length(); ++x) {
-					if (isspace(s[x])) {
+                    if (isspace_char(s[x])) {
 						string::size_type y;
-						for (y = x + 1; y < s.length() && isspace(s[y]); ++y)
+                        for (y = x + 1; y < s.length() && isspace_char(s[y]); ++y)
 							;
 						s.replace(x, y - x, " ");
 					}
@@ -184,7 +184,7 @@ int HTMLControl::htmlparser_yylex(
 			if (next_token == HTMLParser_token::PCDATA) {
 				istr &s(*next_token_value.strinG);
 				string::size_type x;
-				for (x = 0; x < s.length() && isspace(s[x]); ++x)
+                for (x = 0; x < s.length() && isspace_char(s[x]); ++x)
 					;
 				if (x > 0)
 					s.erase(0, x);
@@ -356,7 +356,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 					} while (c != ']');
 					do {
 						c = get_char();
-					} while (c != EOF && isspace(c));
+                    } while (c != EOF && isspace_char(c));
 					if (c != '>')
 						return HTMLParser_token::SCAN_ERROR;
 					continue;  /* ignore this thing (start over) */
@@ -410,7 +410,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 					tag_name += c;
 				}
 
-				while (isspace(c))
+                while (isspace_char(c))
 					c = get_char();
 
 				/*
@@ -435,7 +435,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 							attribute.first += c;
 						}
 
-						while (isspace(c))
+                        while (isspace_char(c))
 							c = get_char();    // Skip WS after attribute name
 
 						/*
@@ -443,7 +443,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 						 */
 						if (c == '=') {
 							c = get_char();
-							while (isspace(c))
+                            while (isspace_char(c))
 								c = get_char();
 							if (c == '"' || c == '\'') {
 								int closing_quote = c; // Same as opening quote!
@@ -475,16 +475,16 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 								}
 							}
 
-							while (isspace(c))
+                            while (isspace_char(c))
 								c = get_char();    // Skip WS after attr value
 						} else {
 							/* if we get something malformed like
 							 * att:"bla" (colon iso =), ensure we eat
 							 * away the garbage until space or closing
 							 * tag */
-							while (!isspace(c) && c != '>')
+                            while (!isspace_char(c) && c != '>')
 								c = get_char();
-							while (isspace(c))
+                            while (isspace_char(c))
 								c = get_char();
 						}
 
@@ -666,12 +666,12 @@ HTMLControl::get_char()
 		} else {
 			current_column++;
 			if ((c >> 7) & 1) {
-				unsigned char nextpoint = 1;
+                unsigned char nextpoint = 1;
 
 				/* we assume iconv produced valid UTF-8 here */
-				while ((c >> (7 - nextpoint)) & 1)
-					c |= ((is.get() & 0xFF) << (8 * nextpoint++));
-			}
+                while ( ((c >> (7 - nextpoint)) & 1) && nextpoint < 4 )
+                    c |= ((is.get() & 0xFF) << (8 * nextpoint++));
+            }
 		}
 	}
 

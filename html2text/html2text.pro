@@ -3,4 +3,5 @@ CONFIG += ordered
 
 SUBDIRS = \
   lib \
-  exe
+  exe \
+  lib/test.pro

@@ -27,12 +27,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <iconv.h>
 
 #include <iostream>
 #include "iconvstream.h"
 
 #ifdef HTML2TEXT_EXE
+#include <iconv.h>
+
 void
 iconvstream::open_is(const char *file_name, const char *encoding)
 {
@@ -113,7 +114,7 @@ void
 iconvstream::close_os(void)
 {
 	if (os_open()) {
-		*this << flush;
+        *this << flush_char;
 		::close(fd_os);
 		delete writebuf;
 		delete wutf8buf;
@@ -176,7 +177,7 @@ iconvstream::get()
 	return rutf8bufpos < rutf8buflen ? rutf8buf[rutf8bufpos++] : EOF;
 }
 
-int
+size_t
 iconvstream::write(const char *inp, size_t len)
 {
 	size_t outlen = len;
@@ -251,18 +252,18 @@ iconvstream::write(const char *inp, size_t len)
 
 h2t_iostream &h2t_iostream::operator<<(const char *inp)
 {
-	(void)write(inp, strlen(inp));
+    write(inp, strlen(inp));
 	return *this;
 }
 
 h2t_iostream &h2t_iostream::operator<<(const string &inp)
 {
-	(void)write(inp.c_str(), inp.length());
+    write(inp.c_str(), inp.length());
 	return *this;
 }
 
 h2t_iostream &h2t_iostream::operator<<(char inp)
 {
-	(void)write(&inp, inp == '\0' ? 0 : 1);
+    write(&inp, inp == '\0' ? 0 : 1);
 	return *this;
 }

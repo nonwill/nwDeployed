@@ -201,7 +201,7 @@ Line::add_attribute(char addition)
 
 /* ------------------------------------------------------------------------- */
 
-bool Area::use_backspaces = true;
+//bool Area::use_backspaces = false;
 
 /* ------------------------------------------------------------------------- */
 
@@ -560,7 +560,7 @@ operator<<(h2t_iostream& os, const Area &a)
 			if (a == Cell::NONE) {
 				os << u;
 			} else {
-				if (Area::use_backspaces) {
+                if (os.useBackspaces()) {
 					/*
 					 * No LESS / terminal combination that I know of
 					 * supports dash-backspace-character as
@@ -589,7 +589,7 @@ operator<<(h2t_iostream& os, const Area &a)
 				}
 			}
 		}
-		os << endl;
+        os << endl_char;
 	}
 
 	return os;

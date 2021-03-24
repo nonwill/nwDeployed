@@ -2,8 +2,6 @@
 DEFINES += AUTO_PTR_BROKEN
 
 include($${PWD}/../nwDeployed.pri)
-win32:INCLUDEPATH += $${PWD} $${PWD}/../include/win32 \
-    $${PWD}/../libiconv/include
 
 SOURCES +=  $${PWD}/HTMLParser.tab.cc \
     $${PWD}/Area.cpp \
@@ -29,5 +27,3 @@ HEADERS += $${PWD}/HTMLParser.tab.hh \
     $${PWD}/Properties.h \
     $${PWD}/sgml.h \
     $${PWD}/iconvstream.h
-
-LIBS += -liconv

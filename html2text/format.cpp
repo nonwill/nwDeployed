@@ -153,7 +153,7 @@ Document::format(
 	static BlockFormat bf("DOCUMENT");
 
 	for (int i = 0; i < bf.vspace_before; ++i)
-		os << endl;
+        os << endl_char;
 
 	body.format(
 			indent_left + bf.indent_left, bf.effective_width(w), halign,
@@ -161,7 +161,7 @@ Document::format(
 			);
 
 	for (int j = 0; j < bf.vspace_after; ++j)
-		os << endl;
+        os << endl_char;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -197,7 +197,7 @@ Body::format(
 	static BlockFormat bf("BODY");
 
 	for (int i = 0; i < bf.vspace_before; ++i)
-		os << endl;
+        os << endl_char;
 
 	::format(
 			content.get(),
@@ -206,7 +206,7 @@ Body::format(
 			);
 
 	for (int j = 0; j < bf.vspace_after; ++j)
-		os << endl;
+        os << endl_char;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -1252,7 +1252,7 @@ make_up(const Line &line, Area::size_type w, int halign)
 //    if (isprint(line[i].character)) cout << line[i].character;
 //    else cout << "[" << (int) line[i].character << "]";
 //  }
-//  cout << "\")" << endl;
+//  cout << "\")" << endl_char;
 //}
 
 	if (line.empty())
@@ -1490,12 +1490,12 @@ format(
 				auto_ptr<Area> a2(make_up(*line, w, halign));
 				if (a2.get()) {
 					*a2 >>= indent_left;
-					os << *a2 << flush;
+                    os << *a2 << flush_char;
 				}
 				line.reset();
 			}
 			*a >>= indent_left;
-			os << *a << flush;
+            os << *a << flush_char;
 		}
 	}
 
@@ -1503,7 +1503,7 @@ format(
 		auto_ptr<Area> a2(make_up(*line, w, halign));
 		if (a2.get()) {
 			*a2 >>= indent_left;
-			os << *a2 << flush;
+            os << *a2 << flush_char;
 		}
 	}
 }

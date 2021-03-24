@@ -81,7 +81,7 @@ text.\n\
 int
 main(int argc, char **argv)
 {
-	if (argc == 2 && !strcmp(argv[1], "-help")) {
+    if (argc == 1 || (argc == 2 && !strcmp(argv[1], "-help"))) {
 		std::cout
 			<< "This is html2text, version " stringify(VERSION) << std::endl
 			<< std::endl
@@ -227,9 +227,9 @@ main(int argc, char **argv)
 	/*
 	 * Set up printing.
 	 */
-	Area::use_backspaces = use_backspaces;
+    //Area::use_backspaces = use_backspaces;
 
-    iconvstream is;
+    iconvstream is(use_backspaces);
 
 	is.open_os(output_file_name, to_encoding);
 	if (!is.os_open()) {
@@ -246,7 +246,7 @@ main(int argc, char **argv)
 		const char *input_file = input_files[i];
 
 		if (number_of_input_files != 1)
-			is << "###### " << input_file << " ######" << endl;
+            is << "###### " << input_file << " ######" << endl_char;
 
 		is.open_is(input_file, from_encoding);
 		if (!is.is_open()) {
@@ -275,7 +275,6 @@ main(int argc, char **argv)
 #else
 bool html_to_text(h2t_iostream &h2tio, int width)
 {
-    //Area::use_backspaces = false;
     int mode = HTMLDriver::PRINT_AS_ASCII;
     HTMLControl control(h2tio, mode, false);
     HTMLDriver driver(control, h2tio, false,

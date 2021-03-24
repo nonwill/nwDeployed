@@ -227,7 +227,7 @@ class Area {
 				size_type w,
 				size_type h
 				);
-		static bool use_backspaces;   // "true" by default.
+        //static bool use_backspaces;   // "true" by default.
 
 	private:
 		Area(const Area &);

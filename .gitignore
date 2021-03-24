@@ -1,8 +1,10 @@
 *.o
 *~
 
-lib*/*.dll
-bin*/*
+*.dylib
+*.dll
+*.lib
+*.exe
 *.exp
 *.ilk
 *.pdb
@@ -11,9 +13,10 @@ bin*/*
 *.pro.user
 debug.log
 *.pro.user.*
-/lib*_x*_*/gdp*
-/lib*_x*_*/*.dll
 *.obj
 Makefile.*Release
 Makefile.*Debug
-
+*.a
+*.so
+*.so.*
+*.qm
