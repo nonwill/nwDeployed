@@ -23,12 +23,12 @@ const char flush_char = '\0';
 using std::string;
 
 #ifdef HTML2TEXT_EXE
+#include <iconv.h>
 
 #include <fstream>
 #ifndef WIN32
 #include <unistd.h>
 #endif
-#include <iconv.h>
 
 class iconvstream : public h2t_iostream {
     public:

@@ -45,7 +45,6 @@ BOOL_DEFINITION
 
 #include <string>
 #include <map>
-#include <istream>
 
 using std::string;
 using std::map;

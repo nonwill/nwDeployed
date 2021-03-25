@@ -44,12 +44,14 @@
 
 /* ------------------------------------------------------------------------- */
 
+#include "Area.h"
+#include "iconvstream.h"
+#include "istr.h"
 
-#include <string>
 #include <list>
 #ifdef AUTO_PTR_BROKEN /* { */
 #  define auto_ptr broken_auto_ptr
-#  include <memory>
+//#  include <memory>
 #  undef auto_ptr
 #  include "auto_ptr.h"
 #else /* } { */
@@ -57,13 +59,9 @@
 #endif /* } */
 #include <utility>
 
-#include "Area.h"
-#include "iconvstream.h"
-#include "istr.h"
 
 /* ------------------------------------------------------------------------- */
 
-using std::string;
 using std::pair;
 using std::list;
 

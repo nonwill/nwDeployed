@@ -35,13 +35,6 @@
 /***************************************************************************/
 
 
-#include <sstream>
-
-#include <stdlib.h>
-#include <ctype.h>
-#include <vector>
-#include <map>
-
 #include "html.h"
 #include "HTMLParser.tab.hh"
 #include "sgml.h"
@@ -49,6 +42,9 @@
 #include "format.h"
 #include "Properties.h"
 #include "iconvstream.h"
+
+#include <sstream>
+
 
 #ifndef nelems
 #define nelems(array) (sizeof(array) / sizeof((array)[0]))

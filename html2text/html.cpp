@@ -32,13 +32,12 @@
 /***************************************************************************/
 
 
-#include <stdlib.h>
-#include <stdarg.h>
-
 #include "html.h"
 #include "HTMLParser.tab.hh"
 #include "cmp_nocase.h"
 #include "iconvstream.h"
+
+#include <stdarg.h>
 
 /* ------------------------------------------------------------------------- */
 

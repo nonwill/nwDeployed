@@ -12,24 +12,14 @@
  * GNU General Public License in the file COPYING for more details.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include "iconvstream.h"
 #ifdef WIN32
 #include <io.h>
 #define dup _dup
 #else
 #include <unistd.h>
 #endif
-#include <ctype.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
-#include <errno.h>
-
-#include <iostream>
-#include "iconvstream.h"
 
 #ifdef HTML2TEXT_EXE
 #include <iconv.h>
@@ -259,7 +249,7 @@ h2t_iostream &h2t_iostream::operator<<(const char *inp)
 h2t_iostream &h2t_iostream::operator<<(const string &inp)
 {
     write(inp.c_str(), inp.length());
-	return *this;
+    return *this;
 }
 
 h2t_iostream &h2t_iostream::operator<<(char inp)

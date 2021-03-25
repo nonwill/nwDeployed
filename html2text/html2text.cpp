@@ -34,15 +34,12 @@
 
 /***************************************************************************/
 
-#include <iostream>
-#include <string.h>
-#include <stdlib.h>
-
-#include "html.h"
 #include "HTMLControl.h"
 #include "HTMLDriver.h"
 #include "iconvstream.h"
 #include "format.h"
+
+#include <stdlib.h>
 
 #ifdef HTML2TEXT_EXE
 

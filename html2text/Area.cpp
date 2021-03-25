@@ -31,14 +31,13 @@
 /***************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "Area.h"
 #include "html.h"
-#include "string.h"
 #include "iconvstream.h"
+#include "istr.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 
 /* ------------------------------------------------------------------------- */
 

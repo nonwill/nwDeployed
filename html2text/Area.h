@@ -38,10 +38,7 @@
 /* ------------------------------------------------------------------------- */
 
 
-#include <sys/types.h>
 #include <string>
-#include "iconvstream.h"
-#include "istr.h"
 
 #ifdef BOOL_DEFINITION
 BOOL_DEFINITION
@@ -49,7 +46,8 @@ BOOL_DEFINITION
 #endif
 
 using std::string;
-
+class h2t_iostream;
+class istr;
 /* ------------------------------------------------------------------------- */
 
 struct Cell {

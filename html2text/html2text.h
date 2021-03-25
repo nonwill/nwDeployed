@@ -15,8 +15,8 @@
 
 /* streaming method for input and output UTF-8 encoded data.
  * if other codec is needed, just derive from h2t_iostream, and:
- * override get() to decode the input's codec to UTF-8,
- * overide write() to encode UTF-8 to the output's codec.
+ * override get() to encode the input's codec to UTF-8,
+ * overide write() to decode UTF-8 to the output's codec.
  * overide useBackspaces() to Render boldface and underlining or not.
 */
 class HTML2TEXT_API h2t_iostream {
@@ -24,14 +24,13 @@ public:
     virtual ~h2t_iostream() {}
 
     /* Render boldface and underlining (using backspaces) or not,
-     * default not,
-     * -nobs by html2text exec to identify this
+     * default not. -nobs by html2text exec to identify this.
     */
     virtual bool useBackspaces() { return false; }
 
-    /* get input: return EOF at end, otherwise return char(<0xff) */
+    /* get input[UTF-8]: return EOF at end, otherwise one char(<0xff) */
     virtual int get() = 0;
-    /* write output: return EOF for overflow, otherwise return size of really written */
+    /* write output[UTF-8]: return EOF for overflow, otherwise size of really written */
     virtual size_t write(const char *inp, size_t len) = 0;
 
 public:
@@ -67,20 +66,17 @@ public:
 
     size_t write(const char *inp, size_t len)
     {
-        int ret = EOF;
-        if ( outbuffer_len < outbuffer_cap )
-        {
-            size_t buffer_cap = outbuffer_cap - outbuffer_len;
-            if(buffer_cap > len)
-                ret = len;
-            else
-                ret = buffer_cap;
+        if ( outbuffer_len >= outbuffer_cap )
+            return EOF;
 
-            memcpy(outbuffer + outbuffer_len, inp, ret);
-            outbuffer_len += ret;
-        }
+        size_t buffer_cap = outbuffer_cap - outbuffer_len;
+        if(buffer_cap < len)
+            len = buffer_cap;
 
-        return ret;
+        memcpy(outbuffer + outbuffer_len, inp, len);
+        outbuffer_len += len;
+
+        return len;
     }
 
 private:

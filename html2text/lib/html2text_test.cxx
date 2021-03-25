@@ -10,7 +10,7 @@
 #include <vector>
 
 //const char *filename = "Z:\\test.html";
-const char *filename = "Z:\\goldendict-installation-and-operation.html";
+const char *filename = "Z:\\test.html";
 QSemaphore sem;
 
 class semPost : public QThread
@@ -19,7 +19,7 @@ public:
     void operator()() { QThread::start(); }
     void run()
     {
-        QThread::sleep(30);
+        //QThread::sleep(10);
         sem.release(99);
     }
 }sem_ost;
@@ -30,7 +30,6 @@ public:
     void operator()() { QThread::start(); }
     void run()
     {
-        QThread::sleep(10);
         int ret = 0;
         FILE *in_file = ::fopen(filename, "r");
         if( in_file )
@@ -79,14 +78,13 @@ public:
     void operator()() { QThread::start(); }
     void run()
     {
-        QThread::sleep(10);
         int ret = 0;
         std::string out_string;
         h2t_utf8file utf8file(filename, out_string);
 
         sem.acquire();
         QTime begin = QTime::currentTime();
-        ret = html_to_text(utf8file, 80);
+        ret = html_to_text(utf8file, 30);
         int msec = begin.msecsTo(QTime::currentTime());
         std::cout << "h2t_utf8file msec: " << msec << std::endl;
 
@@ -111,7 +109,6 @@ public:
     void operator()() { QThread::start(); }
     void run()
     {
-        QThread::sleep(10);
         int ret = 0;
         QFile qfile(filename);
         if( qfile.open(QIODevice::ReadOnly) )
@@ -122,7 +119,7 @@ public:
 
             sem.acquire();
             QTime begin = QTime::currentTime();
-            ret = html_to_text(utf8string, 80);
+            ret = html_to_text(utf8string, 100);
             int msec = begin.msecsTo(QTime::currentTime());
             std::cout << "h2t_utf8string msec: " << msec << std::endl;
 

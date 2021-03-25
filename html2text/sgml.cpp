@@ -33,10 +33,6 @@
 /***************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "html.h"
 #include "sgml.h"
 #include "istr.h"

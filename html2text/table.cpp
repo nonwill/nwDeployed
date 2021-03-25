@@ -42,7 +42,6 @@
 
 #ident "$Id: table.C,v 1.15 1999/11/12 18:57:35 arno Exp $"
 
-#include <iostream>
 #include "html.h"
 #include "auto_aptr.h"
 #include "format.h"
