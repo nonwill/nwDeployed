@@ -49,7 +49,7 @@ class h2t_iostream;
 class HTMLControl {
 	public:
 		HTMLControl(h2t_iostream& is_,
-				int& mode_,
+                int mode_,
 				bool debug_scanner_,
                 const char *file_name_ = nullptr) :
 			current_line(1),

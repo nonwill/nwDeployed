@@ -273,12 +273,12 @@ main(int argc, char **argv)
 }
 
 #else
-bool html_to_text(h2t_iostream &h2tio, int width)
+bool html_to_text(h2t_iostream &h2tio, int width, bool enable_links)
 {
-    int mode = HTMLDriver::PRINT_AS_ASCII;
+    const int mode = HTMLDriver::PRINT_AS_ASCII;
+
     HTMLControl control(h2tio, mode, false);
-    HTMLDriver driver(control, h2tio, false,
-            width, mode, false);
+    HTMLDriver driver(control, h2tio, enable_links, width, mode, false);
 
     return (driver.parse() == 0);
 }

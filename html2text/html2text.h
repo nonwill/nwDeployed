@@ -13,20 +13,40 @@
 #   define HTML2TEXT_API
 #endif
 
+/* streaming method for input and output UTF-8 encoded data.
+ * if other codec is needed, just derive from h2t_iostream, and:
+ * override get() to decode the input's codec to UTF-8,
+ * overide write() to encode UTF-8 to the output's codec.
+ * overide useBackspaces() to Render boldface and underlining or not.
+*/
 class HTML2TEXT_API h2t_iostream {
-    public:
-        virtual ~h2t_iostream() {}
+public:
+    virtual ~h2t_iostream() {}
 
-        virtual bool useBackspaces() { return false; }
-        virtual int get() = 0;
-        virtual size_t write(const char *inp, size_t len) = 0;
+    /* Render boldface and underlining (using backspaces) or not,
+     * default not,
+     * -nobs by html2text exec to identify this
+    */
+    virtual bool useBackspaces() { return false; }
 
-        h2t_iostream &operator<<(const char *inp);
-        h2t_iostream &operator<<(const std::string &inp);
-        h2t_iostream &operator<<(char inp);
+    /* get input: return EOF at end, otherwise return char(<0xff) */
+    virtual int get() = 0;
+    /* write output: return EOF for overflow, otherwise return size of really written */
+    virtual size_t write(const char *inp, size_t len) = 0;
+
+public:
+    /* really using write to output the transformed content, called by the engine */
+    h2t_iostream &operator<<(const char *inp);
+    h2t_iostream &operator<<(const std::string &inp);
+    h2t_iostream &operator<<(char inp);
 };
 
-extern HTML2TEXT_API bool html_to_text(h2t_iostream &h2tio, int width = 79);
+/* h2t_iostream, for input and output streams.
+ * enable_links, Generate reference list with link targets.
+ * width, Optimize for screen widths other than 79.
+ * always used PRINT_AS_ASCII - ASCII output
+*/
+extern HTML2TEXT_API bool html_to_text(h2t_iostream &h2tio, int width = 79, bool enable_links = false);
 
 #if !defined(HTML2TEXT_EXE) && !defined(HTML2TEXT_LIBS)
 
