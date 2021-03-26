@@ -42,7 +42,7 @@
 #include "format.h"
 #include "Properties.h"
 #include "iconvstream.h"
-
+#include "break_after_punctuations.h"
 #include <sstream>
 
 
@@ -1275,9 +1275,10 @@ make_up(const Line &line, Area::size_type w, int halign)
 		while (to < line.length()) {
 			if (line[to].character == '\n')
 				break;
-			char c1 = line[to].character;
-			char c2 = line[to - 1].character;
+            int c1 = line[to].character;
+            int c2 = line[to - 1].character;
 			if (
+                    c1 > 0x7F || /* multi codes for utf-8 char*/
 					c1 == ' ' ||
 					c1 == '(' ||
 					c1 == '[' ||
@@ -1296,15 +1297,20 @@ make_up(const Line &line, Area::size_type w, int halign)
 			   )
 			{
 				lbp = to++;
-				while (to < line.length() && line[to].character == ' ')
-					to++;
+                if ( c1 > 0x7F && to < line.length() && break_after_punctuations(c1))
+                    lbp = to++;
+                while (to < line.length() && line[to].character == ' ')
+                    to++;
 			} else {
 				to++;
 			}
 
 			if (to - from > w && lbp != (Area::size_type) -1)
 			{
-				to = lbp;
+                if( line.length() - lbp < 3)
+                    to = line.length();
+                else
+                    to = lbp;
 				break;
 			}
 		}

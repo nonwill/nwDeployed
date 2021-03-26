@@ -119,7 +119,7 @@ public:
 
             sem.acquire();
             QTime begin = QTime::currentTime();
-            ret = html_to_text(utf8string, 100);
+            ret = html_to_text(utf8string, 35);
             int msec = begin.msecsTo(QTime::currentTime());
             std::cout << "h2t_utf8string msec: " << msec << std::endl;
 
