@@ -321,12 +321,17 @@ int mkutf8(unsigned long x)
 	} else if (x < 0x800) {
 		ret =  (0xC0 | ((x >>  6) & 0x1F))
 			| ((0x80 | ( x        & 0x3F)) <<  8);
-	} else {
-		ret =  (0xE0 | ((x >> 12) & 0x0F))
-			| ((0x80 | ((x >>  6) & 0x3F)) <<  8)
-			| ((0x80 | ( x        & 0x3F)) << 16);
-	}
-	return ret;
+    } else if (x < 0x10000) {
+        ret =  (0xE0 | ((x >> 12) & 0x0F))
+            | ((0x80 | ((x >>  6) & 0x3F)) <<  8)
+            | ((0x80 | ( x        & 0x3F)) << 16);
+    } else {
+        ret =  (0xF0 | ((x >> 18) & 0x0F))
+            | ((0x80 | ((x >> 12) & 0x3F)) <<  8)
+            | ((0x80 | ((x >>  6) & 0x3F)) << 16)
+            | ((0x80 | ( x        & 0x3F)) << 24);
+    }
+    return ret;
 }
 
 void
