@@ -1,18 +1,19 @@
 #ifndef BREAK_AFTER_PUNCTUATIONS_HH
 #define BREAK_AFTER_PUNCTUATIONS_HH
 
-inline int utf8char_codec(int utf8char) {
-    int ic = 0;
-    int ichar = 0;
-    unsigned char *pic = (unsigned char *)&utf8char;
-    ichar = *pic++;
-    while(*pic && ++ic < 4)
+#if 1 /* HTMLControl.cpp:667 */
+inline int utf8char_codec(unsigned int utf8char) {
+    unsigned int ichar = utf8char & 0xff;
+    while( (utf8char >>= 8) )
     {
         ichar <<= 8;
-        ichar |= *pic++;
-    };
+        ichar |= ( utf8char & 0xff );
+    }
     return ichar;
 }
+#else
+#define utf8char_codec(x) x
+#endif
 
 inline bool break_after_punctuations(int utf8char)
 {

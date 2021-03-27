@@ -581,7 +581,7 @@ operator<<(h2t_iostream& os, const Area &a)
 					if ((a & Cell::UNDERLINE))
 						os << '_' << backspace;
 					if ((a & Cell::BOLD     ) && c != ' ')
-						os << c << backspace;
+                        os << u << backspace;
 					os << u;
 				} else {
 					os << (c == ' ' && (a & Cell::UNDERLINE) ? "_" : u);
