@@ -28,8 +28,9 @@ public:
     */
     virtual bool useBackspaces() { return false; }
 
-    /* get input[UTF-8]: return EOF at end, otherwise one char(<0xff) */
-    virtual int get() = 0;
+protected:
+    /* get one char: return EOF at end, otherwise one char(<0xff) */
+    virtual int getc() = 0;
     /* write output[UTF-8]: return EOF for overflow, otherwise size of really written */
     virtual size_t write(const char *inp, size_t len) = 0;
 
@@ -38,6 +39,11 @@ public:
     h2t_iostream &operator<<(const char *inp);
     h2t_iostream &operator<<(const std::string &inp);
     h2t_iostream &operator<<(char inp);
+
+    /* write one UTF-8 codec wchar data to output the transformed content */
+    h2t_iostream &operator<<(int inp);
+    /* get one UTF-8 codec wchar data, so load bytes as required */
+    h2t_iostream &operator>>(unsigned int &op);
 };
 
 /* h2t_iostream, for input and output streams.
@@ -59,7 +65,7 @@ public:
     }
     virtual ~h2t_utf8buffer() {}
 
-    int get()
+    int getc()
     {
         return (inbuffer_pos < inbuffer_len) ? (inbuffer[inbuffer_pos++] & 0xFF) : EOF;
     }
@@ -68,6 +74,9 @@ public:
     {
         if ( outbuffer_len >= outbuffer_cap )
             return EOF;
+
+        if( !len )
+            return len;
 
         size_t buffer_cap = outbuffer_cap - outbuffer_len;
         if(buffer_cap < len)
@@ -101,7 +110,7 @@ public:
     }
     virtual ~h2t_utf8string() {}
 
-    int get()
+    int getc()
     {
         return (inbuffer_pos < in_string.size()) ? (in_string[inbuffer_pos++] & 0xFF) : EOF;
     }
@@ -140,7 +149,7 @@ public:
             fclose(in_file);
     }
 
-    int get()
+    int getc()
     {
         return ::feof( in_file ) ? EOF : ::fgetc( in_file );
     }

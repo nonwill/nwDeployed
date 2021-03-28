@@ -118,7 +118,7 @@ iconvstream::open_error_msg() const
 }
 
 int
-iconvstream::get()
+iconvstream::getc()
 {
 	if (rutf8bufpos == rutf8buflen) {
 		char *procinp = (char *)readbuf;
@@ -256,4 +256,36 @@ h2t_iostream &h2t_iostream::operator<<(char inp)
 {
     write(&inp, inp == '\0' ? 0 : 1);
 	return *this;
+}
+
+h2t_iostream &h2t_iostream::operator<<(int inp)
+{
+    char single = inp & 0xFF;
+
+    write(&single, single == '\0' ? 0 : 1);
+
+    if ((single >> 7) & 1) {
+        unsigned int d = inp;
+        unsigned char point = 1;
+        while (point < 4 && ((inp >> (7 - point++)) & 1)) {
+            d >>= 8;
+            single = d & 0xFF;
+            write(&single, 1);
+        };
+    }
+    return *this;
+}
+
+h2t_iostream &h2t_iostream::operator>>(unsigned int &op)
+{
+    op = getc();
+    if ((op >> 7) & 1) {
+        unsigned char nextpoint = 1;
+
+        /* we assume iconv produced valid UTF-8 here */
+        while ( ((op >> (7 - nextpoint)) & 1) && nextpoint < 4 )
+            op |= ((getc() & 0xFF) << (8 * nextpoint++));
+    }
+
+    return *this;
 }

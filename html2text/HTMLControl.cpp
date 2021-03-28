@@ -650,9 +650,9 @@ HTMLControl::get_char()
 	if (number_of_ungotten_chars > 0) {
 		c = ungotten_chars[--number_of_ungotten_chars];
 	} else {
-		c = is.get();
+        is >> c;
 		while (c == '\r')
-			c = is.get();
+            is >> c;
 
 		if (c == EOF) {
 			;
@@ -661,13 +661,6 @@ HTMLControl::get_char()
 			current_column = 0;
 		} else {
 			current_column++;
-			if ((c >> 7) & 1) {
-                unsigned char nextpoint = 1;
-
-				/* we assume iconv produced valid UTF-8 here */
-                while ( ((c >> (7 - nextpoint)) & 1) && nextpoint < 4 )
-                    c |= ((is.get() & 0xFF) << (8 * nextpoint++));
-            }
 		}
 	}
 

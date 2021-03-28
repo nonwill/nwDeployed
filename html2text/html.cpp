@@ -179,11 +179,7 @@ PCData::unparse(h2t_iostream& os, ostream_manipulator separator) const
 			case '"':         os << "&quot;";
 							  break;
 			default:
-							  if (c & 0x80) {
-								  os << "&#" << (((int) c) & 255) << ";";
-							  } else {
-								  os << c;
-							  }
+                              os << text[j];
 							  break;
 		}
 	}
@@ -605,7 +601,7 @@ get_attribute(
 		list<TagAttribute>::const_iterator i;
 		for (i = as->begin(); i != as->end(); ++i) {
 			if (cmp_nocase((*i).first, name) == 0)
-				return atoi((*i).second.c_str());
+                return atoi((*i).second.c_str().c_str());
 		}
 	}
 	return dflt;
@@ -659,17 +655,19 @@ get_attribute(
 	...
 	)
 {
+    std::string dflt1_;
 	if (as) {
 		list<TagAttribute>::const_iterator i;
 		for (i = as->begin(); i != as->end(); ++i) {
 			if (cmp_nocase((*i).first, name) == 0) {
-				dflt1 = (*i).second.c_str();
+                dflt1_ = (*i).second.c_str();
+                dflt1 = dflt1_.c_str();
 				break;
 			}
 		}
 	}
 
-	if (!dflt1)
+    if (!dflt1)
 		return dflt2;
 
 	const char *s = s1;

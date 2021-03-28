@@ -16,7 +16,6 @@
 #define ISTR_H 1
 
 #include <vector>
-#include <memory>
 #include <cstring>
 
 /* crude temp hack until we properly use wchar, glibc isspace crashes on
@@ -30,27 +29,22 @@ class istr {
 		{
 		}
 		istr(const char *p):
-			elems({})
+            elems(std::move(istr::from_chars(p)))
 		{
-			for (; *p != '\0'; p++)
-				elems.push_back(((int)*p) & 0xFF);
 		}
 		istr(const string &p):
-			elems({})
+            elems(std::move(istr::from_chars(p.c_str())))
 		{
-			int i;
-			for (i = 0; i < p.length(); i++)
-				elems.push_back(((int)p.at(i)) & 0xFF);
 		}
 
 		bool empty(void)
 		{
 			return elems.empty();
 		}
-		int get(size_t pos)
-		{
-			return elems.size() < pos ? -1 : elems[pos];
-		}
+        int get(size_t pos)
+        {
+            return elems.size() < pos ? -1 : elems[pos];
+        }
 		string::size_type length(void) const
 		{
 			return (string::size_type)elems.size();
@@ -68,8 +62,8 @@ class istr {
 		istr &replace(size_t pos, size_t len, const char *s)
 		{
 			erase(pos, len);
-			for (int i = 0; *s != '\0'; s++, i++)
-				elems.insert(elems.begin() + pos + i, ((int)*s) & 0xFF);
+            std::vector<int> elems_ = from_chars(s);
+            elems.insert(elems.begin() + pos, elems_.begin(), elems_.end());
 			return *this;
 		}
 		istr &replace(size_t pos, size_t len, const int i)
@@ -98,9 +92,11 @@ class istr {
 			int ret;
 			int elm;
 
+            std::vector<int> elems_ = from_chars(s, true);
+
 			for (size_t i = 0; i < len; i++) {
 				elm = (pos + i) < elems.size() ? elems[pos + i] : 0;
-				if ((ret = s[i] - elm) != 0)
+                if ((ret = elems_[i] - elm) != 0)
 					break;
 			}
 
@@ -113,12 +109,13 @@ class istr {
 		}
 		istr &operator+=(const char *p)
 		{
-			for (; *p != '\0'; p++)
-				elems.push_back(((int)*p) & 0xFF);
+            std::vector<int> elems_ = from_chars(p);
+            elems.insert(elems.end(), elems_.begin(), elems_.end());
 			return *this;
 		}
 		istr &operator+=(const string &p)
 		{
+            return operator+=(p.c_str());
 			for (const char c : p)
 				elems.push_back(((int)c) & 0xFF);
 			return *this;
@@ -143,9 +140,9 @@ class istr {
 		}
 		istr &operator>>=(const char *inp)
 		{
-			for (int i = 0; *inp != '\0'; i++, inp++)
-				elems.insert(elems.begin() + i, ((int)*inp) & 0xFF);
-			return *this;
+            std::vector<int> elems_ = from_chars(inp);
+            elems.insert(elems.begin(), elems_.begin(), elems_.end());
+            return *this;
 		}
 		int operator[](const int pos) const
 		{
@@ -159,24 +156,47 @@ class istr {
 		{
 			return !(*this == inp);
 		}
-		const char *c_str(void) const
+        const std::string c_str(void) const
 		{
-			std::unique_ptr<string> s(new std::string);
+            std::string s;
 
 			for (int c : elems) {
-				*s += c & 0xFF;
+                s += c & 0xFF;
 				if ((c >> 7) & 1) {
 					unsigned int d = c;
 					unsigned char point = 1;
 					while ((c >> (7 - point++)) & 1) {
 						d >>= 8;
-						*s += d & 0xFF;
+                        s += d & 0xFF;
 					};
 				}
 			}
 
-			return s->c_str();
+            return s;
 		}
+
+    protected:
+        static std::vector<int> from_chars(const char *p, bool endchar = false)
+        {
+            std::vector<int> elems_;
+            while( *p )
+            {
+                unsigned int op = *p++;
+                if ((op >> 7) & 1) {
+                    unsigned char nextpoint = 1;
+
+                    /* we assume iconv produced valid UTF-8 here */
+                    while ( *p && ((op >> (7 - nextpoint)) & 1) && nextpoint < 4 )
+                        op |= ((*p++ & 0xFF) << (8 * nextpoint++));
+                }
+                elems_.push_back(op);
+            }
+
+            if ( endchar )
+                elems_.push_back(0);
+
+            return elems_;
+        }
 
 	private:
 		std::vector<int> elems;

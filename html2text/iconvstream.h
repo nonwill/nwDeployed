@@ -62,7 +62,7 @@ class iconvstream : public h2t_iostream {
         const char *open_error_msg() const;
 
         bool useBackspaces() { return using_backspaces; }
-        int get();
+        int getc();
         size_t write(const char *inp, size_t len);
 
     private:

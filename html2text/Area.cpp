@@ -542,19 +542,8 @@ operator<<(h2t_iostream& os, const Area &a)
 			end--;
 
 		for (const Cell *p = cell; p != end; p++) {
-			int c = p->character;
+            int u = p->character;
 			char a = p->attribute;
-			char u[5] = {0, 0, 0, 0, 0};
-
-			u[0] = c & 0xFF;
-			if ((c >> 7) & 1) {
-				unsigned int d = c;
-				unsigned char point = 1;
-				while ((c >> (7 - point++)) & 1) {
-					d >>= 8;
-					u[point - 1] = d & 0xFF;
-				};
-			}
 
 			if (a == Cell::NONE) {
 				os << u;
@@ -580,11 +569,11 @@ operator<<(h2t_iostream& os, const Area &a)
 					 */
 					if ((a & Cell::UNDERLINE))
 						os << '_' << backspace;
-					if ((a & Cell::BOLD     ) && c != ' ')
+                    if ((a & Cell::BOLD     ) && u != ' ')
                         os << u << backspace;
 					os << u;
 				} else {
-					os << (c == ' ' && (a & Cell::UNDERLINE) ? "_" : u);
+                    os << (u == ' ' && (a & Cell::UNDERLINE) ? '_' : u);
 				}
 			}
 		}
