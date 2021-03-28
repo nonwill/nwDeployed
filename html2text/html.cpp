@@ -45,6 +45,16 @@
  * Define some helpers.
  */
 
+template <typename T>
+void foreach(const list<auto_ptr<T> > &l,
+             h2t_iostream& os,
+             ostream_manipulator separator)
+{
+    for (list<auto_ptr<T> >::const_iterator i = l.begin(); i != l.end(); ++i) {
+        (*i)->unparse(os, separator);
+    }
+}
+#if 0
 #define define_foreach(T, args, action) \
 	void foreach args { \
 		for (T::const_iterator i = l.begin(); i != l.end(); ++i) { \
@@ -70,7 +80,7 @@ static pack(Style)
 static pack(Meta)
 
 #undef pack
-
+#endif
 /*
  * Special helper for "const auto_ptr<list<TagAttribute> > &".
  */

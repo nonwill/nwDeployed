@@ -258,6 +258,7 @@ h2t_iostream &h2t_iostream::operator<<(char inp)
 	return *this;
 }
 
+/* See istr::append_utf8_codec */
 h2t_iostream &h2t_iostream::operator<<(int inp)
 {
     char single = inp & 0xFF;
@@ -276,6 +277,7 @@ h2t_iostream &h2t_iostream::operator<<(int inp)
     return *this;
 }
 
+/* See istr::from_chars */
 h2t_iostream &h2t_iostream::operator>>(unsigned int &op)
 {
     op = getc();

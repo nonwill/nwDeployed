@@ -161,19 +161,24 @@ class istr {
             std::string s;
 
 			for (int c : elems) {
-                s += c & 0xFF;
-				if ((c >> 7) & 1) {
-					unsigned int d = c;
-					unsigned char point = 1;
-					while ((c >> (7 - point++)) & 1) {
-						d >>= 8;
-                        s += d & 0xFF;
-					};
-				}
+                append_utf8_codec(s, c);
 			}
 
             return s;
 		}
+
+        static void append_utf8_codec(std::string &s, int c)
+        {
+            s += char(c & 0xFF);
+            if ((c >> 7) & 1) {
+                unsigned int d = c;
+                unsigned char point = 1;
+                while ((c >> (7 - point++)) & 1) {
+                    d >>= 8;
+                    s += char(d & 0xFF);
+                };
+            }
+        }
 
     protected:
         static std::vector<int> from_chars(const char *p, bool endchar = false)

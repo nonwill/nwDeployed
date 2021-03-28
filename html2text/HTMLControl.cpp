@@ -364,12 +364,12 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 				if (!isalpha(c))
 					return HTMLParser_token::SCAN_ERROR;
 				string tag_name(1, '!');
-				tag_name += c;
+                istr::append_utf8_codec(tag_name, c);
 				for (;;) {
 					c = get_char();
 					if (!isalnum(c) && c != '-')
 						break;
-					tag_name += c;
+                    istr::append_utf8_codec(tag_name, c);
 				}
 				if (cmp_nocase(tag_name, "!DOCTYPE") != 0)
 					return HTMLParser_token::SCAN_ERROR;
@@ -392,7 +392,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 				}
 				if (!isalpha(c) && c != '_')
 					return HTMLParser_token::SCAN_ERROR;
-				tag_name += c;
+                istr::append_utf8_codec(tag_name, c);
 				for (;;) {
 					c = get_char();
 					/* ID and NAME tokens must begin with a letter
@@ -403,7 +403,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 					if (!isalnum(c) &&
 							c != '-' && c != '_' && c != ':' && c != '.')
 						break;
-					tag_name += c;
+                    istr::append_utf8_codec(tag_name, c);
 				}
 
                 while (isspace_char(c))
@@ -421,14 +421,14 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 
 						/* Scan attribute name, see the ID and NAME rule
 						 * mentioned above */
-						attribute.first = c;
+                        istr::append_utf8_codec(attribute.first, c);
 						for (;;) {
 							c = get_char();
 							if (!isalnum(c) &&
 									c != '-' && c != '_' &&
 									c != ':' && c != '.')
 								break;
-							attribute.first += c;
+                            istr::append_utf8_codec(attribute.first, c);
 						}
 
                         while (isspace_char(c))
@@ -634,8 +634,8 @@ HTMLControl::read_cdata(const char *terminal, string *value_return)
 			}
 		} else {
 			state = 0;
-		}
-		s += c;
+        }
+        istr::append_utf8_codec(s, c);
 	}
 }
 
