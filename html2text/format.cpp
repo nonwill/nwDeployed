@@ -41,7 +41,7 @@
 #include "cmp_nocase.h"
 #include "format.h"
 #include "Properties.h"
-#include "iconvstream.h"
+#include "html2text.h"
 #include "break_after_punctuations.h"
 #include <sstream>
 

@@ -22,6 +22,9 @@
  * too large values */
 #define isspace_char(X) ((X) > 0 && (X) < 256 && isspace(X))
 
+const char endl_char = '\n';
+const char flush_char = '\0';
+
 class istr {
 public:
 	public:

@@ -36,12 +36,11 @@
 
 #include "HTMLControl.h"
 #include "HTMLDriver.h"
-#include "iconvstream.h"
-#include "format.h"
-
-#include <stdlib.h>
 
 #ifdef HTML2TEXT_EXE
+#include "format.h"
+#include "iconvstream.h"
+#include <stdlib.h>
 
 #define stringify(x) stringify2(x)
 #define stringify2(x) #x
@@ -270,6 +269,8 @@ main(int argc, char **argv)
 }
 
 #else
+#include "html2text.h"
+
 bool html_to_text(h2t_iostream &h2tio, int width, bool enable_links)
 {
     const int mode = HTMLDriver::PRINT_AS_ASCII;
@@ -280,5 +281,64 @@ bool html_to_text(h2t_iostream &h2tio, int width, bool enable_links)
     return (driver.parse() == 0);
 }
 #endif
+
+h2t_iostream &h2t_iostream::operator<<(const char *inp)
+{
+    write(inp, strlen(inp));
+    return *this;
+}
+
+h2t_iostream &h2t_iostream::operator<<(const string &inp)
+{
+    write(inp.c_str(), inp.length());
+    return *this;
+}
+
+h2t_iostream &h2t_iostream::operator<<(char inp)
+{
+    write(&inp, inp == '\0' ? 0 : 1);
+    return *this;
+}
+
+/* See istr::append_utf8_codec */
+h2t_iostream &h2t_iostream::operator<<(unsigned int inp)
+{
+    unsigned char point = 0;
+    char fc = 0;
+    do {
+        fc = ((unsigned)inp >> (24 - 8 * point)) & 0xff;
+        ++point;
+    }while(!fc && point < 4);
+
+    write(&fc, fc == '\0' ? 0 : 1);
+
+    if ((fc >> 7) & 1) {
+        char single = 0;
+        while(( single = (inp >> (24 - 8 * point)) & 0xff ) && point++ < 4)
+            write(&single, 1);
+    }
+    return *this;
+}
+
+/* See istr::from_chars */
+h2t_iostream &h2t_iostream::operator>>(unsigned int &op)
+{
+    op = getc();
+
+    unsigned char fc = op & 0xFF;
+
+    if ((fc >> 7) & 1) {
+        unsigned char nextpoint = 1;
+
+        /* we assume iconv produced valid UTF-8 here */
+        while ( ((fc >> (7 - nextpoint)) & 1) && nextpoint++ < 4 )
+        {
+            op <<= 8;
+            op |= (getc() & 0xFF);
+        }
+    }
+
+    return *this;
+}
 
 /* ------------------------------------------------------------------------- */

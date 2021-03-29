@@ -35,7 +35,7 @@
 #include "html.h"
 #include "HTMLParser.tab.hh"
 #include "cmp_nocase.h"
-#include "iconvstream.h"
+#include "html2text.h"
 
 #include <stdarg.h>
 

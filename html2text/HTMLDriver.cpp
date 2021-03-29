@@ -14,7 +14,7 @@
 #include "HTMLDriver.h"
 #include "HTMLControl.h"
 #include "HTMLParser.tab.hh"
-#include "iconvstream.h"
+#include "html2text.h"
 
 HTMLDriver::HTMLDriver(HTMLControl& c,
 		h2t_iostream& os_,

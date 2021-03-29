@@ -34,6 +34,7 @@
 /***************************************************************************/
 
 
+#include "html2text.h"
 #include "html.h"
 #include "HTMLControl.h"
 #include "HTMLDriver.h"
@@ -41,7 +42,6 @@
 #include "sgml.h"
 #include "cmp_nocase.h"
 #include "istr.h"
-
 
 #ifndef nelems
 #define nelems(array) (sizeof(array) / sizeof((array)[0]))

@@ -17,12 +17,8 @@
 #define ICONVSTREAM_H 1
 #include "html2text.h"
 
-const char endl_char = '\n';
-const char flush_char = '\0';
-
 using std::string;
 
-#ifdef HTML2TEXT_EXE
 #include <iconv.h>
 
 #include <fstream>
@@ -91,7 +87,5 @@ class iconvstream : public h2t_iostream {
         size_t wutf8buflen;
         size_t wutf8bufpos;
 };
-
-#endif
 
 #endif

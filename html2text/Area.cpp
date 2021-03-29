@@ -33,7 +33,7 @@
 
 #include "Area.h"
 #include "html.h"
-#include "iconvstream.h"
+#include "html2text.h"
 #include "istr.h"
 #include <stdio.h>
 #include <stdlib.h>

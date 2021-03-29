@@ -45,7 +45,6 @@
 /* ------------------------------------------------------------------------- */
 
 #include "Area.h"
-#include "iconvstream.h"
 #include "istr.h"
 
 #include <list>

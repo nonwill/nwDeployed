@@ -13,8 +13,7 @@ SOURCES +=  $${PWD}/HTMLParser.tab.cc \
     $${PWD}/HTMLDriver.cpp \
     $${PWD}/Properties.cpp \
     $${PWD}/sgml.cpp \
-    $${PWD}/table.cpp \
-    $${PWD}/iconvstream.cpp
+    $${PWD}/table.cpp
 
 HEADERS += $${PWD}/HTMLParser.tab.hh \
     $${PWD}/Area.h \
@@ -25,5 +24,4 @@ HEADERS += $${PWD}/HTMLParser.tab.hh \
     $${PWD}/HTMLControl.h \
     $${PWD}/HTMLDriver.h \
     $${PWD}/Properties.h \
-    $${PWD}/sgml.h \
-    $${PWD}/iconvstream.h
+    $${PWD}/sgml.h
