@@ -905,44 +905,72 @@ Form::format(Area::size_type w, int halign) const
 Line *
 Input::line_format() const
 {
-	string type = get_attribute(attributes.get(), "TYPE", "TEXT").c_str();
-	string name = get_attribute(attributes.get(), "NAME", "").c_str();
-	string value = get_attribute(attributes.get(), "VALUE", "").c_str();
+    string type = get_attribute(attributes.get(), "TYPE", "TEXT").c_str();
+    istr name = get_attribute(attributes.get(), "NAME", "");
+    istr value = get_attribute(attributes.get(), "VALUE", "");
 	bool checked = get_attribute(attributes.get(), "CHECKED", "0") != "0";
 	int size = get_attribute(attributes.get(), "SIZE", -1);
-	string src = get_attribute(attributes.get(), "SRC", "").c_str();
+    //istr src = get_attribute(attributes.get(), "SRC", "");
 
-	string res;
-	if (cmp_nocase(type, "TEXT") == 0) {
-		if (size == -1)
-			size = 20;
-		if (value.empty())
-			value = name;
+    istr res;
+    if (cmp_nocase(type, "TEXT") == 0) {
+        if (size == -1)
+            size = 20;
+        if (value.empty())
+            value = name;
 //		if ((int) value.length() > size) { value.erase(size); } else
-		if ((int) value.length() < size)
-			value.append(size - value.length(), ' ');
-		res = '[' + string(value.c_str()) + ']';
-	} else if (cmp_nocase(type, "PASSWORD") == 0) {
+        if (value.length() < size)
+            value += string(size - value.length(), ' ');
+        res += '[';
+        res += value;
+        res += ']';
+    } else if (cmp_nocase(type, "PASSWORD") == 0) {
 		if (size == -1)
 			size = 20;
-		res = '[' + string(size, '*') + ']';
-	} else if (cmp_nocase(type, "CHECKBOX") == 0) {
-		res = '[' + (checked ? 'X' : ' ') + ']';
-	} else if (cmp_nocase(type, "RADIO") == 0) {
-		res = checked ? '#' : 'o';
+        res += '[';
+        res += string(size, '*');
+        res += ']';
+    } else if (cmp_nocase(type, "CHECKBOX") == 0) {
+        res += '[';
+        res += (checked ? 'X' : ' ');
+        res += ']';
+    } else if (cmp_nocase(type, "RADIO") == 0) {
+        res += checked ? '#' : 'o';
 	} else if (cmp_nocase(type, "SUBMIT") == 0) {
-		res = value.empty() ? string("[Submit]") : '[' + value + ']';
+        if( value.empty() )
+            res += string("[Submit]");
+        else
+        {
+            res += '[';
+            res += value;
+            res += ']';
+        }
 	} else if (cmp_nocase(type, "IMAGE") == 0) {
-		res = "[Submit " + src + ']';
+        res += "[Submit ";
+        res += value;
+        res += ']';
 	} else if (cmp_nocase(type, "RESET") == 0) {
-		res = value.empty() ? string("[Reset]") : '[' + value + ']';
+        if( value.empty() )
+            res += string("[Reset]");
+        else
+        {
+            res += '[';
+            res += value;
+            res += ']';
+        }
 	} else if (cmp_nocase(type, "FILE") == 0) {
 		res = "[File]";
 	} else if (cmp_nocase(type, "HIDDEN") == 0) {
 		return 0;
-	} else {
-		res = "[Unknown INPUT type]";
-	}
+    } else if (cmp_nocase(type, "BUTTON") == 0) {
+        res += '[';
+        res += value;
+        res += ']';
+    } else {
+        res += "[Unknown INPUT type: ";
+        res += type;
+        res += ']';
+    }
 
 	return new Line(res);
 }

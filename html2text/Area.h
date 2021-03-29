@@ -51,7 +51,7 @@ class istr;
 /* ------------------------------------------------------------------------- */
 
 struct Cell {
-	int character;
+    unsigned int character;
 	char attribute;
 
 	enum {
@@ -72,8 +72,8 @@ class Line {
 		typedef size_t size_type;
 
 		Line(size_type l = 0);
-		Line(const char *);
-		Line(const string &);
+//		Line(const char *);
+//		Line(const string &);
 		Line(const istr &);
 		~Line();
 
@@ -154,9 +154,9 @@ class Area {
 		};
 
 		Area();
-		Area(size_type w, size_type h = 0, char = ' ', char = Cell::NONE);
-		Area(const char *);
-		Area(const string &);
+        Area(size_type w, size_type h = 0, int = ' ', char = Cell::NONE);
+//		Area(const char *);
+//		Area(const string &);
 		Area(const Line &);
 		Area(const istr &);
 		~Area();

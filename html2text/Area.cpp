@@ -76,7 +76,7 @@ Line::Line(size_type l):
 	for (p = cells_; p != end; p++)
 		p->clear();
 }
-
+#if 0
 Line::Line(const char *p):
 	length_(strlen(p)),
 	cells_(malloc_array(Cell, length_))
@@ -101,7 +101,7 @@ Line::Line(const string &s):
 		q++;
 	}
 }
-
+#endif
 Line::Line(const istr &s):
 	length_(s.length()),
 	cells_(malloc_array(Cell, length_))
@@ -213,7 +213,7 @@ Area::Area() :
 Area::Area(
 	size_type w /*= 0*/,
 	size_type h /*= 0*/,
-	char c /*= ' '*/,
+    int c /*= ' '*/,
 	char a    /*= Cell::NONE*/
 	) :
 	width_(w),
@@ -229,7 +229,7 @@ Area::Area(
 		}
 	}
 }
-
+#if 0
 Area::Area(const char *p) :
 	width_(strlen(p)),
 	height_(1),
@@ -257,7 +257,7 @@ Area::Area(const string &s) :
 		q++;
 	}
 }
-
+#endif
 Area::Area(const Line &l) :
 	width_(l.length_),
 	height_(1),
@@ -542,7 +542,7 @@ operator<<(h2t_iostream& os, const Area &a)
 			end--;
 
 		for (const Cell *p = cell; p != end; p++) {
-            int u = p->character;
+            unsigned int u = p->character;
 			char a = p->attribute;
 
 			if (a == Cell::NONE) {
