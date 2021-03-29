@@ -88,7 +88,7 @@ class HTMLControl {
 		bool debug_scanner;
 
 		h2t_iostream &is;
-		int ungotten_chars[5];
+        unsigned int ungotten_chars[5];
 		int number_of_ungotten_chars;
 };
 

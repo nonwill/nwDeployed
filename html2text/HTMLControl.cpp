@@ -664,18 +664,6 @@ HTMLControl::get_char()
 		}
 	}
 
-#if 0
-	if ((c >> 7) & 1) {
-		unsigned int d = c;
-		unsigned char point = 1;
-		fprintf(stderr, "utf-8 start %02x\n", c & 0xFF);
-		while ((c >> (7 - point++)) & 1) {
-			d >>= 8;
-			fprintf(stderr, "utf-8 join  %02x\n", d & 0xFF);
-		};
-	}
-#endif
-
 	return c;
 }
 

@@ -37,7 +37,7 @@
 #include "HTMLControl.h"
 #include "HTMLDriver.h"
 
-#ifdef HTML2TEXT_EXE
+#ifndef HTML2TEXT_LIBS
 #include "format.h"
 #include "iconvstream.h"
 #include <stdlib.h>

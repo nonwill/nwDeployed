@@ -46,12 +46,16 @@ public:
     h2t_iostream &operator>>(unsigned int &op);
 };
 
+#ifndef HTML2TEXT_EXE
+
 /* h2t_iostream, for input and output streams.
  * enable_links, Generate reference list with link targets.
  * width, Optimize for screen widths other than 79.
  * always used PRINT_AS_ASCII - ASCII output
 */
 extern HTML2TEXT_API bool html_to_text(h2t_iostream &h2tio, int width = 79, bool enable_links = false);
+
+#endif
 
 #if !defined(HTML2TEXT_EXE) && !defined(HTML2TEXT_LIBS)
 
