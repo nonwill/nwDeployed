@@ -43,15 +43,15 @@ public:
 		}
         virtual ~istr(){}
 
-		bool empty(void)
+        inline bool empty(void)
 		{
 			return elems.empty();
 		}
-        int get(size_t pos)
+        inline int get(size_t pos)
         {
             return elems.size() < pos ? -1 : elems[pos];
         }
-        string::size_type length(void) const
+        inline string::size_type length(void) const
         {
             return (string::size_type)elems.size();
         }
@@ -88,7 +88,7 @@ public:
 
             std::string s;
 
-            for (len += pos; pos < len; pos++)
+            for (len += pos; pos < len; ++pos)
                 append_utf8_codec(s, elems[pos]);
 
             return s;
@@ -100,7 +100,7 @@ public:
 
             std::vector<unsigned int> elems_ = from_chars(s, true);
 
-            for (size_t i = 0; i < len && i < elems_.size(); i++) {
+            for (size_t i = 0; i < len && i < elems_.size(); ++i) {
                 elm = (pos + i) < elems.size() ? elems[pos + i] : 0;
                 if ((ret = elems_[i] - elm) != 0)
                     break;
@@ -118,54 +118,71 @@ public:
             elems.push_back((unsigned int)inp);
             return *this;
         }
+#if 0
         istr &operator+=(const unsigned int inp)
         {
             elems.push_back(inp);
             return *this;
         }
+#endif
         istr &operator+=(const char *p)
 		{
             std::vector<unsigned int> elems_ = from_chars(p);
             elems.insert(elems.end(), elems_.begin(), elems_.end());
 			return *this;
 		}
-		istr &operator+=(const string &p)
+        inline istr &operator+=(const string &p)
 		{
             return operator+=(p.c_str());
 		}
-        istr &operator<<=(const unsigned int inp)
+#if 0
+        istr &operator<<=(const istr &inp)
 		{
-			elems.push_back(inp);
+            elems.insert(elems.end(), inp.elems.begin(), inp.elems.end());
 			return *this;
 		}
-		istr &operator<<=(const char inp)
+        istr &operator<<=(const unsigned int inp)
+        {
+            elems.push_back(inp);
+            return *this;
+        }
+#endif
+        istr &operator<<=(const int inp)
 		{
-            return *this <<= unsigned int(inp & 0xFF);
-		}
-		istr &operator<<=(const char *inp)
+            elems.push_back((unsigned int)inp);
+            return *this;
+        }
+        inline istr &operator<<=(const char *inp)
 		{
 			return *this += inp;
 		}
-		istr &operator>>=(const char inp)
+#if 0
+        istr &operator>>=(const istr &inp)
+        {
+            elems.insert(elems.begin(), inp.elems.begin(), inp.elems.end());
+            return *this;
+        }
+#endif
+        istr &operator>>=(const char inp)
 		{
             elems.insert(elems.begin(), inp & 0xFF);
 			return *this;
 		}
-		istr &operator>>=(const char *inp)
+        istr &operator>>=(const char *inp)
 		{
             std::vector<unsigned int> elems_ = from_chars(inp);
             elems.insert(elems.begin(), elems_.begin(), elems_.end());
             return *this;
 		}
-        unsigned int operator[](const size_t pos) const
+        inline unsigned int operator[](const size_t pos) const
 		{
 			return elems[pos];
 		}
-        bool operator==(const char *inp)
+        inline bool operator==(const char *inp)
         {
             return this->compare(0, strlen(inp), inp) == 0;
         }
-		bool operator!=(const char *inp)
+        inline bool operator!=(const char *inp)
 		{
 			return !(*this == inp);
 		}
@@ -203,13 +220,14 @@ public:
             }
         }
 
-
-    protected:
         static std::vector<unsigned int> from_chars(const char *p, bool endchar = false)
         {
             std::vector<unsigned int> elems_;
-            while( *p != '\0' )
+
+            if( p )
             {
+              while( *p != '\0' )
+              {
                 unsigned int op = *p++;
                 unsigned char fc = op & 0xFF;
                 if ((op >> 7) & 1) {
@@ -223,6 +241,7 @@ public:
                     }
                 }
                 elems_.push_back(op);
+              }
             }
 
             if ( endchar )

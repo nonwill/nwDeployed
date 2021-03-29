@@ -145,10 +145,11 @@ Line::insert(const Line &l, size_type x)
 void
 Line::insert(const char *p, size_type x)
 {
-	enlarge(x + strlen(p));
+    std::vector<unsigned int> is = istr::from_chars(p);
+    enlarge(x + is.size());
 	Cell *q = cells_ + x;
-	while (*p)
-		q++->character = *p++;
+    for (size_type i = 0; i < is.size(); ++q)
+        q->character = is[i++];
 }
 
 void
@@ -181,10 +182,11 @@ void
 Line::append(const char *p)
 {
 	size_type x = length_;
-	enlarge(x + strlen(p));
+    std::vector<unsigned int> is = istr::from_chars(p);
+    enlarge(x + is.size());
 	Cell *q = cells_ + x;
-	for (; *p; ++p, ++q) {
-		q->character = *p;
+    for (size_type i = 0; i < is.size(); ++q) {
+        q->character = is[i++];
 		q->attribute = Cell::NONE;
 	}
 }
@@ -310,17 +312,15 @@ Area::operator>>=(size_type rs)
 const Area &
 Area::operator>>=(const char *prefix)
 {
-	size_type plen = 0;
-	if (prefix != NULL)
-		plen = strlen(prefix);
-
-	if (plen > 0) {
+    std::vector<unsigned int> is = istr::from_chars(prefix);
+    size_type plen = is.size();
+    if (plen > 0) {
 		resize(width_ + plen, height_);
 		for (size_type y = 0; y < height_; y++) {
 			Cell *c = cells_[y];
 			memmove(c + plen, c, (width_ - plen) * sizeof(Cell));
 			for (size_type x = 0; x < plen; x++) {
-				c[x].character = prefix[x];
+                c[x].character = is[x];
 				c[x].attribute = Cell::NONE;
 			}
 		}
@@ -443,19 +443,18 @@ Area::insert(char c, size_type x, size_type y)
 	enlarge(x + 1, y + 1);
 	cells_[y][x].character = c;
 }
-
 void
 Area::insert(const string &s, size_type x, size_type y)
 {
-	enlarge(x + s.length(), y + 1);
-	Cell *cell = &cells_[y][x];
-	for (string::size_type i = 0; i < s.length(); i++) {
-		cell->character = s[i];
-		cell->attribute = Cell::NONE;
-		cell++;
-	}
+    std::vector<unsigned int> is = istr::from_chars(s.c_str());
+    enlarge(x + is.size(), y + 1);
+    Cell *cell = &cells_[y][x];
+    for (string::size_type i = 0; i < is.size(); i++) {
+        cell->character = is[i];
+        cell->attribute = Cell::NONE;
+        ++cell;
+    }
 }
-
 void
 Area::prepend(int n)
 {
@@ -483,9 +482,9 @@ void
 Area::fill(char c, size_type x, size_type y, size_type w, size_type h)
 {
 	enlarge(x + w, y + h);
-	for (size_type yy = y; yy < y + h; yy++) {
+    for (size_type yy = y; yy < y + h; ++yy) {
 		Cell *p = &cells_[yy][x];
-		for (size_type i = 0; i < w; i++)
+        for (size_type i = 0; i < w; ++i)
 			p++->character = c;
 	}
 }
@@ -493,7 +492,7 @@ Area::fill(char c, size_type x, size_type y, size_type w, size_type h)
 void
 Area::add_attribute(char addition)
 {
-	for (size_type y = 0; y < height(); y++) {
+    for (size_type y = 0; y < height(); ++y) {
 		Cell *p = cells_[y], *end = p + width();
 		while (p != end && p->character == ' ')
 			++p;
@@ -517,7 +516,7 @@ Area::add_attribute(
 	)
 {
 	enlarge(x + w, y + h);
-	for (size_type yy = y; yy < y + h; yy++) {
+    for (size_type yy = y; yy < y + h; ++yy) {
 		Cell *p = &cells_[yy][x], *end = p + w;
 		while (p != end)
 			p++->attribute |= addition;
@@ -531,7 +530,7 @@ static char backspace = '\b';
 h2t_iostream &
 operator<<(h2t_iostream& os, const Area &a)
 {
-	for (Area::size_type y = 0; y < a.height(); y++) {
+    for (Area::size_type y = 0; y < a.height(); ++y) {
 		const Cell *cell = a.cells_[y];
 		const Cell *end = cell + a.width();
 		while (
@@ -541,7 +540,7 @@ operator<<(h2t_iostream& os, const Area &a)
 			  )
 			end--;
 
-		for (const Cell *p = cell; p != end; p++) {
+        for (const Cell *p = cell; p != end; ++p) {
             unsigned int u = p->character;
 			char a = p->attribute;
 

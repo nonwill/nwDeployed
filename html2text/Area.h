@@ -157,7 +157,7 @@ class Area {
         Area(size_type w, size_type h = 0, int = ' ', char = Cell::NONE);
 //		Area(const char *);
 //		Area(const string &);
-		Area(const Line &);
+        Area(const Line &);
 		Area(const istr &);
 		~Area();
 
@@ -201,7 +201,7 @@ class Area {
 		void insert(const Cell &, size_type x, size_type y);
 		void insert(const Cell *, size_type count, size_type x, size_type y);
 		void insert(char, size_type x, size_type y);
-		void insert(const string &, size_type x, size_type y);
+        void insert(const string &, size_type x, size_type y);
 		void prepend(int n);      // Prepend blank lines at top
 		void append(int n)        // Append blank lines at bottom
 		{
