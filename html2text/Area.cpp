@@ -73,7 +73,7 @@ Line::Line(size_type l):
 	cells_(malloc_array(Cell, l))
 {
 	Cell *p, *end = cells_ + l;
-	for (p = cells_; p != end; p++)
+    for (p = cells_; p != end; ++p)
 		p->clear();
 }
 #if 0
@@ -85,7 +85,7 @@ Line::Line(const char *p):
 	while (q != end) {
 		q->character = *p++;
 		q->attribute = Cell::NONE;
-		q++;
+        ++q;
 	}
 }
 
@@ -98,7 +98,7 @@ Line::Line(const string &s):
 	while (q != end) {
 		q->character = *p++;
 		q->attribute = Cell::NONE;
-		q++;
+        ++q;
 	}
 }
 #endif
@@ -107,10 +107,10 @@ Line::Line(const istr &s):
 	cells_(malloc_array(Cell, length_))
 {
 	Cell *q = cells_;
-	for (int i = 0; i < length_; i++) {
+    for (int i = 0; i < length_; ++i) {
 		q->character = s[i];
 		q->attribute = Cell::NONE;
-		q++;
+        ++q;
 	}
 }
 
@@ -127,7 +127,7 @@ Line::resize(size_type l)
 	if (l == length())
 		return;
 	realloc_array(cells_, Cell, l);
-	for (size_type x = length(); x < l; x++)
+    for (size_type x = length(); x < l; ++x)
 		cells_[x].clear();
 	length_ = l;
 }
@@ -222,12 +222,12 @@ Area::Area(
 	height_(h),
 	cells_(malloc_array(Cell *, h))
 {
-	for (size_type y = 0; y < h; y++) {
+    for (size_type y = 0; y < h; ++y) {
 		Cell *p = cells_[y] = malloc_array(Cell, w), *end = p + w;
 		while (p != end) {
 			p->character = c;
 			p->attribute = a;
-			p++;
+            ++p;
 		}
 	}
 }
@@ -242,7 +242,7 @@ Area::Area(const char *p) :
 	while (q != end) {
 		q->character = *p++;
 		q->attribute = Cell::NONE;
-		q++;
+        ++q;
 	}
 }
 
@@ -256,7 +256,7 @@ Area::Area(const string &s) :
 	for (string::size_type i = 0; i < s.length(); ++i) {
 		q->character = s[i];
 		q->attribute = Cell::NONE;
-		q++;
+        ++q;
 	}
 }
 #endif
@@ -279,13 +279,13 @@ Area::Area(const istr &s):
 	for (string::size_type i = 0; i < s.length(); ++i) {
 		q->character = s[i];
 		q->attribute = Cell::NONE;
-		q++;
+        ++q;
 	}
 }
 
 Area::~Area()
 {
-	for (size_type y = 0; y < height(); y++)
+    for (size_type y = 0; y < height(); ++y)
 		free(cells_[y]);
 	free(cells_);
 }
@@ -297,10 +297,10 @@ Area::operator>>=(size_type rs)
 {
 	if (rs > 0) {
 		resize(width_ + rs, height_);
-		for (size_type y = 0; y < height_; y++) {
+        for (size_type y = 0; y < height_; ++y) {
 			Cell *c = cells_[y];
 			memmove(c + rs, c, (width_ - rs) * sizeof(Cell));
-			for (size_type x = 0; x < rs; x++) {
+            for (size_type x = 0; x < rs; ++x) {
 				c[x].character = ' ';
 				c[x].attribute = Cell::NONE;
 			}
@@ -316,10 +316,10 @@ Area::operator>>=(const char *prefix)
     size_type plen = is.size();
     if (plen > 0) {
 		resize(width_ + plen, height_);
-		for (size_type y = 0; y < height_; y++) {
+        for (size_type y = 0; y < height_; ++y) {
 			Cell *c = cells_[y];
 			memmove(c + plen, c, (width_ - plen) * sizeof(Cell));
-			for (size_type x = 0; x < plen; x++) {
+            for (size_type x = 0; x < plen; ++x) {
                 c[x].character = is[x];
 				c[x].attribute = Cell::NONE;
 			}
@@ -334,27 +334,27 @@ Area::resize(size_type w, size_type h)
 	size_type y_max = h < height() ? h : height();
 
 	if (w > width()) {
-		for (size_type y = 0; y < y_max; y++) {
+        for (size_type y = 0; y < y_max; ++y) {
 			realloc_array(cells_[y], Cell, w);
 			Cell *p = cells_[y] + width(), *end = cells_[y] + w;
 			while (p != end)
 				p++->clear();
 		}
 	} else if (w < width()) {
-		for (size_type y = 0; y < y_max; y++) {
+        for (size_type y = 0; y < y_max; ++y) {
 			realloc_array(cells_[y], Cell, w);
 		}
 	}
 
 	if (h > height()) {
 		realloc_array(cells_, Cell *, h);
-		for (size_type y = height(); y < h; y++) {
+        for (size_type y = height(); y < h; ++y) {
 			Cell *p = cells_[y] = malloc_array(Cell, w), *end = p + w;
 			while (p != end)
 				p++->clear();
 		}
 	} else if (h < height()) {
-		for (size_type y = h; y < height(); y++)
+        for (size_type y = h; y < height(); ++y)
 			free(cells_[y]);
 		realloc_array(cells_, Cell *, h);
 	}
@@ -376,7 +376,7 @@ Area::insert(const Area &a, size_type x, size_type y)
 {
 	enlarge(x + a.width(), y + a.height());
 
-	for (size_type i = 0; i < a.height(); i++) {
+    for (size_type i = 0; i < a.height(); ++i) {
 		const Cell *p = a.cells_[i], *end = p + a.width();
 		Cell       *q = cells_[y + i] + x;
 		while (p != end)
@@ -421,9 +421,9 @@ void
 Area::fill(const Cell &c, size_type x, size_type y, size_type w, size_type h)
 {
 	enlarge(x + w, y + h);
-	for (size_type yy = y; yy < y + h; yy++) {
+    for (size_type yy = y; yy < y + h; ++yy) {
 		Cell *p = &cells_[yy][x];
-		for (size_type i = 0; i < w; i++)
+        for (size_type i = 0; i < w; ++i)
 			*p++ = c;
 	}
 }
@@ -449,7 +449,7 @@ Area::insert(const string &s, size_type x, size_type y)
     std::vector<unsigned int> is = istr::from_chars(s.c_str());
     enlarge(x + is.size(), y + 1);
     Cell *cell = &cells_[y][x];
-    for (string::size_type i = 0; i < is.size(); i++) {
+    for (string::size_type i = 0; i < is.size(); ++i) {
         cell->character = is[i];
         cell->attribute = Cell::NONE;
         ++cell;
@@ -538,7 +538,7 @@ operator<<(h2t_iostream& os, const Area &a)
 				(end[-1].attribute &
 				 (Cell::UNDERLINE | Cell::STRIKETHROUGH)) == 0
 			  )
-			end--;
+            --end;
 
         for (const Cell *p = cell; p != end; ++p) {
             unsigned int u = p->character;

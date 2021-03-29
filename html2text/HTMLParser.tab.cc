@@ -3019,7 +3019,7 @@ namespace html2text {
     *yycdebug_ << "Reducing stack by rule " << yyrule - 1
                << " (line " << yylno << "):\n";
     // The symbols being reduced.
-    for (int yyi = 0; yyi < yynrhs; yyi++)
+    for (int yyi = 0; yyi < yynrhs; ++yyi)
       YY_SYMBOL_PRINT ("   $" << yyi + 1 << " =",
                        yystack_[(yynrhs) - (yyi + 1)]);
   }

@@ -625,7 +625,7 @@ HTMLControl::read_cdata(const char *terminal, string *value_return)
 		if (c == EOF)
 			return false;
 		if (toupper(c) == terminal[state]) {
-			state++;
+            ++state;
 			if (terminal[state] == '\0') {
 // s.erase(s.length() - state);
 // caused core dump on empty STYLE and SCRIPT elements - Johannes Geiger
@@ -657,10 +657,10 @@ HTMLControl::get_char()
 		if (c == EOF) {
 			;
 		} else if (c == '\n') {
-			current_line++;
+            ++current_line;
 			current_column = 0;
 		} else {
-			current_column++;
+            ++current_column;
 		}
 	}
 

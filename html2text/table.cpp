@@ -252,17 +252,17 @@ compute_widths(
 	 * Compute the column widths.
 	 */
 	{
-		for (int i = 0; i < number_of_columns; i++)
+        for (int i = 0; i < number_of_columns; ++i)
 			column_widths_return[i] = 0;
 	}
-	for (int x = 0; x < number_of_columns; x++) {
+    for (int x = 0; x < number_of_columns; ++x) {
 		list<auto_ptr<LogicalCell> >::const_iterator i;
 		for (i = lcs.begin(); i != lcs.end(); ++i) {
 			const LogicalCell &lc(**i);
 			if (x != lc.x + lc.w - 1)
 				continue;                  // Cell not in column?
 			Area::size_type width = lc.width;
-			for (int j = lc.x; j < x; j++) {
+            for (int j = lc.x; j < x; ++j) {
 				// Beware! "width" is unsigned!
 				if (column_widths_return[j] + column_spacing >= width) {
 					width = 0;
@@ -284,7 +284,7 @@ compute_widths(
 		+ right_border_width
 		);
 	{
-		for (int x = 0; x < number_of_columns; x++) {
+        for (int x = 0; x < number_of_columns; ++x) {
 			*table_width_return += column_widths_return[x];
 		}
 	}
@@ -310,7 +310,7 @@ narrow_table(
 	 * Seek for the widest column that can still be narrowed.
 	 */
 	int widest_column = -1;
-	for (int x = 0; x < number_of_columns; x++) {
+    for (int x = 0; x < number_of_columns; ++x) {
 		// Zero width columns cannot be narrowed.
 		if (column_widths_in_out[x] == 0)
 			continue;
@@ -330,7 +330,7 @@ narrow_table(
 			if (!lc.minimized)
 				continue;
 			Area::size_type left_of_cell = 0;
-			for (int j = lc.x; j < x; j++) {
+            for (int j = lc.x; j < x; ++j) {
 				left_of_cell += column_widths_in_out[j] + column_spacing;
 			}
 			if (lc.width >= left_of_cell + column_widths_in_out[x]) {
@@ -567,7 +567,7 @@ Table::format(Area::size_type w, int halign) const
 		bottom_border_width
 		);
 	{
-		for (int y = 0; y < number_of_rows; y++)
+        for (int y = 0; y < number_of_rows; ++y)
 			table_height += row_heights[y];
 	}
 
@@ -613,7 +613,7 @@ Table::format(Area::size_type w, int halign) const
 		// underline.
 		{
 			Cell *cells = (*res)[y0 - 1];
-			for (Area::size_type x = 0; x < res->width(); x++) {
+            for (Area::size_type x = 0; x < res->width(); ++x) {
 				if (cells[x].character == ' ')
 					cells[x].attribute = Cell::NONE;
 			}
@@ -637,23 +637,23 @@ Table::format(Area::size_type w, int halign) const
 			// Calculate cell position.
 			Area::size_type x = x0 + left_border_width, y = y0 + top_border_width;
 			{
-				for (int j = 0; j < lc.x; j++)
+                for (int j = 0; j < lc.x; ++j)
 					x += column_widths[j] + column_spacing;
 			}
 			{
-				for (int j = 0; j < lc.y; j++)
+                for (int j = 0; j < lc.y; ++j)
 					y += row_heights  [j] + row_spacing;
 			}
 
 			// Calculate cell dimensions.
 			Area::size_type w = (lc.w - 1) * column_spacing;
 			{
-				for (int j = lc.x; j < lc.x + lc.w; j++)
+                for (int j = lc.x; j < lc.x + lc.w; ++j)
 					w += column_widths[j];
 			}
 			Area::size_type h = (lc.h - 1) * row_spacing;
 			{
-				for (int j = lc.y; j < lc.y + lc.h; j++)
+                for (int j = lc.y; j < lc.y + lc.h; ++j)
 					h += row_heights[j];
 			}
 

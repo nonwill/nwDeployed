@@ -452,7 +452,7 @@ ListNormalItem::format(
 	*res >>= indent;
 	res->insert(bullet, indent - bullet.length() - 1, 0);
 	if (number_in_out)
-		(*number_in_out)++;
+        ++*number_in_out;
 	return res.release();
 }
 
@@ -1292,7 +1292,7 @@ make_up(const Line &line, Area::size_type w, int halign)
 		 */
 		if (line[from].character == '\n') {
 			res->resize(res->width(), res->height() + 1);
-			from++;
+            ++from;
 			continue;
 		}
 
@@ -1328,9 +1328,9 @@ make_up(const Line &line, Area::size_type w, int halign)
                 if ( c1 > 0x7F && to < line.length() && break_after_punctuations(c1))
                     lbp = to++;
                 while (to < line.length() && line[to].character == ' ')
-                    to++;
+                    ++to;
 			} else {
-				to++;
+                ++to;
 			}
 
 			if (to - from > w && lbp != (Area::size_type) -1)

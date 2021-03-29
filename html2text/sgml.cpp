@@ -345,7 +345,7 @@ replace_sgml_entities(istr *s)
 
 		/* Skip characters before ampersand. */
 		while (j < l && (*s)[j] != '&')
-			j++;
+            ++j;
 
 		if (j >= l)
 			break;
@@ -369,10 +369,10 @@ replace_sgml_entities(istr *s)
 			c = (*s)[j++];
 			if (isdigit(c)) {
 				int x = c - '0';
-				for (; j < l; j++) {
+                for (; j < l; ++j) {
 					c = (*s)[j];
 					if (c == ';') {
-						j++;
+                        ++j;
 						break;
 					}
 					if (!isdigit(c))
@@ -384,10 +384,10 @@ replace_sgml_entities(istr *s)
 			} else if (c == 'x' || c == 'X') {  /* HTML Hex Entity */
 				int x = 0;
 				int v;
-				for (; j < l; j++) {
+                for (; j < l; ++j) {
 					c = tolower((*s)[j]);
 					if (c == ';') {
-						j++;
+                        ++j;
 						break;
 					}
 					if (isdigit(c)) {
