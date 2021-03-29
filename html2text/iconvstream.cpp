@@ -259,20 +259,21 @@ h2t_iostream &h2t_iostream::operator<<(char inp)
 }
 
 /* See istr::append_utf8_codec */
-h2t_iostream &h2t_iostream::operator<<(int inp)
+h2t_iostream &h2t_iostream::operator<<(unsigned int inp)
 {
-    char single = inp & 0xFF;
+    unsigned char point = 0;
+    char fc = 0;
+    do {
+        fc = ((unsigned)inp >> (24 - 8 * point)) & 0xff;
+        ++point;
+    }while(!fc && point < 4);
 
-    write(&single, single == '\0' ? 0 : 1);
+    write(&fc, fc == '\0' ? 0 : 1);
 
-    if ((single >> 7) & 1) {
-        unsigned int d = inp;
-        unsigned char point = 1;
-        while (point < 4 && ((inp >> (7 - point++)) & 1)) {
-            d >>= 8;
-            single = d & 0xFF;
+    if ((fc >> 7) & 1) {
+        char single = 0;
+        while(( single = (inp >> (24 - 8 * point)) & 0xff ) && point++ < 4)
             write(&single, 1);
-        };
     }
     return *this;
 }
@@ -281,12 +282,18 @@ h2t_iostream &h2t_iostream::operator<<(int inp)
 h2t_iostream &h2t_iostream::operator>>(unsigned int &op)
 {
     op = getc();
-    if ((op >> 7) & 1) {
+
+    unsigned char fc = op & 0xFF;
+
+    if ((fc >> 7) & 1) {
         unsigned char nextpoint = 1;
 
         /* we assume iconv produced valid UTF-8 here */
-        while ( ((op >> (7 - nextpoint)) & 1) && nextpoint < 4 )
-            op |= ((getc() & 0xFF) << (8 * nextpoint++));
+        while ( ((fc >> (7 - nextpoint)) & 1) && nextpoint++ < 4 )
+        {
+            op <<= 8;
+            op |= (getc() & 0xFF);
+        }
     }
 
     return *this;

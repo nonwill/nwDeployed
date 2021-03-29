@@ -17,7 +17,7 @@ inline int utf8char_codec(unsigned int utf8char) {
 
 inline bool break_after_punctuations(int utf8char)
 {
-    switch (utf8char_codec(utf8char))
+    switch (utf8char)
     {
     /* begin chinese punctuation */
     case 0xE280A6:

@@ -178,8 +178,8 @@ void
 PCData::unparse(h2t_iostream& os, ostream_manipulator separator) const
 {
 	for (string::size_type j = 0; j < text.length(); ++j) {
-		char c = text[j];
-		switch (((int) c) & 255) {
+        unsigned int c = text[j];
+        switch (c) {
 			case '&':         os << "&amp;";
 							  break;
 			case '<':         os << "&lt;";
@@ -189,7 +189,7 @@ PCData::unparse(h2t_iostream& os, ostream_manipulator separator) const
 			case '"':         os << "&quot;";
 							  break;
 			default:
-                              os << text[j];
+                              os << c;
 							  break;
 		}
 	}
@@ -572,10 +572,10 @@ get_attribute(
 		list<TagAttribute>::const_iterator i;
 		for (i = as->begin(); i != as->end(); ++i) {
 			if (cmp_nocase((*i).first, name) == 0)
-				return (*i).second;
+                return (*i).second;
 		}
 	}
-	return istr(dflt);
+    return istr(dflt);
 }
 
 // *exists is set to false if attribute *name does not exist - Johannes Geiger
@@ -592,11 +592,11 @@ get_attribute(
 		list<TagAttribute>::const_iterator i;
 		for (i = as->begin(); i != as->end(); ++i) {
 			if (cmp_nocase((*i).first, name) == 0)
-				return (*i).second;
+                return (*i).second;
 		}
 	}
 	*exists = false;
-	return istr("");
+    return istr("");
 }
 
 
@@ -740,5 +740,5 @@ get_style_attr(istr *style, const char *name, const char *dflt)
 		}
 	}
 
-	return istr(dflt);
+    return istr(dflt);
 }

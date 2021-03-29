@@ -382,7 +382,7 @@ struct Document {
 };
 
 struct Heading : public Element {
-	int level;
+    unsigned int level;
 	auto_ptr<list<TagAttribute> >       attributes;// ALIGN
 	auto_ptr<list<auto_ptr<Element> > > content;
 

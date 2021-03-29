@@ -23,12 +23,17 @@
 #define isspace_char(X) ((X) > 0 && (X) < 256 && isspace(X))
 
 class istr {
+public:
 	public:
 		istr():
 			elems({})
 		{
 		}
-		istr(const char *p):
+        istr(const istr &is):
+            elems(is.elems)
+        {
+        }
+        istr(const char *p):
             elems(std::move(istr::from_chars(p)))
 		{
 		}
@@ -36,6 +41,7 @@ class istr {
             elems(std::move(istr::from_chars(p.c_str())))
 		{
 		}
+        virtual ~istr(){}
 
 		bool empty(void)
 		{
@@ -45,10 +51,10 @@ class istr {
         {
             return elems.size() < pos ? -1 : elems[pos];
         }
-		string::size_type length(void) const
-		{
-			return (string::size_type)elems.size();
-		}
+        string::size_type length(void) const
+        {
+            return (string::size_type)elems.size();
+        }
 		istr &erase(size_t pos = 0, size_t len = string::npos)
 		{
 			if (len == string::npos)
@@ -62,72 +68,79 @@ class istr {
 		istr &replace(size_t pos, size_t len, const char *s)
 		{
 			erase(pos, len);
-            std::vector<int> elems_ = from_chars(s);
+            std::vector<unsigned int> elems_ = from_chars(s);
             elems.insert(elems.begin() + pos, elems_.begin(), elems_.end());
 			return *this;
 		}
-		istr &replace(size_t pos, size_t len, const int i)
+        istr &replace(size_t pos, size_t len, const unsigned int i)
 		{
 			erase(pos, len);
 			elems.insert(elems.begin() + pos, i);
 			return *this;
 		}
-		istr slice(size_t pos = 0, size_t len = string::npos)
+        std::string slice(size_t pos = 0, size_t len = string::npos) const
 		{
-			istr ret = istr();
+            if (len == string::npos)
+                len = elems.size();
+            /* we assume pos within range here (should throw out_of_range) */
+            if (pos + len >= elems.size())
+                len = elems.size() - pos;
 
-			if (len == string::npos)
-				len = elems.size();
-			/* we assume pos within range here (should throw out_of_range) */
-			if (pos + len >= elems.size())
-				len = elems.size() - pos;
+            std::string s;
 
-			for (len += pos; pos < len; pos++)
-				ret += elems[pos];
+            for (len += pos; pos < len; pos++)
+                append_utf8_codec(s, elems[pos]);
 
-			return ret;
+            return s;
 		}
-		int compare(size_t pos, size_t len, const char *s) const
-		{
-			int ret;
-			int elm;
+        int compare(size_t pos, size_t len, const char *s) const
+        {
+            int ret;
+            unsigned int elm;
 
-            std::vector<int> elems_ = from_chars(s, true);
+            std::vector<unsigned int> elems_ = from_chars(s, true);
 
-			for (size_t i = 0; i < len; i++) {
-				elm = (pos + i) < elems.size() ? elems[pos + i] : 0;
+            for (size_t i = 0; i < len && i < elems_.size(); i++) {
+                elm = (pos + i) < elems.size() ? elems[pos + i] : 0;
                 if ((ret = elems_[i] - elm) != 0)
-					break;
-			}
+                    break;
+            }
 
-			return ret;
-		}
-		istr &operator+=(const int inp)
+            return ret;
+        }
+        istr &operator+=(const istr &inp)
+        {
+            elems.insert(elems.end(), inp.elems.begin(), inp.elems.end());
+            return *this;
+        }
+        istr &operator+=(const int inp)
+        {
+            elems.push_back((unsigned int)inp);
+            return *this;
+        }
+        istr &operator+=(const unsigned int inp)
+        {
+            elems.push_back(inp);
+            return *this;
+        }
+        istr &operator+=(const char *p)
 		{
-			elems.push_back(inp);
-			return *this;
-		}
-		istr &operator+=(const char *p)
-		{
-            std::vector<int> elems_ = from_chars(p);
+            std::vector<unsigned int> elems_ = from_chars(p);
             elems.insert(elems.end(), elems_.begin(), elems_.end());
 			return *this;
 		}
 		istr &operator+=(const string &p)
 		{
             return operator+=(p.c_str());
-			for (const char c : p)
-				elems.push_back(((int)c) & 0xFF);
-			return *this;
 		}
-		istr &operator<<=(const int inp)
+        istr &operator<<=(const unsigned int inp)
 		{
 			elems.push_back(inp);
 			return *this;
 		}
 		istr &operator<<=(const char inp)
 		{
-			return *this <<= (((const int)inp) & 0xFF);
+            return *this <<= unsigned int(inp & 0xFF);
 		}
 		istr &operator<<=(const char *inp)
 		{
@@ -135,23 +148,23 @@ class istr {
 		}
 		istr &operator>>=(const char inp)
 		{
-			elems.insert(elems.begin(), ((int)inp) & 0xFF);
+            elems.insert(elems.begin(), inp & 0xFF);
 			return *this;
 		}
 		istr &operator>>=(const char *inp)
 		{
-            std::vector<int> elems_ = from_chars(inp);
+            std::vector<unsigned int> elems_ = from_chars(inp);
             elems.insert(elems.begin(), elems_.begin(), elems_.end());
             return *this;
 		}
-		int operator[](const int pos) const
+        unsigned int operator[](const size_t pos) const
 		{
 			return elems[pos];
 		}
-		bool operator==(const char *inp)
-		{
-			return this->compare(0, strlen(inp), inp) == 0;
-		}
+        bool operator==(const char *inp)
+        {
+            return this->compare(0, strlen(inp), inp) == 0;
+        }
 		bool operator!=(const char *inp)
 		{
 			return !(*this == inp);
@@ -160,39 +173,54 @@ class istr {
 		{
             std::string s;
 
-			for (int c : elems) {
-                append_utf8_codec(s, c);
-			}
+            for ( size_t b = 0; b < elems.size(); ++b)
+                append_utf8_codec(s, elems[b]);
 
             return s;
 		}
 
-        static void append_utf8_codec(std::string &s, int c)
+        static void append_utf8_codec(std::string &s, unsigned int inp)
         {
-            s += char(c & 0xFF);
-            if ((c >> 7) & 1) {
-                unsigned int d = c;
-                unsigned char point = 1;
-                while ((c >> (7 - point++)) & 1) {
-                    d >>= 8;
-                    s += char(d & 0xFF);
-                };
+            if( inp < 0xff)
+            {
+                s += inp;
+                return;
+            }
+
+            unsigned char point = 0;
+            char fc = 0;
+            do {
+                fc = (inp >> (24 - 8 * point)) & 0xff;
+                ++point;
+            }while(!fc && point < 4);
+
+            s += fc;
+
+            if ((fc >> 7) & 1) {
+                char single = 0;
+                while((single = (inp >> (24 - 8 * point))) && point++ < 4)
+                    s += single;
             }
         }
 
+
     protected:
-        static std::vector<int> from_chars(const char *p, bool endchar = false)
+        static std::vector<unsigned int> from_chars(const char *p, bool endchar = false)
         {
-            std::vector<int> elems_;
-            while( *p )
+            std::vector<unsigned int> elems_;
+            while( *p != '\0' )
             {
                 unsigned int op = *p++;
+                unsigned char fc = op & 0xFF;
                 if ((op >> 7) & 1) {
                     unsigned char nextpoint = 1;
 
                     /* we assume iconv produced valid UTF-8 here */
-                    while ( *p && ((op >> (7 - nextpoint)) & 1) && nextpoint < 4 )
-                        op |= ((*p++ & 0xFF) << (8 * nextpoint++));
+                    while ( ((fc >> (7 - nextpoint)) & 1) && nextpoint++ < 4 )
+                    {
+                        op <<= 8;
+                        op |= (*p++ & 0xFF);
+                    }
                 }
                 elems_.push_back(op);
             }
@@ -204,7 +232,7 @@ class istr {
         }
 
 	private:
-		std::vector<int> elems;
+        std::vector<unsigned int> elems;
 };
 
 #endif

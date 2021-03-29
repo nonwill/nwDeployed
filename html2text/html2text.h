@@ -41,7 +41,7 @@ public:
     h2t_iostream &operator<<(char inp);
 
     /* write one UTF-8 codec wchar data to output the transformed content */
-    h2t_iostream &operator<<(int inp);
+    h2t_iostream &operator<<(unsigned int inp);
     /* get one UTF-8 codec wchar data, so load bytes as required */
     h2t_iostream &operator>>(unsigned int &op);
 };

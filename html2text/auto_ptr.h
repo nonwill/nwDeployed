@@ -76,7 +76,7 @@ public:
 
   T    &operator*() const  { if (!p) abort(); return *(T *) p; }
   T    *operator->() const { if (!p) abort(); return (T *) p; }
-  T    *get() const        { return (T *) p; }
+  T    *const get() const        { return (T *) p; }
   T    *release()          { T *tmp = p; p = 0; return tmp; }
   void reset(T *x = 0)     { delete p; p = x; }
 
