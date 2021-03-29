@@ -44,7 +44,7 @@
 /*
  * Define some helpers.
  */
-
+#if defined(_MSC_VER)
 template <typename T>
 void foreach(const list<auto_ptr<T> > &l,
              h2t_iostream& os,
@@ -54,7 +54,7 @@ void foreach(const list<auto_ptr<T> > &l,
         (*i)->unparse(os, separator);
     }
 }
-#if 0
+#else
 #define define_foreach(T, args, action) \
 	void foreach args { \
 		for (T::const_iterator i = l.begin(); i != l.end(); ++i) { \
@@ -709,22 +709,22 @@ get_style_attr(istr *style, const char *name, const char *dflt)
 	size_t t;
 
 	if (style != NULL) {
-		for (size_t i = 0; i < style->length(); i++) {
+        for (size_t i = 0; i < style->length(); ++i) {
 			switch ((*style)[i]) {
 				case ':':
 					/* keystart:i = key */
-					for (t = i - 1; (*style)[t] == ' '; t--)
+                    for (t = i - 1; (*style)[t] == ' '; --t)
 						;
-					t++;
+                    ++t;
 					iskey = false;
 					valstart = i + 1;
 					break;
 				case ';':
 					/* end of value */
 					if (style->compare(keystart, t - keystart, name) == 0) {
-						for (t = i - 1; (*style)[t] == ' '; t--)
+                        for (t = i - 1; (*style)[t] == ' '; --t)
 							;
-						t++;
+                        ++t;
 						return style->slice(valstart, t - valstart);
 					}
 					keystart = i + 1;
@@ -732,9 +732,9 @@ get_style_attr(istr *style, const char *name, const char *dflt)
 					break;
 				case ' ':
 					if (keystart == i)
-						keystart++;
+                        ++keystart;
 					if (valstart == i)
-						valstart++;
+                        ++valstart;
 					break;
 			}
 		}
