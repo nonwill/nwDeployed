@@ -91,7 +91,7 @@ static h2t_iostream &operator<<(h2t_iostream& os,
 		const list<TagAttribute> &al(*a);
 		list<TagAttribute>::const_iterator i;
 		for (i = al.begin(); i != al.end(); ++i) {
-			os << " " << (*i).first << "=\"" << (*i).second.c_str() << "\"";
+            os << " " << (*i).first << "=\"" << (*i).second.to_stdstring() << "\"";
 		}
 	}
 	return os;
@@ -611,7 +611,7 @@ get_attribute(
 		list<TagAttribute>::const_iterator i;
 		for (i = as->begin(); i != as->end(); ++i) {
 			if (cmp_nocase((*i).first, name) == 0)
-                return atoi((*i).second.c_str().c_str());
+                return atoi((*i).second.to_stdstring().c_str());
 		}
 	}
 	return dflt;
@@ -637,7 +637,7 @@ get_attribute(
 				va_list va;
 				va_start(va, v1);
 				for (;;) {
-					if (cmp_nocase(s, (*i).second.c_str()) == 0)
+                    if (cmp_nocase(s, (*i).second.to_stdstring()) == 0)
 						break;
 					s = va_arg(va, const char *);
 					if (!s) {
@@ -670,7 +670,7 @@ get_attribute(
 		list<TagAttribute>::const_iterator i;
 		for (i = as->begin(); i != as->end(); ++i) {
 			if (cmp_nocase((*i).first, name) == 0) {
-                dflt1_ = (*i).second.c_str();
+                dflt1_ = (*i).second.to_stdstring();
                 dflt1 = dflt1_.c_str();
 				break;
 			}

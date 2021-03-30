@@ -28,6 +28,8 @@ const char flush_char = '\0';
 class istr {
 public:
 	public:
+        typedef  std::vector<unsigned int> utf8_string;
+
 		istr():
 			elems({})
 		{
@@ -37,11 +39,11 @@ public:
         {
         }
         istr(const char *p):
-            elems(std::move(istr::from_chars(p)))
+            elems(std::move(istr::from_stdstring(p)))
 		{
 		}
 		istr(const string &p):
-            elems(std::move(istr::from_chars(p.c_str())))
+            elems(std::move(istr::from_stdstring(p.c_str())))
 		{
 		}
         virtual ~istr(){}
@@ -71,7 +73,7 @@ public:
 		istr &replace(size_t pos, size_t len, const char *s)
 		{
 			erase(pos, len);
-            std::vector<unsigned int> elems_ = from_chars(s);
+            utf8_string elems_ = from_stdstring(s);
             elems.insert(elems.begin() + pos, elems_.begin(), elems_.end());
 			return *this;
 		}
@@ -92,7 +94,7 @@ public:
             std::string s;
 
             for (len += pos; pos < len; ++pos)
-                append_utf8_codec(s, elems[pos]);
+                append_utf8char(s, elems[pos]);
 
             return s;
 		}
@@ -101,7 +103,7 @@ public:
             int ret;
             unsigned int elm;
 
-            std::vector<unsigned int> elems_ = from_chars(s, true);
+            utf8_string elems_ = from_stdstring(s, true);
 
             for (size_t i = 0; i < len && i < elems_.size(); ++i) {
                 elm = (pos + i) < elems.size() ? elems[pos + i] : 0;
@@ -130,7 +132,7 @@ public:
 #endif
         istr &operator+=(const char *p)
 		{
-            std::vector<unsigned int> elems_ = from_chars(p);
+            utf8_string elems_ = from_stdstring(p);
             elems.insert(elems.end(), elems_.begin(), elems_.end());
 			return *this;
 		}
@@ -173,7 +175,7 @@ public:
 		}
         istr &operator>>=(const char *inp)
 		{
-            std::vector<unsigned int> elems_ = from_chars(inp);
+            utf8_string elems_ = from_stdstring(inp);
             elems.insert(elems.begin(), elems_.begin(), elems_.end());
             return *this;
 		}
@@ -189,17 +191,17 @@ public:
 		{
 			return !(*this == inp);
 		}
-        const std::string c_str(void) const
+        const std::string to_stdstring(void) const
 		{
             std::string s;
 
             for ( size_t b = 0; b < elems.size(); ++b)
-                append_utf8_codec(s, elems[b]);
+                append_utf8char(s, elems[b]);
 
             return s;
 		}
 
-        static void append_utf8_codec(std::string &s, unsigned int inp)
+        static void append_utf8char(std::string &s, unsigned int inp)
         {
             if( inp < 0xff)
             {
@@ -223,9 +225,9 @@ public:
             }
         }
 
-        static std::vector<unsigned int> from_chars(const char *p, bool endchar = false)
+        static utf8_string from_stdstring(const char *p, bool endchar = false)
         {
-            std::vector<unsigned int> elems_;
+            utf8_string elems_;
 
             if( p )
             {
@@ -254,7 +256,7 @@ public:
         }
 
 	private:
-        std::vector<unsigned int> elems;
+        utf8_string elems;
 };
 
 #endif

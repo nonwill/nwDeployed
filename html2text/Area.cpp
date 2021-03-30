@@ -93,7 +93,7 @@ Line::Line(const string &s):
 	length_(s.length()),
 	cells_(malloc_array(Cell, length_))
 {
-	const char *p = s.c_str();
+    const char *p = s.c_str();
 	Cell *q = cells_, *end = q + length_;
 	while (q != end) {
 		q->character = *p++;
@@ -145,7 +145,7 @@ Line::insert(const Line &l, size_type x)
 void
 Line::insert(const char *p, size_type x)
 {
-    std::vector<unsigned int> is = istr::from_chars(p);
+    istr::utf8_string is = istr::from_stdstring(p);
     enlarge(x + is.size());
 	Cell *q = cells_ + x;
     for (size_type i = 0; i < is.size(); ++q)
@@ -182,7 +182,7 @@ void
 Line::append(const char *p)
 {
 	size_type x = length_;
-    std::vector<unsigned int> is = istr::from_chars(p);
+    istr::utf8_string is = istr::from_stdstring(p);
     enlarge(x + is.size());
 	Cell *q = cells_ + x;
     for (size_type i = 0; i < is.size(); ++q) {
@@ -312,7 +312,7 @@ Area::operator>>=(size_type rs)
 const Area &
 Area::operator>>=(const char *prefix)
 {
-    std::vector<unsigned int> is = istr::from_chars(prefix);
+    istr::utf8_string is = istr::from_stdstring(prefix);
     size_type plen = is.size();
     if (plen > 0) {
 		resize(width_ + plen, height_);
@@ -446,7 +446,7 @@ Area::insert(char c, size_type x, size_type y)
 void
 Area::insert(const string &s, size_type x, size_type y)
 {
-    std::vector<unsigned int> is = istr::from_chars(s.c_str());
+    istr::utf8_string is = istr::from_stdstring(s.c_str());
     enlarge(x + is.size(), y + 1);
     Cell *cell = &cells_[y][x];
     for (string::size_type i = 0; i < is.size(); ++i) {
@@ -547,6 +547,7 @@ operator<<(h2t_iostream& os, const Area &a)
 			if (a == Cell::NONE) {
 				os << u;
 			} else {
+              if(os.useCellStyle()) {
                 if (os.useBackspaces()) {
 					/*
 					 * No LESS / terminal combination that I know of
@@ -574,6 +575,9 @@ operator<<(h2t_iostream& os, const Area &a)
 				} else {
                     os << (u == ' ' && (a & Cell::UNDERLINE) ? '_' : u);
 				}
+              }
+              else
+                os << u;
 			}
 		}
         os << endl_char;

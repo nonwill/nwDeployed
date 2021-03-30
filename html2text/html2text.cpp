@@ -300,7 +300,7 @@ h2t_iostream &h2t_iostream::operator<<(char inp)
     return *this;
 }
 
-/* See istr::append_utf8_codec */
+/* See istr::append_utf8char */
 h2t_iostream &h2t_iostream::operator<<(unsigned int inp)
 {
     unsigned char point = 0;

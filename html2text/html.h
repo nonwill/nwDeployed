@@ -99,7 +99,7 @@ struct Element {
 	 * then it cannot be line-formatted, and 0 will be returned. However, it
 	 * is still possible to try "format()" (see below).
 	 */
-	virtual Line *line_format() const
+    virtual Line *line_format(bool render) const
 	{
 		return 0;
 	}
@@ -110,7 +110,8 @@ struct Element {
 	 */
 	virtual Area *format(
 		Area::size_type /*width*/,
-		int         /*halign*/
+        int         /*halign*/,
+        bool render
 		) const
 	{
 		return 0;
@@ -133,7 +134,7 @@ struct PCData : public Element {
 	}
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
+    /*virtual*/ Line *line_format(bool render) const;
 };
 
 struct Font : public Element {
@@ -144,8 +145,8 @@ struct Font : public Element {
 	Font(int a, list<auto_ptr<Element> > *t = 0) : attribute(a), texts(t)
 	{}
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Line *line_format(bool render) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Phrase : public Element {
@@ -156,8 +157,8 @@ struct Phrase : public Element {
 	Phrase(int a, list<auto_ptr<Element> > *t = 0) : attribute(a), texts(t)
 	{}
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Line *line_format(bool render) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Font2 : public Element {
@@ -165,8 +166,8 @@ struct Font2 : public Element {
 	auto_ptr<list<auto_ptr<Element> > > elements;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Line *line_format(bool render) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Anchor : public Element {
@@ -175,8 +176,8 @@ struct Anchor : public Element {
 	mutable int                         refnum;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Line *line_format(bool render) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct BaseFont : public Element {
@@ -189,7 +190,7 @@ struct LineBreak : public Element {
 	auto_ptr<list<TagAttribute> > attributes; // CLEAR
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
+    /*virtual*/ Line *line_format(bool render) const;
 };
 
 struct Map : public Element {
@@ -204,7 +205,7 @@ struct Paragraph : public Element {
 	auto_ptr<list<auto_ptr<Element> > > texts;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Image : public Element {
@@ -213,7 +214,7 @@ struct Image : public Element {
 	// ISMAP
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
+    /*virtual*/ Line *line_format(bool render) const;
 };
 
 struct Applet : public Element {
@@ -223,8 +224,8 @@ struct Applet : public Element {
 	auto_ptr<list<auto_ptr<Element> > > content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Line *line_format(bool render) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Param : public Element {
@@ -238,7 +239,7 @@ struct Division : public Element {
 	auto_ptr<list<auto_ptr<Element> > > body_content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Center : public Element {
@@ -246,7 +247,7 @@ struct Center : public Element {
 	auto_ptr<list<auto_ptr<Element> > > body_content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct BlockQuote : public Element {
@@ -254,7 +255,7 @@ struct BlockQuote : public Element {
 	auto_ptr<list<auto_ptr<Element> > > content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Address : public Element {
@@ -262,7 +263,7 @@ struct Address : public Element {
 	auto_ptr<list<auto_ptr<Element> > > content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 /* ------------------------------------------------------------------------- */
@@ -272,7 +273,7 @@ struct Form : public Element {
 	auto_ptr<list<auto_ptr<Element> > > content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Input : public Element {
@@ -280,7 +281,7 @@ struct Input : public Element {
 	// MAXLENGTH SRC ALIGN
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
+    /*virtual*/ Line *line_format(bool render) const;
 };
 
 struct Option {
@@ -295,7 +296,7 @@ struct Select : public Element {
 	auto_ptr<list<auto_ptr<Option> > > content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
+    /*virtual*/ Line *line_format(bool render) const;
 };
 
 struct TextArea : public Element {
@@ -303,7 +304,7 @@ struct TextArea : public Element {
 	auto_ptr<PCData>              pcdata;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 /* ------------------------------------------------------------------------- */
@@ -313,7 +314,7 @@ struct Preformatted : public Element {
 	auto_ptr<list<auto_ptr<Element> > > texts;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Body {
@@ -324,7 +325,7 @@ struct Body {
 	virtual ~Body()
 	{}
 	virtual void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	virtual Area *format(Area::size_type w, int halign) const;
+    virtual Area *format(Area::size_type w, int halign, bool render) const;
 	void format(
 		Area::size_type indent_left,
 		Area::size_type w,
@@ -371,7 +372,7 @@ struct Document {
 	Body body;
 
 	void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	Area *format(Area::size_type w, int halign) const;
+    Area *format(Area::size_type w, int halign, bool render) const;
 	void format(
 		Area::size_type indent_left,
 		Area::size_type w,
@@ -386,7 +387,7 @@ struct Heading : public Element {
 	auto_ptr<list<auto_ptr<Element> > > content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct TableCell : public Body {
@@ -397,7 +398,7 @@ struct TableCell : public Body {
 struct TableHeadingCell : public TableCell {
 	/*virtual*/
 	void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct TableRow {
@@ -412,7 +413,7 @@ struct Caption {
 	auto_ptr<list<auto_ptr<Element> > > texts;
 
 	void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	Area *format(Area::size_type w, int halign) const;
+    Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Table : public Element {
@@ -422,21 +423,21 @@ struct Table : public Element {
 	auto_ptr<list<auto_ptr<TableRow> > > rows;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct NoBreak : public Element {
 	auto_ptr<list<auto_ptr<Element> > > content;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Line *line_format() const;
+    /*virtual*/ Line *line_format(bool render) const;
 };
 
 struct HorizontalRule : public Element {
 	auto_ptr<list<TagAttribute> > attributes; // ALIGN NOSHADE SIZE WIDTH
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 /* ------------------------------------------------------------------------- */
@@ -449,7 +450,8 @@ struct ListItem {
 		Area::size_type w,
 		int style,
 		Area::size_type indent,
-		int             *number_in_out = 0
+        bool render,
+        int             *number_in_out = 0
 		) const = 0;
 };
 
@@ -462,7 +464,8 @@ struct ListNormalItem : public ListItem {
 		Area::size_type w,
 		int style,
 		Area::size_type indent,
-		int             *number_in_out
+        bool render,
+        int             *number_in_out
 		) const;
 };
 
@@ -474,7 +477,8 @@ struct ListBlockItem : public ListItem {
 		Area::size_type w,
 		int style,
 		Area::size_type indent,
-		int             *
+        bool render,
+        int             *
 		) const;
 };
 
@@ -485,7 +489,7 @@ struct OrderedList : public Element {
 	// Item indentation depends on on the list nesting level.
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct UnorderedList : public Element {
@@ -494,7 +498,7 @@ struct UnorderedList : public Element {
 	int nesting;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Dir : public Element {
@@ -503,7 +507,7 @@ struct Dir : public Element {
 	int nesting;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct Menu : public Element {
@@ -512,7 +516,7 @@ struct Menu : public Element {
 	int nesting;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 /* ------------------------------------------------------------------------- */
@@ -521,21 +525,21 @@ struct DefinitionListItem {
 	virtual ~DefinitionListItem()
 	{}
 	virtual void unparse(h2t_iostream&, ostream_manipulator separator) const = 0;
-	virtual Area *format(Area::size_type w, int halign) const = 0;
+    virtual Area *format(Area::size_type w, int halign, bool render) const = 0;
 };
 
 struct TermName : public DefinitionListItem {
 	auto_ptr<list<auto_ptr<Element> > > flow;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct TermDefinition : public DefinitionListItem {
 	auto_ptr<list<auto_ptr<Element> > > flow;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 struct DefinitionList : public Element {
@@ -544,7 +548,7 @@ struct DefinitionList : public Element {
 	auto_ptr<list<auto_ptr<DefinitionListItem> > > items;
 
 	/*virtual*/ void unparse(h2t_iostream&, ostream_manipulator separator) const;
-	/*virtual*/ Area *format(Area::size_type w, int halign) const;
+    /*virtual*/ Area *format(Area::size_type w, int halign, bool render) const;
 };
 
 /* ------------------------------------------------------------------------- */

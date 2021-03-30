@@ -52,12 +52,13 @@
 
 /* ------------------------------------------------------------------------- */
 
-static Line *line_format(const list<auto_ptr<Element> > *elements);
-static Area *make_up(const Line &line, Area::size_type w, int halign);
+static Line *line_format(const list<auto_ptr<Element> > *elements, bool render);
+static Area *make_up(const Line &line, Area::size_type w, int halign, bool render);
 static Area *format(
 	const list<auto_ptr<Element> > *elements,
 	Area::size_type w,
-	int halign
+    int halign,
+    bool render
 	);
 static void format(
 	const list<auto_ptr<Element> > *elements,
@@ -120,20 +121,23 @@ struct ListFormat {
 
 /* ------------------------------------------------------------------------- */
 
+static const BlockFormat &document_bf(){
+    static const BlockFormat bfb("DOCUMENT");
+    return bfb;
+}
+
 // Attributes: VERSION (ignored)
 Area *
-Document::format(Area::size_type w, int halign) const
+Document::format(Area::size_type w, int halign, bool render) const
 {
-	static BlockFormat bf("DOCUMENT");
-
-	auto_ptr<Area> res(body.format(bf.effective_width(w), halign));
+    auto_ptr<Area> res(body.format(document_bf().effective_width(w), halign, render));
 	if (!res.get())
 		return 0;
 
-	*res >>= bf.indent_left;
+    *res >>= document_bf().indent_left;
 
-	res->prepend(bf.vspace_before);
-	res->append(bf.vspace_after);
+    res->prepend(document_bf().vspace_before);
+    res->append(document_bf().vspace_after);
 
 	return res.release();
 }
@@ -146,38 +150,39 @@ Document::format(
 	h2t_iostream     &os
 	) const
 {
-	static BlockFormat bf("DOCUMENT");
-
-	for (int i = 0; i < bf.vspace_before; ++i)
+    for (int i = 0; i < document_bf().vspace_before; ++i)
         os << endl_char;
 
 	body.format(
-			indent_left + bf.indent_left, bf.effective_width(w), halign,
+            indent_left + document_bf().indent_left, document_bf().effective_width(w), halign,
 			os
 			);
 
-	for (int j = 0; j < bf.vspace_after; ++j)
+    for (int j = 0; j < document_bf().vspace_after; ++j)
         os << endl_char;
 }
 
 /* ------------------------------------------------------------------------- */
 
+static const BlockFormat &body_bf(){
+    static const BlockFormat bfb("BODY");
+    return bfb;
+}
+
 // Attributes: BACKGROUND BGCOLOR TEXT LINK VLINK ALINK (ignored)
 Area *
-Body::format(Area::size_type w, int halign) const
+Body::format(Area::size_type w, int halign, bool render) const
 {
-	static BlockFormat bf("BODY");
-
 	auto_ptr<Area> res(
-		::format(content.get(), bf.effective_width(w), halign)
+        ::format(content.get(), body_bf().effective_width(w), halign, render)
 		);
 	if (!res.get())
 		return 0;
 
-	*res >>= bf.indent_left;
+    *res >>= body_bf().indent_left;
 
-	res->prepend(bf.vspace_before);
-	res->append(bf.vspace_after);
+    res->prepend(body_bf().vspace_before);
+    res->append(body_bf().vspace_after);
 
 	return res.release();
 }
@@ -190,18 +195,16 @@ Body::format(
 	h2t_iostream &os
 	) const
 {
-	static BlockFormat bf("BODY");
-
-	for (int i = 0; i < bf.vspace_before; ++i)
+    for (int i = 0; i < body_bf().vspace_before; ++i)
         os << endl_char;
 
 	::format(
 			content.get(),
-			indent_left + bf.indent_left, bf.effective_width(w), halign,
+            indent_left + body_bf().indent_left, body_bf().effective_width(w), halign,
 			os
 			);
 
-	for (int j = 0; j < bf.vspace_after; ++j)
+    for (int j = 0; j < body_bf().vspace_after; ++j)
         os << endl_char;
 }
 
@@ -215,7 +218,7 @@ enum {
 
 // Attributes: TYPE (processed) COMPACT (ignored)
 Area *
-OrderedList::format(Area::size_type w, int /*halign*/) const
+OrderedList::format(Area::size_type w, int /*halign*/, bool render) const
 {
 	if (!items.get())
 		return 0;
@@ -253,7 +256,7 @@ OrderedList::format(Area::size_type w, int /*halign*/) const
 
 // Attributes: TYPE (processed) COMPACT (ignored)
 Area *
-UnorderedList::format(Area::size_type w, int /*halign*/) const
+UnorderedList::format(Area::size_type w, int /*halign*/, bool render) const
 {
 	if (!items.get())
 		return 0;
@@ -265,7 +268,7 @@ UnorderedList::format(Area::size_type w, int /*halign*/) const
 	const list<auto_ptr<ListItem> > &il(*items);
 	list<auto_ptr<ListItem> >::const_iterator i;
 	for (i = il.begin(); i != il.end(); ++i) {
-		auto_ptr<Area> a((*i)->format(w, type, lf.get_indent(nesting)));
+        auto_ptr<Area> a((*i)->format(w, type, lf.get_indent(nesting), render));
 		if (a.get()) {
 			if (res.get()) {
 				res->append(lf.vspace_between);
@@ -284,7 +287,7 @@ UnorderedList::format(Area::size_type w, int /*halign*/) const
 
 // Attributes: TYPE (extension, processed) COMPACT (ignored)
 Area *
-Dir::format(Area::size_type w, int /*halign*/) const
+Dir::format(Area::size_type w, int /*halign*/, bool render) const
 {
 	if (!items.get())
 		return 0;
@@ -296,7 +299,7 @@ Dir::format(Area::size_type w, int /*halign*/) const
 	const list<auto_ptr<ListItem> > &il(*items);
 	list<auto_ptr<ListItem> >::const_iterator i;
 	for (i = il.begin(); i != il.end(); ++i) {
-		auto_ptr<Area> a((*i)->format(w, type, lf.get_indent(nesting)));
+        auto_ptr<Area> a((*i)->format(w, type, lf.get_indent(nesting), render));
 		if (a.get()) {
 			if (res.get()) {
 				res->append(lf.vspace_between);
@@ -315,7 +318,7 @@ Dir::format(Area::size_type w, int /*halign*/) const
 
 // Attributes: TYPE (extension, processed) COMPACT (ignored)
 Area *
-Menu::format(Area::size_type w, int /*halign*/) const
+Menu::format(Area::size_type w, int /*halign*/, bool render) const
 {
 	if (!items.get())
 		return 0;
@@ -327,7 +330,7 @@ Menu::format(Area::size_type w, int /*halign*/) const
 	const list<auto_ptr<ListItem> > &il(*items);
 	list<auto_ptr<ListItem> >::const_iterator i;
 	for (i = il.begin(); i != il.end(); ++i) {
-		auto_ptr<Area> a((*i)->format(w, type, lf.get_indent(nesting)));
+        auto_ptr<Area> a((*i)->format(w, type, lf.get_indent(nesting), render));
 		if (a.get()) {
 			if (res.get()) {
 				res->append(lf.vspace_between);
@@ -349,8 +352,9 @@ Area *
 ListNormalItem::format(
 	Area::size_type w,
 	int type,
-	Area::size_type indent,
-	int             *number_in_out/*= 0*/
+    Area::size_type indent,
+    bool render,
+    int             *number_in_out/*= 0*/
 	) const
 {
 	int number = 0;
@@ -375,6 +379,7 @@ ListNormalItem::format(
 		Formatting::getString("LI.custom3_bullet", "~");
 
 	string bullet;
+    if(render)
 	switch (type) {
 	case NO_BULLET:                          break;
 	case DISC:      bullet = disc_bullet;
@@ -442,15 +447,17 @@ ListNormalItem::format(
 	if (bullet.length() >= indent)
 		indent = bullet.length() + 1;
 
-	auto_ptr<Area> res(::format(flow.get(), w - indent, Area::LEFT));
+    auto_ptr<Area> res(::format(flow.get(), w - indent, Area::LEFT, render));
 	// KLUDGE: Some people write "<UL> <B><LI>Bla</B>Bla </UL>", which actually
 	// defines a bold and empty list item before "Bla Bla". This is very
 	// difficult to handle... so... let's just ignore empty list items.
 	if (!res.get())
 		return 0;
 
+    if(render) {
 	*res >>= indent;
 	res->insert(bullet, indent - bullet.length() - 1, 0);
+    }
 	if (number_in_out)
         ++*number_in_out;
 	return res.release();
@@ -460,14 +467,15 @@ Area *
 ListBlockItem::format(
 	Area::size_type w,
 	int /*type*/,
-	Area::size_type indent,
-	int             */*number_in_out*/ /*= 0*/
+    Area::size_type indent,
+    bool render,
+    int             */*number_in_out*/ /*= 0*/
 	) const
 {
 	if (!block.get())
 		return 0;
 
-	auto_ptr<Area> res(block->format(w - indent, Area::LEFT));
+    auto_ptr<Area> res(block->format(w - indent, Area::LEFT, render));
 	if (!res.get())
 		return 0;
 
@@ -482,7 +490,7 @@ ListBlockItem::format(
 
 // Attributes: COMPACT (ignored)
 Area *
-DefinitionList::format(Area::size_type w, int halign) const
+DefinitionList::format(Area::size_type w, int halign, bool render) const
 {
 	static struct DefinitionListFormat {
 		const Area::size_type vspace_before;
@@ -499,7 +507,7 @@ DefinitionList::format(Area::size_type w, int halign) const
 	auto_ptr<Area> res;
 
 	if (preamble.get()) {
-		res.reset(::format(preamble.get(), w, halign));
+        res.reset(::format(preamble.get(), w, halign, render));
 		if (res.get())
 			res->prepend(dlf.vspace_before);
 	}
@@ -508,7 +516,7 @@ DefinitionList::format(Area::size_type w, int halign) const
 		const list<auto_ptr<DefinitionListItem> > &il(*items);
 		list<auto_ptr<DefinitionListItem> >::const_iterator i;
 		for (i = il.begin(); i != il.end(); ++i) {
-			auto_ptr<Area> a((*i)->format(w, halign));
+            auto_ptr<Area> a((*i)->format(w, halign, render));
 			if (!a.get())
 				continue;
 			if (res.get()) {
@@ -527,11 +535,11 @@ DefinitionList::format(Area::size_type w, int halign) const
 }
 
 Area *
-TermName::format(Area::size_type w, int halign) const
+TermName::format(Area::size_type w, int halign, bool render) const
 {
 	static BlockFormat bf("DT", 0, 0, 2);
 
-	auto_ptr<Area> res(::format(flow.get(), bf.effective_width(w), halign));
+    auto_ptr<Area> res(::format(flow.get(), bf.effective_width(w), halign, render));
 	if (!res.get())
 		return 0;
 
@@ -543,11 +551,11 @@ TermName::format(Area::size_type w, int halign) const
 }
 
 Area *
-TermDefinition::format(Area::size_type w, int halign) const
+TermDefinition::format(Area::size_type w, int halign, bool render) const
 {
 	static BlockFormat bf("DD", 0, 0, 6);
 
-	auto_ptr<Area> res(::format(flow.get(), bf.effective_width(w), halign));
+    auto_ptr<Area> res(::format(flow.get(), bf.effective_width(w), halign, render));
 	if (!res.get())
 		return 0;
 
@@ -562,7 +570,7 @@ TermDefinition::format(Area::size_type w, int halign) const
 
 // Attributes: ALIGN NOSHADE SIZE WIDTH (ignored)
 Area *
-HorizontalRule::format(Area::size_type w, int /*halign*/) const
+HorizontalRule::format(Area::size_type w, int /*halign*/, bool render) const
 {
 	static const char *marker = Formatting::getString("HR.marker", "=");
 	static BlockFormat bf("HR");
@@ -580,7 +588,7 @@ HorizontalRule::format(Area::size_type w, int /*halign*/) const
 
 // Attributes: ALIGN (processed)
 Area *
-Heading::format(Area::size_type w, int halign) const
+Heading::format(Area::size_type w, int halign, bool render) const
 {
 	halign = get_attribute(
 			attributes.get(), "ALIGN", halign,
@@ -602,8 +610,11 @@ Heading::format(Area::size_type w, int halign) const
 	}
 
 	auto_ptr<Area> res;
-	auto_ptr<Line> line(::line_format(content.get()));
+    auto_ptr<Line> line(::line_format(content.get(), render));
 	if (line.get()) {
+        if (!render) {
+            return new Area(*line.get());
+        }
 		static const char *prefixes[7];
 		if (!prefixes[1]) {
 			prefixes[1] = Formatting::getString("H1.prefix", "****** ");
@@ -626,14 +637,14 @@ Heading::format(Area::size_type w, int halign) const
 		}
 		l->append(suffixes[level]);
 		l->add_attribute(cell_attributes[level]);
-		res.reset(make_up(*l, w, halign));
+        res.reset(make_up(*l, w, halign, render));
 		if (!res.get())
 			return 0;
 	} else {
 		/*
 		 * Hm. Heading is not line-formattable...
 		 */
-		res.reset(::format(content.get(), w, halign));
+        res.reset(::format(content.get(), w, halign, render));
 		if (!res.get())
 			return 0;
 		res->add_attribute(cell_attributes[level]);
@@ -668,7 +679,7 @@ Heading::format(Area::size_type w, int halign) const
 
 // Attributes: WIDTH (processed)
 Area *
-Preformatted::format(Area::size_type w, int halign) const
+Preformatted::format(Area::size_type w, int halign, bool render) const
 {
 	w = get_attribute(attributes.get(), "WIDTH", w);
 
@@ -679,16 +690,16 @@ Preformatted::format(Area::size_type w, int halign) const
 	 */
 	auto_ptr<Area> res;
 
-	auto_ptr<Line> line(::line_format(texts.get()));
+    auto_ptr<Line> line(::line_format(texts.get(), render));
 	if (line.get()) {
-		res.reset(make_up(*line, bf.effective_width(w), halign));
+        res.reset(make_up(*line, bf.effective_width(w), halign, render));
 	}
 
 	/*
 	 * Failed; block-format it.
 	 */
 	if (!res.get()) {
-		res.reset(::format(texts.get(), bf.effective_width(w), halign));
+        res.reset(::format(texts.get(), bf.effective_width(w), halign, render));
 		if (!res.get())
 			return 0;
 	}
@@ -702,7 +713,7 @@ Preformatted::format(Area::size_type w, int halign) const
 
 // Attributes: ALIGN (processed)
 Area *
-Paragraph::format(Area::size_type w, int halign) const
+Paragraph::format(Area::size_type w, int halign, bool render) const
 {
 	if (!texts.get())
 		return 0;
@@ -716,7 +727,7 @@ Paragraph::format(Area::size_type w, int halign) const
 			);
 
 	static BlockFormat bf("P");
-	Area *res = ::format(texts.get(), bf.effective_width(w), halign);
+    Area *res = ::format(texts.get(), bf.effective_width(w), halign, render);
 	if (!res)
 		return 0;
 
@@ -730,8 +741,10 @@ Paragraph::format(Area::size_type w, int halign) const
 // Attributes: SRC ALT (processed) ALIGN HEIGHT WIDTH BORDER HSPACE VSPACE
 //             USEMAP ISMAP (ignored)
 Line *
-Image::line_format() const
+Image::line_format(bool render) const
 {
+    if(!render)
+        return 0;
 	// new image handling - Johannes Geiger
 	static const char *repl_all =
 		Formatting::getString("IMG.replace.all");
@@ -756,7 +769,7 @@ Image::line_format() const
 				alt <<= alt_suffix;
 				return new Line(alt);
 			} else {
-				return NULL;
+                return 0;
 			}
 		}
 	}
@@ -777,7 +790,7 @@ Image::line_format() const
 // Attributes: CODEBASE CODE (ignored) ALT (processed) NAME WIDTH HEIGHT
 //             (ignored) ALIGN (processed) HSPACE VSPACE (ignored)
 Area *
-Applet::format(Area::size_type w, int /*halign*/) const
+Applet::format(Area::size_type w, int /*halign*/, bool render) const
 {
 	if (content.get()) {
 		int halign = get_attribute(
@@ -787,7 +800,7 @@ Applet::format(Area::size_type w, int /*halign*/) const
 				"RIGHT", Area::RIGHT,
 				NULL
 				);
-		Area *a = ::format(content.get(), w, halign);
+        Area *a = ::format(content.get(), w, halign, render);
 		if (a)
 			return a;
 	}
@@ -808,10 +821,10 @@ Applet::format(Area::size_type w, int /*halign*/) const
 }
 
 Line *
-Applet::line_format() const
+Applet::line_format(bool render) const
 {
 	if (content.get()) {
-		Line *l = ::line_format(content.get());
+        Line *l = ::line_format(content.get(), render);
 		if (l)
 			return l;
 	}
@@ -834,7 +847,7 @@ Applet::line_format() const
 // Attributes: NAME HREF REL REV TITLE (ignored)
 // Attributes: ALIGN (processed)
 Area *
-Division::format(Area::size_type w, int halign) const
+Division::format(Area::size_type w, int halign, bool render) const
 {
 	return ::format(body_content.get(), w, get_attribute(
 			attributes.get(), "ALIGN", halign,
@@ -842,24 +855,24 @@ Division::format(Area::size_type w, int halign) const
 			"CENTER", Area::CENTER,
 			"RIGHT", Area::RIGHT,
 			NULL
-			));
+            ), render);
 }
 
 Area *
-Center::format(Area::size_type w, int /*halign*/) const
+Center::format(Area::size_type w, int /*halign*/, bool render) const
 {
-	return ::format(body_content.get(), w, Area::CENTER);
+    return ::format(body_content.get(), w, Area::CENTER, render);
 }
 
 Area *
-BlockQuote::format(Area::size_type w, int halign) const
+BlockQuote::format(Area::size_type w, int halign, bool render) const
 {
 	static BlockFormat bf("BLOCKQUOTE", 0, 0, 5, 5);
 
 	auto_ptr<Area> res(::format(
 			content.get(),
-			bf.effective_width(w), halign
-			));
+            bf.effective_width(w), halign, render
+            ));
 	if (!res.get())
 		return 0;
 
@@ -873,14 +886,14 @@ BlockQuote::format(Area::size_type w, int halign) const
 }
 
 Area *
-Address::format(Area::size_type w, int halign) const
+Address::format(Area::size_type w, int halign, bool render) const
 {
 	static BlockFormat bf("ADDRESS", 0, 0, 5, 5);
 
 	auto_ptr<Area> res(::format(
 			content.get(),
-			bf.effective_width(w), halign
-			));
+            bf.effective_width(w), halign, render
+            ));
 	if (!res.get())
 		return 0;
 
@@ -895,17 +908,20 @@ Address::format(Area::size_type w, int halign) const
 
 // Attributes: ACTION METHOD ENCTYPE (ignored)
 Area *
-Form::format(Area::size_type w, int halign) const
+Form::format(Area::size_type w, int halign, bool render) const
 {
-	return content.get() ? ::format(content.get(), w, halign) : 0;
+    return content.get() ? ::format(content.get(), w, halign, render) : 0;
 }
 
 // Attributes: TYPE (processed) NAME (ignored) VALUE CHECKED SIZE (processed)
 //             MAXLENGTH (ignored) SRC (processed) ALIGN (ignored)
 Line *
-Input::line_format() const
+Input::line_format(bool render) const
 {
-    string type = get_attribute(attributes.get(), "TYPE", "TEXT").c_str();
+    if(!render)
+        return 0;
+
+    string type = get_attribute(attributes.get(), "TYPE", "TEXT").to_stdstring();
     istr name = get_attribute(attributes.get(), "NAME", "");
     istr value = get_attribute(attributes.get(), "VALUE", "");
 	bool checked = get_attribute(attributes.get(), "CHECKED", "0") != "0";
@@ -977,14 +993,14 @@ Input::line_format() const
 
 // Attributes: NAME SIZE (ignored) MULTIPLE (processed)
 Line *
-Select::line_format() const
+Select::line_format(bool render) const
 {
 	if (!content.get() || content->empty())
-		return new Line("[Empty selection]");
+        return render ? (new Line("[Empty selection]")) : 0;
 
 	bool multiple = get_attribute(attributes.get(), "MULTIPLE", "0") != "0";
 
-	auto_ptr<Line> res(new Line(multiple ? "[One or more of " : "[One of: "));
+    auto_ptr<Line> res(new Line(render ? (multiple ? "[One or more of " : "[One of: ") : "["));
 	const list<auto_ptr<Option> > &c(*content);
 	list<auto_ptr<Option> >::const_iterator i;
 	for (i = c.begin(); i != c.end(); ++i) {
@@ -992,7 +1008,7 @@ Select::line_format() const
 			continue;
 		if (i != c.begin())
 			*res += '/';
-		auto_ptr<Line> l((*i)->pcdata->line_format());
+        auto_ptr<Line> l((*i)->pcdata->line_format(render));
 		*res += *l;
 	}
 	*res += ']';
@@ -1002,16 +1018,16 @@ Select::line_format() const
 
 // Attributes: NAME ROWS COLS
 Area *
-TextArea::format(Area::size_type w, int halign) const
+TextArea::format(Area::size_type w, int halign, bool render) const
 {
-	auto_ptr<Line> line(pcdata->line_format());
-	return line.get() ? make_up(*line, w, halign) : 0;
+    auto_ptr<Line> line(pcdata->line_format(render));
+    return line.get() ? make_up(*line, w, halign, render) : 0;
 }
 
 /* ------------------------------------------------------------------------- */
 
 Line *
-PCData::line_format() const
+PCData::line_format(bool render) const
 {
 	return new Line(text);
 }
@@ -1057,9 +1073,9 @@ get_font_cell_attributes(int attribute)
 }
 
 Line *
-Font::line_format() const
+Font::line_format(bool render) const
 {
-	auto_ptr<Line> res(::line_format(texts.get()));
+    auto_ptr<Line> res(::line_format(texts.get(), render));
 	if (!res.get())
 		return 0;
 
@@ -1072,9 +1088,9 @@ Font::line_format() const
 
 // Item:                        Default cell attribute:
 Area *
-Font::format(Area::size_type w, int halign) const
+Font::format(Area::size_type w, int halign, bool render) const
 {
-	auto_ptr<Area> res(::format(texts.get(), w, halign));
+    auto_ptr<Area> res(::format(texts.get(), w, halign, render));
 	if (!res.get())
 		return 0;
 
@@ -1120,9 +1136,9 @@ get_phrase_cell_attributes(int attribute)
 }
 
 Line *
-Phrase::line_format() const
+Phrase::line_format(bool render) const
 {
-	auto_ptr<Line> res(::line_format(texts.get()));
+    auto_ptr<Line> res(::line_format(texts.get(), render));
 	if (!res.get())
 		return 0;
 
@@ -1136,9 +1152,9 @@ Phrase::line_format() const
 // EM STRONG                  => BOLD
 // DFN CODE SAMP KBD VAR CITE => (nothing)
 Area *
-Phrase::format(Area::size_type w, int halign) const
+Phrase::format(Area::size_type w, int halign, bool render) const
 {
-	auto_ptr<Area> res(::format(texts.get(), w, halign));
+    auto_ptr<Area> res(::format(texts.get(), w, halign, render));
 	if (!res.get())
 		return 0;
 
@@ -1151,16 +1167,16 @@ Phrase::format(Area::size_type w, int halign) const
 
 // Attributes: SIZE COLOR (ignored)
 Area *
-Font2::format(Area::size_type w, int halign) const
+Font2::format(Area::size_type w, int halign, bool render) const
 {
-	return ::format(elements.get(), w, halign);
+    return ::format(elements.get(), w, halign, render);
 }
 
 // Attributes: SIZE COLOR (ignored)
 Line *
-Font2::line_format() const
+Font2::line_format(bool render) const
 {
-	return ::line_format(elements.get());
+    return ::line_format(elements.get(), render);
 }
 
 static char
@@ -1181,9 +1197,9 @@ get_link_cell_attributes(const istr &href)
 
 // Attributes: NAME HREF REL REV TITLE (ignored)
 Line *
-Anchor::line_format() const
+Anchor::line_format(bool render) const
 {
-	auto_ptr<Line> res(::line_format(texts.get()));
+    auto_ptr<Line> res(::line_format(texts.get(), render));
 	if (!res.get())
 		return 0;
 
@@ -1200,9 +1216,9 @@ Anchor::line_format() const
 }
 
 Area *
-Anchor::format(Area::size_type w, int halign) const
+Anchor::format(Area::size_type w, int halign, bool render) const
 {
-	auto_ptr<Area> res(::format(texts.get(), w, halign));
+    auto_ptr<Area> res(::format(texts.get(), w, halign, render));
 	if (!res.get())
 		return 0;
 
@@ -1221,15 +1237,15 @@ Anchor::format(Area::size_type w, int halign) const
 
 // Attributes: CLEAR (ignored)
 Line *
-LineBreak::line_format() const
+LineBreak::line_format(bool render) const
 {
-	return new Line("\n");
+    return new Line("\n");
 }
 
 Area *
-TableHeadingCell::format(Area::size_type w, int halign) const
+TableHeadingCell::format(Area::size_type w, int halign, bool render) const
 {
-	Area *a = TableCell::format(w, halign);
+    Area *a = TableCell::format(w, halign, render);
 
 	if (a)
 		a->add_attribute(Cell::BOLD);
@@ -1237,18 +1253,18 @@ TableHeadingCell::format(Area::size_type w, int halign) const
 }
 
 Area *
-Caption::format(Area::size_type w, int halign) const
+Caption::format(Area::size_type w, int halign, bool render) const
 {
-	auto_ptr<Line> l(::line_format(texts.get()));
+    auto_ptr<Line> l(::line_format(texts.get(), render));
 
-	return l.get() ? make_up(*l, w, halign) : 0;
+    return l.get() ? make_up(*l, w, halign, render) : 0;
 }
 
 // Attributes: (none)
 Line *
-NoBreak::line_format() const
+NoBreak::line_format(bool render) const
 {
-	Line *l(::line_format(content.get()));
+    Line *l(::line_format(content.get(), render));
 	if (!l)
 		return 0;
 
@@ -1268,7 +1284,7 @@ NoBreak::line_format() const
  * Make up "line" into an Area. Attempt to return an Area no wider than "w".
  */
 static Area *
-make_up(const Line &line, Area::size_type w, int halign)
+make_up(const Line &line, Area::size_type w, int halign, bool render)
 {
 //{
 //  cout << "make_up(\"";
@@ -1278,9 +1294,13 @@ make_up(const Line &line, Area::size_type w, int halign)
 //  }
 //  cout << "\")" << endl_char;
 //}
-
 	if (line.empty())
 		return 0;
+
+    if(w < 1 || !render)
+    {
+        return new Area(line);
+    }
 
 	auto_ptr<Area> res(new Area);
 
@@ -1381,14 +1401,14 @@ make_up(const Line &line, Area::size_type w, int halign)
  * probably work.
  */
 static Line *
-line_format(const list<auto_ptr<Element> > *elements)
+line_format(const list<auto_ptr<Element> > *elements, bool render)
 {
 	auto_ptr<Line> res;
 
 	if (elements) {
 		list<auto_ptr<Element> >::const_iterator i;
 		for (i = elements->begin(); i != elements->end(); ++i) {
-			auto_ptr<Line> l((*i)->line_format());
+            auto_ptr<Line> l((*i)->line_format(render));
 			if (!l.get())
 				return 0;
 			if (res.get()) {
@@ -1422,7 +1442,8 @@ static Area *
 format(
 	const list<auto_ptr<Element> > *elements,
 	Area::size_type w,
-	int halign
+    int halign,
+    bool render
 	)
 {
 	if (!elements)
@@ -1436,7 +1457,7 @@ format(
 		if (!(*i).get())
 			continue;
 
-		auto_ptr<Line> l((*i)->line_format());
+        auto_ptr<Line> l((*i)->line_format(render));
 		if (l.get()) {
 			if (line.get()) {
 				*line += *l;
@@ -1446,10 +1467,10 @@ format(
 			continue;
 		}
 
-		auto_ptr<Area> a((*i)->format(w, halign));
+        auto_ptr<Area> a((*i)->format(w, halign, render));
 		if (a.get()) {
 			if (line.get()) {
-				auto_ptr<Area> a2(make_up(*line, w, halign));
+                auto_ptr<Area> a2(make_up(*line, w, halign, render));
 				if (a2.get()) {
 					if (res.get()) {
 						*res += *a2;
@@ -1468,7 +1489,7 @@ format(
 	}
 
 	if (line.get()) {
-		auto_ptr<Area> a2(make_up(*line, w, halign));
+        auto_ptr<Area> a2(make_up(*line, w, halign, render));
 		if (a2.get()) {
 			if (res.get()) {
 				*res += *a2;
@@ -1499,12 +1520,14 @@ format(
 
 	auto_ptr<Line> line;
 
+    bool render = os.useCellStyle();
+
 	list<auto_ptr<Element> >::const_iterator i;
 	for (i = elements->begin(); i != elements->end(); ++i) {
 		if (!(*i).get())
 			continue;
 
-		auto_ptr<Line> l((*i)->line_format());
+        auto_ptr<Line> l((*i)->line_format(render));
 		if (l.get()) {
 			if (line.get()) {
 				*line += *l;
@@ -1514,10 +1537,10 @@ format(
 			continue;
 		}
 
-		auto_ptr<Area> a((*i)->format(w, halign));
+        auto_ptr<Area> a((*i)->format(w, halign, render));
 		if (a.get()) {
 			if (line.get()) {
-				auto_ptr<Area> a2(make_up(*line, w, halign));
+                auto_ptr<Area> a2(make_up(*line, w, halign, render));
 				if (a2.get()) {
 					*a2 >>= indent_left;
                     os << *a2 << flush_char;
@@ -1530,7 +1553,7 @@ format(
 	}
 
 	if (line.get()) {
-		auto_ptr<Area> a2(make_up(*line, w, halign));
+        auto_ptr<Area> a2(make_up(*line, w, halign, render));
 		if (a2.get()) {
 			*a2 >>= indent_left;
             os << *a2 << flush_char;
@@ -1693,6 +1716,8 @@ BlockFormat::BlockFormat(
 Area::size_type
 BlockFormat::effective_width(Area::size_type w) const
 {
+    if(w < 1)
+        return w;
 	/*
 	 * No problem if "w" is wide enough...
 	 */

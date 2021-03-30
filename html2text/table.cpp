@@ -108,7 +108,8 @@ create_lcs(
 	const Area::size_type column_spacing,
 	list<auto_ptr<LogicalCell> > *const lcs_return,
 	int                          *const number_of_rows_return,
-	int                          *const number_of_columns_return
+    int                          *const number_of_columns_return,
+    bool render
 	)
 {
 	*number_of_rows_return = 0;
@@ -224,7 +225,8 @@ create_lcs(
 						- left_border_width
 						- right_border_width
 						- (*number_of_columns_return - 1) * (column_spacing + 0),
-						Area::LEFT // Yields better results than "p->halign"!
+                        Area::LEFT, // Yields better results than "p->halign"!
+                        render
 						));
 				p->width = tmp.get() ? tmp->width() : 0;
 			}
@@ -303,7 +305,8 @@ narrow_table(
 	const int number_of_columns,
 	const Area::size_type column_spacing,
 	Area::size_type              *const column_widths_in_out,
-	Area::size_type              *const table_width_in_out
+    Area::size_type              *const table_width_in_out,
+    bool render
 	)
 {
 	/*
@@ -368,7 +371,8 @@ narrow_table(
 		if (w >= left_of_column + old_column_width) {
 			auto_ptr<Area> tmp(lc.cell->format(
 					left_of_column + old_column_width - 1,
-					Area::LEFT // Yields better results than "lc.halign"!
+                    Area::LEFT, // Yields better results than "lc.halign"!
+                    render
 					));
 			w = tmp->width();
 			if (w >= left_of_column + old_column_width)
@@ -410,7 +414,8 @@ compute_row_heights(
 	const Area::size_type row_spacing,
 	Area::size_type              *const row_heights_return,
 	const int column_spacing,
-	const Area::size_type        *column_widths
+    const Area::size_type        *column_widths,
+    bool render
 	)
 {
 	{
@@ -424,7 +429,7 @@ compute_row_heights(
 		Area::size_type w = (lc.w - 1) * column_spacing;
 		for (int x = lc.x; x < lc.x + lc.w; ++x)
 			w += column_widths[x];
-		lc.area.reset(lc.cell->format(w, lc.halign));
+        lc.area.reset(lc.cell->format(w, lc.halign, render));
 		if (!lc.area.get())
 			continue;
 //    cerr << "lc.halign=" << lc.halign << ", w=" << w << endl_char;
@@ -450,7 +455,7 @@ compute_row_heights(
 // <TD> Attributes:    NOWRAP (ignored) ROWSPAN COLSPAN ALIGN VALIGN
 //                     (processed) WIDTH HEIGHT (ignored)
 Area *
-Table::format(Area::size_type w, int halign) const
+Table::format(Area::size_type w, int halign, bool render) const
 {
 	int ahalign = get_attribute(
 			attributes.get(), "ALIGN", -1,
@@ -502,7 +507,8 @@ Table::format(Area::size_type w, int halign) const
 			column_spacing,
 			&lcs,
 			&number_of_rows,
-			&number_of_columns
+            &number_of_columns,
+            render
 			);
 
 	/*
@@ -539,7 +545,8 @@ Table::format(Area::size_type w, int halign) const
 				number_of_columns,
 				column_spacing,
 				column_widths.get(), /* in/out */
-				&table_width /* in/out */
+                &table_width, /* in/out */
+                render
 				))
 			break;
 	}
@@ -558,7 +565,8 @@ Table::format(Area::size_type w, int halign) const
 			&lcs,
 			number_of_rows,
 			row_spacing, row_heights.get(),
-			column_spacing, column_widths.get()
+            column_spacing, column_widths.get(),
+            render
 			);
 
 	Area::size_type table_height = (
@@ -593,7 +601,7 @@ Table::format(Area::size_type w, int halign) const
 	 * Draw the caption, if any.
 	 */
 	if (caption.get()) {
-		auto_ptr<Area> cap(caption->format(table_width, Area::CENTER));
+        auto_ptr<Area> cap(caption->format(table_width, Area::CENTER, render));
 		if (cap.get() && cap->height() >= 1) {
 			cap->add_attribute(Cell::BOLD);
 			res->insert(*cap, x0, 0);

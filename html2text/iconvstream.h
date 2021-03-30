@@ -57,6 +57,7 @@ class iconvstream : public h2t_iostream {
         }
         const char *open_error_msg() const;
 
+        bool useCellStyle() { return true; }
         bool useBackspaces() { return using_backspaces; }
         int getc();
         size_t write(const char *inp, size_t len);

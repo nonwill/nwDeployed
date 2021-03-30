@@ -364,12 +364,12 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 				if (!isalpha(c))
 					return HTMLParser_token::SCAN_ERROR;
 				string tag_name(1, '!');
-                istr::append_utf8_codec(tag_name, c);
+                istr::append_utf8char(tag_name, c);
 				for (;;) {
 					c = get_char();
 					if (!isalnum(c) && c != '-')
 						break;
-                    istr::append_utf8_codec(tag_name, c);
+                    istr::append_utf8char(tag_name, c);
 				}
 				if (cmp_nocase(tag_name, "!DOCTYPE") != 0)
 					return HTMLParser_token::SCAN_ERROR;
@@ -392,7 +392,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 				}
 				if (!isalpha(c) && c != '_')
 					return HTMLParser_token::SCAN_ERROR;
-                istr::append_utf8_codec(tag_name, c);
+                istr::append_utf8char(tag_name, c);
 				for (;;) {
 					c = get_char();
 					/* ID and NAME tokens must begin with a letter
@@ -403,7 +403,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 					if (!isalnum(c) &&
 							c != '-' && c != '_' && c != ':' && c != '.')
 						break;
-                    istr::append_utf8_codec(tag_name, c);
+                    istr::append_utf8char(tag_name, c);
 				}
 
                 while (isspace_char(c))
@@ -421,14 +421,14 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 
 						/* Scan attribute name, see the ID and NAME rule
 						 * mentioned above */
-                        istr::append_utf8_codec(attribute.first, c);
+                        istr::append_utf8char(attribute.first, c);
 						for (;;) {
 							c = get_char();
 							if (!isalnum(c) &&
 									c != '-' && c != '_' &&
 									c != ':' && c != '.')
 								break;
-                            istr::append_utf8_codec(attribute.first, c);
+                            istr::append_utf8char(attribute.first, c);
 						}
 
                         while (isspace_char(c))
@@ -515,7 +515,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 						list<TagAttribute>::const_iterator j;
 						for (j = ta.begin(); j != ta.end(); ++j) {
 							std::cerr << " " << (*j).first <<
-								"=\"" << (*j).second.c_str() << "\"";
+                                "=\"" << (*j).second.to_stdstring() << "\"";
 						}
 					}
 					std::cerr << ">\"" << std::endl;
@@ -601,7 +601,7 @@ HTMLControl::yylex2(html2text::HTMLParser::semantic_type *value_return,
 			}
 
 			if (debug_scanner)
-				std::cerr << "Scanned PCDATA \"" << s->c_str() << "\""
+                std::cerr << "Scanned PCDATA \"" << s->to_stdstring() << "\""
 					<< std::endl;
 
 			return HTMLParser_token::PCDATA;
@@ -635,7 +635,7 @@ HTMLControl::read_cdata(const char *terminal, string *value_return)
 		} else {
 			state = 0;
         }
-        istr::append_utf8_codec(s, c);
+        istr::append_utf8char(s, c);
 	}
 }
 

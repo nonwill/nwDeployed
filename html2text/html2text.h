@@ -23,8 +23,13 @@ class HTML2TEXT_API h2t_iostream {
 public:
     virtual ~h2t_iostream() {}
 
+    /* Render css style, exp. by underline replace ' ' with '_', default not.
+     * default true by html2textexec.
+    */
+    virtual bool useCellStyle() { return false; }
     /* Render boldface and underlining (using backspaces) or not,
      * default not. -nobs by html2text exec to identify this.
+     * if useCellStyle return false, this will not be called(really falsed).
     */
     virtual bool useBackspaces() { return false; }
 
