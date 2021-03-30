@@ -1,5 +1,11 @@
 #include "html2text.h"
 
+#if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
+#include <QRegularExpression>
+#else
+#include <QRegExp>
+#endif
+
 #include <QTextDocumentFragment>
 #include <QFile>
 #include <QByteArray>
@@ -37,7 +43,7 @@ public:
     {
         std::cout << "Do initial jobs, semPost after 10s ...... " << std::endl;
         MyThread::sleep(2);
-        sem.release(88);
+        sem.release(4);
     }
 };
 
@@ -192,12 +198,22 @@ public:
         QFile qfile(filename);
         if( qfile.open(QIODevice::ReadOnly) )
         {
-            QString instring = QString::fromUtf8(qfile.readAll());
+            QByteArray inbytes = qfile.readAll();
             qfile.close();
 
             sem.acquire();
             QTime begin = QTime::currentTime();
-            QString outstring = QTextDocumentFragment::fromHtml(instring).toPlainText();
+            QString instring = QString::fromUtf8(inbytes);
+#if QT_VERSION >= QT_VERSION_CHECK( 5, 0, 0 )
+            instring.replace( QRegularExpression( QStringLiteral("<(?:\\s*/?(?:div|h[1-6r]|q|p(?![alr])|br|li(?![ns])|td|blockquote|[uo]l|pre|d[dl]|nav|address))[^>]{0,}>"),
+                                             QRegularExpression::CaseInsensitiveOption ), QString(' ') );
+            instring.remove( QRegularExpression( QStringLiteral("<[^>]*>") ) );
+#else
+            instring.replace( QRegExp( "<(?:\\s*/?(?:div|h[1-6r]|q|p(?![alr])|br|li(?![ns])|td|blockquote|[uo]l|pre|d[dl]|nav|address))[^>]{0,}>",
+                                  Qt::CaseInsensitive, QRegExp::RegExp2 ), " " );
+            instring.remove( QRegExp( "<[^>]*>", Qt::CaseSensitive, QRegExp::RegExp2 ) );
+#endif
+            std::string out_string = QTextDocumentFragment::fromHtml(instring).toPlainText().toStdString();
             int msec = begin.msecsTo(QTime::currentTime());
             std::cout << "QTextDocumentFragment msec: " << msec << std::endl;
 
@@ -207,7 +223,6 @@ public:
                 FILE *out = fopen(outfile.toLocal8Bit().data(), "w");
                 if( out )
                 {
-                    std::string out_string = outstring.toStdString();
                     ::fwrite(out_string.c_str(), out_string.size(), 1, out);
                     ::fflush(out);
                     ::fclose(out);
@@ -252,7 +267,7 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     unscape();
-    return app.exec();
+    //return app.exec();
     MyThread::sleep(10);
     int count = 900000;
     int i = 0;
@@ -261,29 +276,28 @@ int main(int argc, char *argv[])
     QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
     QThreadPool::globalInstance()->start(new test_QTextDocumentFragment(QString("Z:\\out%1.txt").arg(i++ % 20)));
     QThreadPool::globalInstance()->start(new semPost());
-return 0;
-    sem.release(16);
+
     for ( ; i < 10000; ) {
+        std::cout << "l: " << i << std::endl;
         QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
         QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
         QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
-        QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
+        QThreadPool::globalInstance()->start(new test_QTextDocumentFragment(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_QTextDocumentFragment(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_QTextDocumentFragment(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8file(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8string(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_utf8buffer(QString("Z:\\out%1.txt").arg(i++ % 20)));
+//        QThreadPool::globalInstance()->start(new test_QTextDocumentFragment(QString("Z:\\out%1.txt").arg(i++ % 20)));
+
         //QThreadPool::globalInstance()->waitForDone();
-        MyThread::msleep(10);
+        MyThread::msleep(2000);
     }
     //sem_ost();
 

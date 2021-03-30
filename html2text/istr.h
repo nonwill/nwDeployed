@@ -28,7 +28,7 @@ const char flush_char = '\0';
 class istr {
 public:
 	public:
-        typedef  std::vector<unsigned int> utf8_string;
+        typedef std::vector<unsigned int> utf8_string;
 
 		istr():
 			elems({})
@@ -42,8 +42,8 @@ public:
             elems(std::move(istr::from_stdstring(p)))
 		{
 		}
-		istr(const string &p):
-            elems(std::move(istr::from_stdstring(p.c_str())))
+        istr(const string &s):
+            elems(std::move(istr::from_stdstring(s)))
 		{
 		}
         virtual ~istr(){}
@@ -138,8 +138,10 @@ public:
 		}
         inline istr &operator+=(const string &p)
 		{
-            return operator+=(p.c_str());
-		}
+            utf8_string elems_ = from_stdstring(p);
+            elems.insert(elems.end(), elems_.begin(), elems_.end());
+            return *this;
+        }
 #if 0
         istr &operator<<=(const istr &inp)
 		{
@@ -194,6 +196,7 @@ public:
         const std::string to_stdstring(void) const
 		{
             std::string s;
+            s.reserve(elems.size() * 3);
 
             for ( size_t b = 0; b < elems.size(); ++b)
                 append_utf8char(s, elems[b]);
@@ -225,14 +228,16 @@ public:
             }
         }
 
-        static utf8_string from_stdstring(const char *p, bool endchar = false)
+        static utf8_string from_stdstring(const char *p, bool endchar = false, long long reserve = -1)
         {
             utf8_string elems_;
 
-            if( p )
+            if( p && *p != '\0')
             {
-              while( *p != '\0' )
-              {
+              if ( reserve > 8)
+                elems_.reserve(reserve);
+
+              do {
                 unsigned int op = *p++;
                 unsigned char fc = op & 0xFF;
                 if ((op >> 7) & 1) {
@@ -246,7 +251,7 @@ public:
                     }
                 }
                 elems_.push_back(op);
-              }
+              }while( *p != '\0' );
             }
 
             if ( endchar )
@@ -255,7 +260,12 @@ public:
             return elems_;
         }
 
-	private:
+        static utf8_string from_stdstring(const std::string &ins, bool endchar = false)
+        {
+            return from_stdstring(ins.c_str(), endchar, ins.size());
+        }
+
+    private:
         utf8_string elems;
 };
 

@@ -155,7 +155,11 @@ Line::insert(const char *p, size_type x)
 void
 Line::insert(const string &s, size_type x)
 {
-	insert(s.c_str(), x);
+    istr::utf8_string is = istr::from_stdstring(s);
+    enlarge(x + is.size());
+    Cell *q = cells_ + x;
+    for (size_type i = 0; i < is.size(); ++q)
+        q->character = is[i++];
 }
 
 void
@@ -446,7 +450,7 @@ Area::insert(char c, size_type x, size_type y)
 void
 Area::insert(const string &s, size_type x, size_type y)
 {
-    istr::utf8_string is = istr::from_stdstring(s.c_str());
+    istr::utf8_string is = istr::from_stdstring(s);
     enlarge(x + is.size(), y + 1);
     Cell *cell = &cells_[y][x];
     for (string::size_type i = 0; i < is.size(); ++i) {
