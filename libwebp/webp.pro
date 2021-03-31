@@ -209,7 +209,7 @@ INCLUDEPATH += .
 
 LIBS +=
 
-win32{
+win32:msvc*{
 LIBFROM = $${DESTDIR}/webp.lib
 LIBTO1 = $${DESTDIR}/libwebp.lib
 LIBTO2 = $${DESTDIR}/webpdemux.lib

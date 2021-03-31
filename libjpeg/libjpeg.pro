@@ -79,7 +79,7 @@ LIBS +=
 
 
 
-win32{
+win32:msvc*{
 LIBFROM = $${DESTDIR}/$${TARGET}.lib
 LIBTO = $${DESTDIR}/lib$${TARGET}.lib
 LIBFROM = $$replace(LIBFROM, /, \\)

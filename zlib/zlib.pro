@@ -44,7 +44,7 @@ SOURCES += \
 INCLUDEPATH += ./include
 
 
-win32{
+win32:msvc*{
 LIBFROM = $${DESTDIR}/z.lib
 LIBTO = $${DESTDIR}/zdll.lib
 LIBFROM = $$replace(LIBFROM, /, \\)

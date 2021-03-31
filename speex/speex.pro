@@ -85,7 +85,7 @@ win32:msvc*:QMAKE_CFLAGS_RELEASE += -MT
 win32:msvc*:QMAKE_CXXFLAGS_RELEASE += -MT
 
 
-win32{
+win32:msvc*{
 LIBFROM = $${DESTDIR}/$${TARGET}.lib
 LIBTO = $${DESTDIR}/lib$${TARGET}.lib
 LIBFROM = $$replace(LIBFROM, /, \\)

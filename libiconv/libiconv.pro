@@ -34,7 +34,7 @@ win32:RC_FILE += windows/libiconv.rc
 LIBS +=
 
 
-win32{
+win32:msvc*{
 LIBFROM = $${DESTDIR}/$${TARGET}.lib
 LIBTO = $${DESTDIR}/lib$${TARGET}.lib
 LIBFROM = $$replace(LIBFROM, /, \\)
