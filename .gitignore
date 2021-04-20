@@ -1,0 +1,14 @@
+*.o
+*~
+
+lib*/*
+bin*/*.lib
+*.exp
+*.ilk
+*.pdb
+*.7z
+*.exp
+*.pro.user
+*.pro.user.*
+config.nwx
+/bin4_x86_msvc/plugins/NPSWF32_32_0_0_387.dll

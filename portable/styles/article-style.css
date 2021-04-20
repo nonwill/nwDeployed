@@ -1,0 +1,40 @@
+/*  ---- 针对金山数据的stardict格式词典的影射样式表 ----  */
+.JS, .kbody{ margin-top:-.8em; }
+.sdct_k .bdef + .idiom {margin-top: .6em;}
+.sdct_k .idiom + .idiom {margin-top: .3em;}
+.sdct_k .kbody>.bdef .word { display:none;}
+.sdct_k .word {color:blue;}
+.sdct_k .pron {color:#555;}
+.sdct_k .pron:before{
+color:#444;
+content:"[";
+}
+.sdct_k .pron:after{
+color:#444;
+content:"]";
+}
+
+.sdct_k .wpron { display:inline;color:#555;}
+.sdct_k .wpron > span, .sdct_k .predef > span {display:inline;}
+
+.sdct_k .predef {
+display:inline-block;
+color:#333;
+}
+.sdct_k .def {
+display:inline-block;
+color:#39c;
+}
+.sdct_k .desc {color:#444;}
+
+.JS>.CY>.CX>.YX { display:none;}
+.JS>.CY>.CX>.DX {
+color:#333;
+margin-top: .5em;
+}
+.JS>.CY>.CX>.JX {
+color:#39c;
+margin-left: 1em;
+margin-top: .1em;
+}
+/*  ---- ---- ----  */

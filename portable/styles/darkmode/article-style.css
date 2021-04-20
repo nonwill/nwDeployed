@@ -1,0 +1,859 @@
+
+body
+{
+  margin-top: 1px;
+  margin-right: 3px;
+  margin-left:  2px;
+  margin-bottom: 3px;
+  background: #222;
+  color: white;
+  
+  line-height: 1.5em;
+}
+
+strong {
+  color: #45D079;
+}
+
+a:link
+{
+  color: paleTurquoise;
+}
+
+ul
+{
+  color: white;
+}
+
+.gdarticle
+{
+  background: #222;
+  color: white;
+  margin-top: 0.1em;
+  margin-bottom: 0.4em;
+  padding: 0;
+  border: none;
+}
+
+.gdactivearticle
+{
+  border: none;
+}
+
+.gdarticleseparator + script + .gdactivearticle .gddictname
+{
+  border-top: none;
+}
+
+.gdarticleseparator
+{
+  display: none;
+}
+
+.gddictname
+{
+  font-size: 14px;
+  font-weight: normal;
+  float: none;
+  border: 0px;
+  margin: -6px;
+  margin-bottom: 5px;
+  margin-left: 2px;
+  padding-right: 0.4em;
+
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+
+.gdactivearticle .gddictname
+{
+    background-color: #0b485b;
+    color: rgb(239, 235, 227);
+    font-weight: bold;
+    font-size: x-large;
+    padding: 5px;
+    padding-left: 10px;
+    margin: 1px;
+    /* margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 3px; */
+}
+
+.gddictname
+{
+    background-color: #0b485b;
+    color: rgb(239, 235, 227);
+    font-weight: bold;
+    font-size: x-large;
+    padding: 5px;
+    padding-left: 10px;
+    margin: 1px;
+    /* margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 3px; */
+}
+
+.gddicticon
+{
+  display: inline;
+  vertical-align: text-bottom;
+  float: right;
+  padding-right: 0em;
+  padding-left: 0.3em;
+}
+
+/**
+ * Old Dictionaries using DSL format
+ */
+/* .gdarticlebody > span:first-child .dsl_headwords,
+.gdarticlebody > h3:first-child
+{
+  margin-top: -3px;
+  display: inline-block;
+} */
+
+
+.gdspellsuggestion
+{
+  /* Add some vertical space before the article */
+  margin-top: 1.5em;
+}
+
+.dsl_article, .dsl_definition, .dsl_ex, .dsl_opt, .dsl_lang, .dsl_m0, .dsl_m1, .dsl_m2, .dsl_m3, .dsl_m4, .dsl_u, .dsl_b, .dsl_i
+{
+  color: white !important;
+}
+
+.dsl_p {
+  color: #FF7400 !important;
+}
+
+.dsl_b font {
+  color: #FFD300 !important;
+}
+
+.dsl_m2 font {
+  color: #71FF35 !important;
+}
+
+.dsl_i font {
+  color: white !important;
+}
+
+.dsl_article .dsl_definition {
+  color: #FFEA13 !important;
+}
+
+.dsl_article .dsl_definition font[color="darkcyan"]
+{
+  color: #FFEA13 !important;
+}
+
+.dsl_article .dsl_definition font[color="teal"]
+{
+  color: #FFEA13 !important;
+}
+
+.dsl_article .dsl_definition font[color="darkslategray"]
+{
+  color: #E7003E !important;
+}
+
+.dsl_article .dsl_definition font[color="darkslateblue"]
+{
+  color: #E7003E !important;
+}
+
+.dsl_article .dsl_definition font[color="darkmagenta"]
+{
+  color: #E7003E !important;
+}
+
+.dsl_article .dsl_definition font[color="sienna"]
+{
+  color: #E7003E !important;
+}
+
+.dsl_article .dsl_definition font[color="rosybrown"]
+{
+  color: #E7003E !important;
+}
+
+.dsl_article .dsl_definition font[color="dimgray"]
+{
+  color: white !important;
+}
+
+.dsl_article .dsl_definition font[color="green"]
+{
+  color: #E7003E !important;
+}
+
+.dsl_article .dsl_definition font[color="darkgreen"]
+{
+  color: #E7003E !important;
+}
+
+::selection
+{
+  background: yellow;
+	color: white;
+}
+
+code::selection
+{
+	background: white;
+}
+
+.dsl_s_wav img, .lsa_play img, .forvo_play img[alt="Play"]
+{
+  /**
+  display: none;
+  **/
+}
+
+.dsl_s_wav a, .lsa_play td:nth-of-type(1) a, .forvo_play td:nth-of-type(1) a
+{
+  color: white;
+  width: 18px;
+  height: 14px;
+  /**
+  display: inline-block;
+  background: url('file:///control_play_lingvo.png') no-repeat center;
+  vertical-align: text-bottom;
+  -webkit-user-select: none;
+  user-select: none;
+  **/
+}
+
+/**
+ * OALD9 Dictionary
+ */
+
+.mdict, .mdict ol, .head-jump-pos, .head-jump-entry, .h-g, sn-gs, .sn-g, .x-gs, .xg, .rx-g, .x, .num, .def, .label-g, .collapse
+{
+  color: white !important;
+}
+
+.head-jump-pos a
+{
+  display: inline-block;
+  background-color: #45D079;
+  color: white !important;
+  padding-top: 2px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-right: 3px;
+  margin-bottom: 3px;
+  text-decoration: none;
+  font-size: 90%;
+  border-radius: 2px;
+}
+
+.mdict .if-gs
+{
+  color: #E7003E !important;
+}
+
+.mdict .gram-g
+{
+  color: #FF7400 !important;
+}
+
+.mdict .top-container
+{
+  line-height: 1.2em !important;
+}
+
+.mdict .collapse, .mdict .webtop-g
+{
+  background-color: #03A9F4 !important;
+  border-left: 3px solid #03A9F4 !important;
+}
+
+.mdict .collapse .body .h1, .mdict .collapse .body .deflist .li .eb
+{
+  color: #D32F2F !important;
+}
+
+.mdict .collapse .body .inline .li
+{
+  color: #512DA8 !important;
+}
+
+/** Fix numbered list **/
+.mdict ol
+{
+  list-style-type: none;
+}
+
+.mdict ol li
+{
+  counter-increment: step-counter;
+
+}
+
+.mdict ol li::before
+{
+  content: counter(step-counter);
+  color: #E7003E !important;
+  font-weight: bold;
+}
+
+/** Fix phonetics **/
+
+.mdict .phon {
+  color: #E7003E !important;
+  font-weight: bold;
+}
+
+/**
+ * Longman Dictionary 6
+ */
+
+.entry, .example, .collocate, .collgloss, .sense, .neutral, .exas li
+{
+  color: white !important;
+}
+
+.hyphenation, .homnum, .frequent
+{
+  color: #FFEB3B !important;
+}
+
+.pron, .amevarpron
+{
+  color: #D32F2F !important;
+  font-weight: bold;
+}
+
+.gram, .registerlab
+{
+  color: #03A9F4 !important;
+}
+
+.propformprep, .expr, .colloc, .collo, .exp, .display, .nodeword {
+  color: #FF4081 !important;
+}
+
+.sensenum
+{
+  color: #E7003E !important;
+}
+
+.collobox
+{
+  background-color: #448AFF !important;
+  border-color: #448AFF !important;
+}
+
+.thesbox
+{
+  background-color: #FFEB3B !important;
+  border-color: #FFEB3B !important;
+}
+
+.grambox .expl, .grambox .compareword, .collobox .section, .thesbox .section
+{
+  background-color: #222 !important;
+}
+
+.secheading
+{
+  background-color: #1976D2 !important;
+}
+/**
+ * Từ điển Lạc Việt
+ */
+table, #definition_T_id, #mh_n_T_id, #mh_T_id, #C_C
+{
+  color: white !important;
+}
+
+#C_C font {
+  color: white !important;
+}
+
+
+
+
+/* test*/
+
+body {
+	color: #f1f1f1;
+	background-color: #222;
+
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+}
+h1 {
+          background-color: #0b485b;
+    color: rgb(239, 235, 227);
+        font-weight: bold;
+        font-size: x-large;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        margin-bottom: 3px;
+}
+h2, h3 {
+          background-color: rgb(52, 57, 66);
+    color: rgb(239, 235, 227);
+        font-size: large;
+        margin: 0;
+        padding: 5px;
+        padding-left: 10px;
+        min-height: 1em;
+        /* margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px; */
+}
+pre {
+         background-color: rgb(35, 35, 37);
+        margin-left: 5px;
+        margin-right: 0px;
+        margin-top: 7px;
+        margin-bottom: 7px;
+        white-space: pre-wrap;
+        text-indent: 15px;
+        font-size:  medium;
+}
+i {
+}
+b {
+        color: lightblue;
+}
+em.err {
+        color: DeepSkyBlue;
+        font-weight: bold;
+        font-stye: italic;
+}
+span.sel {
+        color: #33A055;
+}
+span.img {
+        font-size: small;
+        font-stye: italic;
+}
+img,svg {
+        vertical-alignment: super;
+        font-size: small;
+        background: #f1f1f1;
+        color: #f1f1f1;
+        border-radius: 1px;
+    }
+sup {
+        color: #45D079;
+}
+sub {
+        color: lightgreen;
+}
+a {
+        color: tomato;
+}
+a.ref {
+}
+a.cnd {
+        color: lightyellow;
+}
+a.img {
+}
+a.snd {
+}
+a.mpg {
+}
+p {
+}
+.epwing_image {
+  display: inline-block !important;
+}
+br {
+  display: block !important;
+  margin: 10px 0 !important;
+  line-height:2em !important;
+}
+.collapse_expand_area {
+    float: right;
+}
+
+.gdfromprefix {
+    display: none;
+}
+
+.epwing_text, .sdct_h {
+    padding: 15px;
+}
+
+.t, .p, .m {
+  background-color: rgb(52, 57, 66) !important;
+}
+
+/* .gdarticle {
+	font-family: ＭＳ Ｐゴシック,游明朝,HG丸ｺﾞｼｯｸM-PRO;
+} */
+/* 
+h3, pre {
+  font-family: ヒラギノ角ゴシック W2;
+} */
+
+body, h3, h2, pre{
+  font-family: ヒラギノ角ゴシック W2;
+}
+  
+
+/* Zen */
+.programs_plaintext, .programs_html {
+  margin-top: 0;
+}
+
+.furigana span {
+  display: inline-block;
+  text-align: center;
+  min-width: 1.5em;
+  line-height: 1.15;
+}
+
+.japanese_word__furigana_wrapper {
+  display: block;
+  min-height: 0.8em;
+  max-height: 0;
+}
+
+.japanese_word__furigana {
+  display: inline-block;
+  text-align: center;
+  /*line-height: 1.15;*/
+  font-size: 50%;
+  position: relative;
+}
+
+ruby.furigana-justify rb {
+  display: block;
+  visibility: hidden;
+  overflow: hidden;
+  height: 0;
+  /*font-size: 31px;*/
+}
+
+#zen ul, #freq ul {
+  list-style: none;
+}
+
+#zen li, #freq li {
+  display: inline-block;
+  font-size: 1.7em;
+  text-align: center;
+
+}
+
+#zen_bar {
+  font-size: 1em;
+  max-height: 280px;
+  margin: 15px 15px 0;
+}
+
+#zen a {
+  color: #E3E3E3;
+  font-weight: normal;
+  text-decoration: none;
+  margin: 0;
+  padding: 1px 2px;
+  border-bottom: 1px solid cadetblue
+}
+
+#zen li[data-pos="Particle"] a {
+  color: lightblue;
+  border-bottom: 1px solid cadetblue
+}
+
+#zen li[data-pos=Verb] a {
+  color: whitesmoke;
+}
+
+#zen a:hover {
+  color: darkturquoise !important;
+  border-bottom-width: 2px !important;
+
+}
+
+#zen li[data-pos=Noun] a {
+  color: lightblue;
+}
+
+#zen li[data-pos="Proper noun"] a {
+  color: cadetblue;
+}
+
+.furigana {
+  display: block;
+  font-size: 10px;
+  margin-right: 2px;
+  padding-left: 2px
+}
+
+.furigana rt{
+  font-size: 10px;
+}
+
+ul.clearfix {
+  padding: 0;
+}
+
+/* concept */
+.concept_light-readings .concept_light-representation .text a {
+  display: block;
+  line-height: 1.1;
+}
+
+#zen h3 {
+  display: table;
+  width: 100%;
+}
+
+/*#zen h3:after {*/
+  /*content: '';*/
+  /*display: inline-block;*/
+  /*width: 100%;*/
+  /*height: 0;*/
+  /*font-size: 0;*/
+  /*line-height: 0;*/
+/*}*/
+
+#primary {
+  display: inline-block;
+  text-align: left;
+  box-sizing: border-box;
+  width: 50%; /* or less */
+}
+
+#timing {
+  text-align: right;
+  font-size: 7px;
+  color: lightgray;
+  padding-top: 5px;
+  display: inline-block;
+  /*width:49%;*/
+  line-height: 10px;
+  box-sizing: border-box;
+  width: 50%; /* or less */
+}
+
+.suspended-row, .suspended-row td{
+  border-bottom: solid 4px #7D7D04;
+}
+.review-row, .review-row td{
+  border-bottom: solid 4px #33A055;
+}
+
+.new-row, .new-row td{
+  border-bottom: solid 4px #3581A9;
+}
+
+.learning-row, .learning-row td{
+  border-bottom: solid 4px #3581A9;
+}
+
+/* .buckets-table{
+  width: 100%;
+  text-align: center;
+} */
+
+#anki_cards tr:nth-child(odd) {
+  background-color: rgb(52, 57, 66);
+}
+
+.anki-results{
+  right: 0;
+  position: fixed;
+
+  bottom:0;
+  right: 0;
+  background: #080808;
+  padding: 0 5px 0 5px;
+  border-radius: 3px;  
+}
+
+tr td:first-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+td img {
+  max-width: 50px;
+  max-height: 50px;
+}
+
+table { border-collapse: separate; }
+/* td { border: solid 1px #000; } */
+tr:first-child td:first-child { border-top-left-radius: 2px; }
+tr:first-child td:last-child { border-top-right-radius: 2px; }
+tr:last-child td:first-child { border-bottom-left-radius: 2px; }
+tr:last-child td:last-child { border-bottom-right-radius: 2px; }
+
+tr:first-child th:first-child { border-top-left-radius: 2px; }
+tr:first-child th:last-child { border-top-right-radius: 2px; }
+tr:last-child th:first-child { border-bottom-left-radius: 2px; }
+tr:last-child th:last-child { border-bottom-right-radius: 2px; }
+
+
+.gddictname, h3 {
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.gdarticlebody {
+  word-wrap: break-word;
+}
+
+/* anki-results div{
+  position:absolute;
+  z-index: 100;
+} */
+
+#freq {
+  padding:10px;
+}
+
+#freq div{
+  padding-top:5px;
+}
+
+.img-holder {
+
+ float: right;
+ cursor: pointer;
+}
+
+
+.img-holder.disabled {
+
+  float: right;
+  cursor: wait;
+  opacity: 0.5;
+
+ }
+
+.copy-img {
+  max-width: 20px;
+  max-height: 20px;
+
+}
+
+.gddictname,.gdactivearticle .gddictname {
+  font-size:medium;
+}
+
+#zen .img-holder, #golden-images .img-holder{
+  display: none;
+}
+
+
+#freq td:first-child{
+  border-left: solid 4px rgb(52, 57, 66);
+  padding-left: 10px
+}
+
+#freq a {
+   /* remove important when all zen styles live in this file  */
+  border-bottom: 0 !important;
+}
+
+.gddicttitle{
+  max-height: 75px;
+  max-width: 75px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flash-notice {
+  position:fixed;
+  top:0px;
+  right:0px;
+  background-color: #34b735;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.active{
+  border-top: 5px solid red;
+}
+
+/* Golden Image */
+
+#golden-images .timing {
+  text-align: right;
+  font-size: 7px;
+  color: lightgray;
+  padding-top: 5px;
+  display: inline-block;
+  line-height: 10px;
+  box-sizing: border-box;
+  width: 50%;
+}
+
+#golden-images .image-list {
+  padding: 10px;
+}
+
+.image-container {
+  display: inline-block;
+  padding: 1px;
+  height: 85px;
+  width: 85px;
+  text-align: center;
+  white-space: nowrap;
+  margin: 1em 0;
+}
+
+#golden-images img {
+  text-align: center;
+  vertical-align: middle;
+  max-height: 85px;
+  max-width: 85px;
+}
+
+.primary {
+  display: inline-block;
+  text-align: left;
+  box-sizing: border-box;
+  width: 50%; /* or less */
+}
+
+/*copied from zen */
+.programs_plaintext, .programs_html {
+  margin-top: 0;
+}
+
+#golden-images .primary a {
+  color: #E3E3E3;
+  font-weight: normal;
+  text-decoration: none;
+  margin: 0;
+  padding: 1px 2px;
+  border-bottom: 1px solid cadetblue
+}
+
+#golden-images h3 {
+  display: table;
+  width: 100%;
+}
+
+.epwing_text br:first {
+  /*prevent jumping on freq stars loading */
+  display: block !important;
+  margin: 30px 0 !important;
+  line-height: 2em !important;
+}
+.epwing_text .frequency-placeholder+br:first {
+  margin: 0px 0 !important;
+}

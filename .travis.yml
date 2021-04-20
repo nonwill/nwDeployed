@@ -1,0 +1,44 @@
+language: ruby
+
+# Specify which branches to build using a safelist
+# 分支白名单限制: 只有master分支的提交才会触发构建
+branches:
+  only:
+    - master 
+
+script:
+  - wget --no-check-certificate --content-disposition https://aka.ms/vs/16/release/vc_redist.x64.exe
+  - wget --no-check-certificate --content-disposition https://aka.ms/vs/16/release/vc_redist.x86.exe
+  - wget --no-check-certificate --content-disposition https://github.com/nonwill/nwDeployed/releases/download/GoldenDict%2B%2BOCR_2A26_20210223/tessdata_fast.7z
+  - wget --no-check-certificate --content-disposition https://github.com/nonwill/nwDeployed/releases/download/GoldenDict%2B%2BOCR_2A26_20210223/ns_ocr_x64.7z
+  - wget --no-check-certificate --content-disposition https://github.com/nonwill/nwDeployed/releases/download/GoldenDict%2B%2BOCR_2A26_20210223/ns_ocr_x86.7z
+  - wget --no-check-certificate --content-disposition https://github.com/nonwill/nwDeployed/releases/download/GoldenDict%2B%2BOCR_2A28_20210330/GoldenDict++OCR-2A27E-macOS-10.13.6-x64-20210322.dmg
+  - wget --no-check-certificate --content-disposition https://github.com/nonwill/nwDeployed/releases/download/GoldenDict%2B%2BOCR_2A28_20210330/GoldenDict++OCR-2A29-manjaro-20-x64-20210401.tar.gz
+   #- wget --no-check-certificate --content-disposition https://github.com/nonwill/nwDeployed/releases/download/GoldenDict%2B%2BOCR_2A26/GoldenDict++OCR-2A26-manjaro-20-x64-20210223.tar.gz
+  - tar -cvjpf GoldenDict++OCR-2A29-Qt-5.9.9-msvc-16.9.3-x64-20210403.tar.bz2 bin5_x64_msvc/*
+  - tar -cvjpf GoldenDict++OCR-2A29-Qt-5.9.9-mingw-gcc10-x86-20210403.tar.bz2 bin5_x86_mingw/*
+  - tar -cvjpf GoldenDict++OCR-2A29-Qt-4.8.7-msvc-16.9.3-x86-20210403.tar.bz2 bin4_x86_msvc/*
+  - tar -cvjpf Dictionary.tar.bz2 dicts/* portable/*
+  - md5sum *.tar.bz2 *.tar.gz *.7z *.exe *.dmg >checksum.md5
+  - sha256sum *.tar.bz2 *.tar.gz *.7z *.exe *.dmg >checksum.sha256
+  - ls -la
+deploy:
+  provider: releases # 重要，指定这是一份github releases的部署配置
+  api_key: $DPL_RELEASE_TOKEN
+  file:
+    - checksum.md5
+    - checksum.sha256
+    - Dictionary.tar.bz2
+    - GoldenDict++OCR-2A27E-macOS-10.13.6-x64-20210322.dmg
+    - GoldenDict++OCR-2A29-manjaro-20-x64-20210401.tar.gz
+    - GoldenDict++OCR-2A29-Qt-5.9.9-mingw-gcc10-x86-20210403.tar.bz2
+    - GoldenDict++OCR-2A29-Qt-5.9.9-msvc-16.9.3-x64-20210403.tar.bz2
+    - GoldenDict++OCR-2A29-Qt-4.8.7-msvc-16.9.3-x86-20210403.tar.bz2
+    - ns_ocr_x64.7z
+    - ns_ocr_x86.7z
+    - tessdata_fast.7z
+    - vc_redist.x86.exe
+    - vc_redist.x86.exe
+  skip-cleanup: true # 重要，不能省略
+  on:
+    branch: master # 源码的分支
