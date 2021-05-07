@@ -7,12 +7,12 @@ TARGET = lept
 unix:CONFIG += static
 
 
-win32::msvc*:DEFINES += COMPILER_MSVC
+win32:msvc*:DEFINES += COMPILER_MSVC
 DEFINES += LIBLEPT_EXPORTS HAVE_CONFIG_H NO_CONSOLE_IO
 DEFINES += OPJ_STATIC
 DEFINES -= UNICODE _UNICODE
 
-win32::msvc*:QMAKE_CFLAGS += /TP # Compile C as CPlusPlus, this is important.
+win32:msvc*:QMAKE_CFLAGS += /TP # Compile C as CPlusPlus, this is important.
 
 include($${PWD}/../nwDeployed.pri)
 
@@ -241,12 +241,11 @@ INCLUDEPATH += . $${PWD}/src \
     $${PWD}/../libjpeg \
     $${PWD}/../libpng \
     $${PWD}/../libgiflib \
-    $${PWD}/../libtiff
+    $${PWD}/../libtiff \
+    $${PWD}/../zlib/include
 
 win32:LIBS += -lGdi32 -lUser32
 
 LIBS += -lgiflib -lpng -ljpeg \
     -ltiff -lwebp -lopenjpeg -lz -lzstd
 
-
-INCLUDEPATH += ../zlib/include

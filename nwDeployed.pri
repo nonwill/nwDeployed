@@ -1,7 +1,9 @@
 
 greaterThan(QT_MAJOR_VERSION, 4) {
+    #unix:QMAKE_LFLAGS += -fuse-ld=gold
     TARGET_ARCH=$${QT_ARCH}
 } else {
+    #linux:QMAKE_LFLAGS += -fuse-ld=bfd
     TARGET_ARCH=$${QMAKE_TARGET.arch}
 }
 
@@ -46,3 +48,14 @@ contains(TEMPLATE,lib) {
 
 LIBS += -L$${NWDEP_LIB}
 
+win32 {
+    win32-msvc* {
+        contains(TARGET_ARCH, x86_64) {
+            DEFINES += __WIN64
+        } else {
+            QMAKE_LFLAGS += /LARGEADDRESSAWARE
+        }
+    } else {
+        !x64:QMAKE_LFLAGS += -Wl,--large-address-aware
+    }
+}

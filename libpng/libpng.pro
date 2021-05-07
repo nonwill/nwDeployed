@@ -41,7 +41,7 @@ SOURCES += \
      pngwutil.c \
 
 
-INCLUDEPATH += ../zlib/include
+INCLUDEPATH += $${PWD}/../zlib/include
 
 LIBS += -lz
 

@@ -205,9 +205,6 @@ android:!android-embedded {
     INCLUDEPATH += $${NDK_ROOT}/sources/android/cpufeatures
 }
 
-INCLUDEPATH += .
-
-LIBS +=
 
 win32:msvc*{
 LIBFROM = $${DESTDIR}/webp.lib

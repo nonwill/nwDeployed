@@ -339,5 +339,5 @@ RC_FILE += src/vs2010/tesseract/libtesseract.rc
 INCLUDEPATH += $${PWD}/../libleptonica/src \
 
 win32:LIBS += -lws2_32
-unix:LIBS += -lpng -ljpeg -ltiff -lgiflib -lwebp -lopenjpeg -lz
+unix:LIBS += -lz -lpng -ljpeg -ltiff -lgiflib -lwebp -lopenjpeg
 LIBS += -llept

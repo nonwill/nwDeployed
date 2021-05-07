@@ -73,12 +73,6 @@ SOURCES += \
      jmemnobs.c
 
 
-INCLUDEPATH +=
-
-LIBS +=
-
-
-
 win32:msvc*{
 LIBFROM = $${DESTDIR}/$${TARGET}.lib
 LIBTO = $${DESTDIR}/lib$${TARGET}.lib
